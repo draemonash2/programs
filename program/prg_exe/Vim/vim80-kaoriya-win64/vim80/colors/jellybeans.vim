@@ -314,14 +314,14 @@ if version >= 700
   call s:X("CursorLine","","1c1c1c","","",s:termBlack)
   call s:X("CursorColumn","","1c1c1c","","",s:termBlack)
   call s:X("MatchParen","ffffff","556779","bold","","DarkCyan")
-  "★mod <top>
+  "★custom mod <top>
   call s:X("TabLine","ffffff","703030","","",s:termBlack)
   call s:X("TabLineFill","9098a0","400000","","",s:termBlack)
   call s:X("TabLineSel","000000","f0D0D0","bold",s:termBlack,"White")
 " call s:X("TabLine","ffffff","808080","","",s:termBlack)
 " call s:X("TabLineFill","9098a0","f0f0f0","","",s:termBlack)
 " call s:X("TabLineSel","f0f0f0","","bold",s:termBlack,"White")
-  "★mod <end>
+  "★custom mod <end>
 
   " Auto-completion
   call s:X("Pmenu","ffffff","606060","","White",s:termBlack)
@@ -333,15 +333,15 @@ call s:X("Cursor",g:jellybeans_background_color,"b0d0f0","","","")
 
 call s:X("LineNr","605958",g:jellybeans_background_color,"none",s:termBlack,"")
 call s:X("CursorLineNr","ccc5c4","","none","White","")
-call s:X("Comment","888888","","","Grey","")	"★mod: del italic
+call s:X("Comment","888888","","","Grey","")	"★custom mod: del italic
 call s:X("Todo","c7c7c7","","bold","White",s:termBlack)
 
-call s:X("StatusLine","000000","dddddd","","","White")	"★mod: del italic
-call s:X("StatusLineNC","ffffff","403c41","","White","Black")	"★mod: del italic
+call s:X("StatusLine","000000","dddddd","","","White")	"★custom mod: del italic
+call s:X("StatusLineNC","ffffff","403c41","","White","Black")	"★custom mod: del italic
 call s:X("VertSplit","777777","403c41","",s:termBlack,s:termBlack)
 call s:X("WildMenu","f0a0c0","302028","","Magenta","")
 
-call s:X("Folded","a0a8b0","384048","",s:termBlack,"")	"★mod: del italic
+call s:X("Folded","a0a8b0","384048","",s:termBlack,"")	"★custom mod: del italic
 call s:X("FoldColumn","535D66","1f1f1f","","",s:termBlack)
 call s:X("SignColumn","777777","333333","","",s:termBlack)
 call s:X("ColorColumn","","000000","","",s:termBlack)

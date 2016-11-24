@@ -689,6 +689,3 @@ endif
 " ==============================================================================
 	execute 'source ' . g:sMarkVimPath
 	
-	let g:BufferListWidth = 40
-	let g:BufferListMaxWidth = 40
-

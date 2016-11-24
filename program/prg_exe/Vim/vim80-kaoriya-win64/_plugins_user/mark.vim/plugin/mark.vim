@@ -138,12 +138,12 @@ nnoremap <silent> <Plug>MarkClear :call
 "       do a \*; otherwise (\/ is the
 "       most recently used), do a \/.
 
-"Åömod nnoremap <silent> <leader>* :call <sid>SearchCurrentMark()<cr>
-"Åömod nnoremap <silent> <leader># :call <sid>SearchCurrentMark("b")<cr>
-"Åömod nnoremap <silent> <leader>/ :call <sid>SearchAnyMark()<cr>
-"Åömod nnoremap <silent> <leader>? :call <sid>SearchAnyMark("b")<cr>
-"Åömod nnoremap <silent> * :if !<sid>SearchNext()<bar>execute "norm! *"<bar>endif<cr>
-"Åömod nnoremap <silent> # :if !<sid>SearchNext("b")<bar>execute "norm! #"<bar>endif<cr>
+"nnoremap <silent> <leader>* :call <sid>SearchCurrentMark()<cr>                    " Åöcustom del
+"nnoremap <silent> <leader># :call <sid>SearchCurrentMark("b")<cr>                 " Åöcustom del
+"nnoremap <silent> <leader>/ :call <sid>SearchAnyMark()<cr>                        " Åöcustom del
+"nnoremap <silent> <leader>? :call <sid>SearchAnyMark("b")<cr>                     " Åöcustom del
+"nnoremap <silent> * :if !<sid>SearchNext()<bar>execute "norm! *"<bar>endif<cr>    " Åöcustom del
+"nnoremap <silent> # :if !<sid>SearchNext("b")<bar>execute "norm! #"<bar>endif<cr> " Åöcustom del
 
 command! -nargs=? Mark call s:DoMark(<f-args>)
 

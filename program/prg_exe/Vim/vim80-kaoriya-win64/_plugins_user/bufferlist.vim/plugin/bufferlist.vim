@@ -58,7 +58,8 @@ function! BufferList()
   " iterate through the buffers
   let l:i = 0 | while l:i <= l:bufcount | let l:i = l:i + 1
     let l:bufname = bufname(l:i)
-    let l:bufname = strpart(l:bufname, strridx(l:bufname, "/") + 1, strlen(l:bufname))      "šadd
+    let l:bufname = strpart(l:bufname, strridx(l:bufname, "/") + 1, strlen(l:bufname))      "šcustom add
+	
     if strlen(l:bufname)
       \&& getbufvar(l:i, '&modifiable')
       \&& getbufvar(l:i, '&buflisted')
@@ -69,21 +70,21 @@ function! BufferList()
           let l:width = strlen(l:bufname) + 5
         else
           let l:width = g:BufferListMaxWidth
-"         let l:bufname = '...' . strpart(l:bufname, strlen(l:bufname) - g:BufferListMaxWidth + 8)  "šdel
+"         let l:bufname = '...' . strpart(l:bufname, strlen(l:bufname) - g:BufferListMaxWidth + 8)  "šcustom del
         endif
       endif
 
       if bufwinnr(l:i) != -1
-"       let l:bufname = l:bufname . '*'     "šdel
-        let l:bufname = '*'. l:bufname      "šadd
-      else                                  "šadd
-        let l:bufname = ' '. l:bufname      "šadd
+"       let l:bufname = l:bufname . '*'     "šcustom del
+        let l:bufname = '*'. l:bufname      "šcustom add
+      else                                  "šcustom add
+        let l:bufname = ' '. l:bufname      "šcustom add
       endif
       if getbufvar(l:i, '&modified')
-"       let l:bufname = l:bufname . '+'     "šdel
-        let l:bufname = '+'. l:bufname      "šadd
-      else                                  "šadd
-        let l:bufname = ' '. l:bufname      "šadd
+"       let l:bufname = l:bufname . '+'     "šcustom del
+        let l:bufname = '+'. l:bufname      "šcustom add
+      else                                  "šcustom add
+        let l:bufname = ' '. l:bufname      "šcustom add
       endif
       " count displayed buffers
       let l:displayedbufs = l:displayedbufs + 1
@@ -95,7 +96,7 @@ function! BufferList()
       endif
       " fill the name with spaces --> gives a nice selection bar
       " use MAX width here, because the width may change inside of this 'for' loop
-      while strlen(l:bufname) < g:BufferListMaxWidth - 2 "šmod
+      while strlen(l:bufname) < g:BufferListMaxWidth - 2 "šcustom mod
         let l:bufname = l:bufname . ' '
       endwhile
       " add the name to the list
@@ -248,7 +249,7 @@ function! LoadBuffer()
   bwipeout
   " ...and switch to the buffer number
   exec ":b " . l:str
-  call BufferList()                         "šadd
+  call BufferList()                         "šcustom add
 endfunction
 
 " deletes the selected buffer

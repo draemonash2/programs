@@ -89,3 +89,9 @@
 " =======================================
 	call singleton#enable()
 
+" =======================================
+" bufferlist 設定
+" =======================================
+	let g:BufferListWidth = 40
+	let g:BufferListMaxWidth = 40
+
