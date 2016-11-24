@@ -17,6 +17,10 @@
 	noremap		<silent>			K			g*zz										" 検索結果を画面中央に
 	noremap		<silent>			g#			g#zz										" 検索結果を画面中央に
 	noremap		<silent>			x			"_x											" １文字削除（切り取りなし）
+	noremap							/			/\v
+																							" veri match で検索
+	noremap							ciy			ciw<c-r>0<esc>b								" 単語コピー
+																							" 検索モード変更
 	noremap		<silent>			<s-h>		^											" カーソルを先頭に移動
 	noremap		<silent>			<s-l>		$											" カーソルを末尾に移動
 	noremap		<silent>			<tab>		a<tab><esc>									" タブ挿入
@@ -24,19 +28,17 @@
 	noremap		<silent>			<c-j>		5jzz										" カーソル移動＋画面移動（下）
 	noremap		<silent>			<c-k>		5kzz										" カーソル移動＋画面移動（上）
 	noremap		<silent>			<c-h>		10zh10h										" カーソル移動＋画面移動（左）
+"	noremap		<silent>			<c-h>		10zh10h
 	noremap		<silent>			<c-l>		10zl10l										" カーソル移動＋画面移動（右）
 	map			<silent>			<c-m>		oa<esc>x									" インデントを維持して改行
 	noremap		<silent>			<c-q>		<c-w>w										" ウィンドウ切替（次へ）
 	noremap		<silent>			<c-s-q>		<c-w>W										" ウィンドウ切替（前へ）
 	noremap		<silent>			<c-tab>		gt											" タブ切替（次へ）
 	noremap		<silent>			<c-s-tab>	gT											" タブ切替（前へ）
-	noremap		<silent>			<c-w>		<nop>
-	noremap		<silent>			<c-w>		:tabclose<cr>								" タブを閉じる
+	noremap		<silent>			<c-s-w>		:tabclose<cr>								" タブを閉じる
 	noremap		<silent>			<c-s-n>		:tabnew<cr>									" 新規タブを開く
 	noremap		<silent>			<c-s-g>		:call ExecuteHNXgrep()<cr>					" HNXGrep を実行
-"	noremap							/			/\v											" 検索モード変更
 	noremap		<silent>			<esc><esc>	:nohlsearch<cr>								" ハイライト解除
-	noremap							ciy			ciw<c-r>0<esc>b								" 単語コピー
 	
 	noremap		<silent>			<F1>		:call BufferList()<cr>						" バッファリスト作成
 	noremap		<silent>			<F2>		:Tlist<cr>									" タグリスト作成
@@ -46,20 +48,21 @@
 	noremap		<silent>			<F6>		:vs<cr><c-w>wggVGy:q<cr><c-w>W				" 全体をコピー
 "	noremap		<silent>			<F7>		:Vexplore<cr>								" Explorerを起動
 	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>					" フォントサイズをトグル
-"	noremap		<silent>			<F9>		<nop>
+	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
+																							" ↑前行の単語をコピーしてインクリメント
 	noremap		<silent>			<F10>		:call UpdateTagFile()<cr>					" タグファイル更新
 	noremap		<silent>			<F11>		:set expandtab<cr>:retab!<cr>				" タブ⇒空白 変換
 	noremap		<silent>			<F12>		:set noexpandtab<cr>:retab!<cr>				" 空白⇒タブ 変換
 	
-	noremap		<silent>			<c-F1>		:call CopyFilePath()<cr>					" 現在ファイルパスコピー
-	noremap		<silent>			<c-F2>		:call CopyFileName()<cr>					" 現在ファイル名コピー
-	noremap		<silent>			<c-F3>		:call CopyDirPath()<cr>						" 現在フォルダパスコピー
+	noremap		<silent>			<c-F1>		:call CopyCurFilePath()<cr>					" 現在ファイルパスコピー
+	noremap		<silent>			<c-F2>		:call CopyCurDirPath()<cr>					" 現在フォルダパスコピー
+	noremap		<silent>			<c-F3>		:call CopyCurFileName()<cr>					" 現在ファイル名コピー
+"	noremap		<silent>			<c-F4>		<nop>
 	noremap		<silent>			<c-F5>		:so %<cr>									" 現在設定ファイル読み込み
 	
-	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'	" ペーストしたテキストを再選択できるようにする
+"	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'	" ペーストしたテキストを再選択できるようにする
 	
 "=== ノーマルモード ===
-	nmap		<silent>			mi			kyiwjciy<c-a>j								" 前行の単語をコピーしてインクリメント
 	
 "=== 挿入モード ===
 	inoremap	<silent>			<c-j>		<esc>										" Ctrl+J でノーマルモードに移行
@@ -87,15 +90,6 @@
 " **************************************************************************************************
 " *****										  基本設定										   *****
 " **************************************************************************************************
-" ==============================================================================
-" ファイルパス設定
-" ==============================================================================
-	let g:sCtagsPath = "C:/prg_exe/ctags58j2bin"
-	let g:sGtagsPath = "C:/prg_exe/glo627wb/bin"
-	let g:sMarkVimPath = substitute( $VIM, "\\", "/", "g" ) . "/bundle/mark.vim/plugin/mark.vim"
-	let g:sGrepTrgtDirPath = "C:/codes_sample/c/FreeRTOSV7.1.1/Source"
-	let g:sHNXGrepPath = substitute( $VIM, "\\", "/", "g" ) . "/../../HNXgrep/HNXgrep.exe"
-	
 " ==============================================================================
 " 基本設定
 " ==============================================================================
@@ -138,7 +132,7 @@
 														" バックアップは上書きに成功した後に削除される。
 	set scrolloff=5										" カーソル周辺行数
 	set swapfile										" スワップファイル(.swpファイル)を作成する
-	set directory=$VIM									" スワップファイル(.swpファイル)の出力先
+	set directory=$VIM/swapfiles						" スワップファイル(.swpファイル)の出力先
 	set nobackup										" バックアップファイル(~ファイル)を作成しない
 	set hidden											" 編集結果非保存のバッファから、新しいバッファを開くときに警告を出さない
 	set history=50										" ヒストリの保存数
@@ -189,10 +183,72 @@ endif
 	set viminfo+=n$VIM/_viminfo							" VIMINFO ファイル出力先設定
 
 " ==============================================================================
+" ファイルパス設定
+" ==============================================================================
+	let g:sCtagsPath = "C:/prg_exe/ctags58j2bin"
+	let g:sGtagsPath = "C:/prg_exe/glo627wb/bin"
+	let g:sGrepTrgtDirPath = "C:/codes_sample/c/FreeRTOSV7.1.1/Source"
+	let g:sMarkVimPath = expand( "$VIM/bundle/mark.vim/plugin/mark.vim" )
+	let g:sHNXGrepPath = expand( "$VIM/../../HNXgrep/HNXgrep.exe" )
+	
+" ==============================================================================
+" 共通ユーザ定義関数
+" ==============================================================================
+	function! GetCurFilePath( sPathDlmtr )
+		let l:sCurFilePath = substitute( expand('%:p'), "/", a:sPathDlmtr, "g" )
+		return l:sCurFilePath
+	endfunction
+	function! GetCurDirPath( sPathDlmtr )
+		let l:sCurDirPathTmp = expand("%:p")[ 0:( len( expand("%:p") ) - len( "/" . expand("%:t") ) - 1 ) ]
+		let l:sCurDirPath = substitute( l:sCurDirPathTmp, "/", a:sPathDlmtr, "g" )
+		return l:sCurDirPath
+	endfunction
+	function! GetCurFileName()
+		let l:sCurFileName = expand( '%:t' )
+		return l:sCurFileName
+	endfunction
+	
+	" === ファイルパス検索（＋存在確認） ====
+	function! SrchStoreDirPathToTop( sTrgtDirPath, sSrchFileName )
+		if stridx( a:sTrgtDirPath, "\\" ) > 0
+			let l:sPathDlmtr = "\\"
+		elseif stridx( a:sTrgtDirPath, "/" ) > 0
+			let l:sPathDlmtr = "/"
+		else
+			return ""
+		endif
+		
+		" === tags 存在確認 ====
+		let l:asDirNames = split( a:sTrgtDirPath, l:sPathDlmtr )
+		let l:sDirPath = ""
+		let l:bIsExist = 0
+		for l:iDirMaxCnt in range( len( l:asDirNames ) - 1, 1, -1 )
+			for l:iDirCnt in range( 0, l:iDirMaxCnt )
+				if l:iDirCnt == 0
+					let l:sDirPath = l:asDirNames[ l:iDirCnt ]
+				else
+					let l:sDirPath = l:sDirPath . l:sPathDlmtr . l:asDirNames[ l:iDirCnt ]
+				endif
+			endfor
+			if filereadable( l:sDirPath . l:sPathDlmtr . a:sSrchFileName )
+				let l:bIsExist = 1
+				break
+			else
+				" Do Nothing
+			endif
+		endfor
+		
+		if l:bIsExist == 1
+			return l:sDirPath
+		else
+			return ""
+		endif
+	endfunction
+
+" ==============================================================================
 " カラースキーマ設定
 " ==============================================================================
 	colorscheme jellybeans_custom
-"	colorscheme desert
 	highlight NonText		guibg=NONE	guifg=#404040
 	highlight SpecialKey	guibg=NONE	guifg=#707070
 
@@ -377,17 +433,17 @@ endif
 " ==============================================================================
 	command! Cm call CreateMemoFile()
 	function! CreateMemoFile()
-		let file_name_index = 1
-		let MemoFilePath = 0
+		let l:sFileNameIdx = 1
+		let l:sMemoFilePath = 0
 		while 1
-			let MemoFilePath = (expand('~/Desktop/') . printf("%03d", file_name_index) . '.txt')
-			if filereadable(MemoFilePath) == 1
-				let file_name_index = file_name_index + 1
+			let l:sMemoFilePath = (expand('~/Desktop/temp_') . printf("%03d", l:sFileNameIdx) . '.txt')
+			if filereadable(l:sMemoFilePath) == 1
+				let l:sFileNameIdx = l:sFileNameIdx + 1
 			else
 				break
 			endif
 		endwhile
-		execute "w " . MemoFilePath
+		execute "w " . l:sMemoFilePath
 	endfunction
 
 " ==============================================================================
@@ -437,50 +493,18 @@ endif
 " 注意 : 事前にタグファイルを作成しておくこと。
 " ==============================================================================
 	function! UpdateTagFile()
-		let l:sFilePath = expand("%:p")
-		
 		" === 上位階層ディレクトリ tags 存在確認 ====
-		let l:sDirPath = s:GetTagDirPathToTop( l:sFilePath )
+		let l:sDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
 		
 		" === tags ファイル更新 ====
 		if l:sDirPath == ""
-			echo "Doesn't exist tag file ... Update tag file error!"
+			echo "update tag file error!! tag file is missing ..."
 		else
 			execute "cd " . l:sDirPath
 			execute "!start " . g:sCtagsPath . "/ctags.exe -R"
 			execute "!start " . g:sGtagsPath . "/gtags.exe -v"
 			execute "redraw"
 			echo "Update tag file!"
-		endif
-	endfunction
-	
-	" === tags ファイルパス取得（＋存在確認） ====
-	function! s:GetTagDirPathToTop( sFilePath )
-		let l:sDirPath = ""
-		let l:bIsExist = 0
-		let l:asDirNames = split( a:sFilePath, "/" )
-		
-		" === tags 存在確認 ====
-		for l:iDirMaxCnt in range( len( l:asDirNames ) - 2, 1, -1 )
-			for l:iDirCnt in range( 0, l:iDirMaxCnt )
-				if l:iDirCnt == 0
-					let l:sDirPath = l:asDirNames[ l:iDirCnt ]
-				else
-					let l:sDirPath = l:sDirPath . "/" . l:asDirNames[ l:iDirCnt ]
-				endif
-			endfor
-			if filereadable( l:sDirPath . "/tags" ) 
-				let l:bIsExist = 1
-				break
-			else
-				" Do Nothing
-			endif
-		endfor
-		
-		if l:bIsExist == 1
-			return l:sDirPath
-		else
-			return ""
 		endif
 	endfunction
 
@@ -532,16 +556,12 @@ endif
 " 参考：copypath.vim v1.0
 "		http://nanasi.jp/articles/vim/copypathim.html
 " ==============================================================================
-	let g:Copy2UnnamedRegister = 1 " 1）無名レジスタ＋＊レジスタにコピー、それ以外)＊レジスタにコピー
-	let g:ReplacePathDelimiter = 1 " 1）パス区切り「\」、0）パス区切り「/」
+	let g:lCopy2UnnamedRegister = 1 " 1）無名レジスタ＋＊レジスタにコピー、それ以外)＊レジスタにコピー
+	let g:sPathDlmtr = "\\"
 	
-	function! CopyFilePath()
-		if g:ReplacePathDelimiter == 0
-			let l:sCurFilePath = expand( '%:p' )
-		else
-			let l:sCurFilePath = substitute( expand('%:p'), "/", "\\", "g" )
-		endif
-		if g:Copy2UnnamedRegister == 1
+	function! CopyCurFilePath()
+		let l:sCurFilePath = GetCurFilePath( g:sPathDlmtr )
+		if g:lCopy2UnnamedRegister == 1
 			let @* = l:sCurFilePath " * register.
 			let @" = l:sCurFilePath " unnamed register.
 		else
@@ -550,31 +570,26 @@ endif
 		echo "copy file path      : " . l:sCurFilePath
 	endfunction
 	
-	function! CopyFileName()
-		let l:sCurFileName = expand( '%:t' )
-		if g:Copy2UnnamedRegister == 1
-			let @* = l:sCurFileName " * register.
-			let @" = l:sCurFileName " unnamed register.
-		else
-			let @* = l:sCurFileName " * register.
-		endif
-		echo "copy file name      : " . l:sCurFileName
-	endfunction
-	
-	function! CopyDirPath()
-		let l:sCurDirPathTmp = expand("%:p")[ 0:( len( expand("%:p") ) - len( "\\" . expand("%:t") ) - 1 ) ]
-		if g:ReplacePathDelimiter == 0
-			let l:sCurDirPath = l:sCurDirPathTmp
-		else
-			let l:sCurDirPath = substitute( l:sCurDirPathTmp, "/", "\\", "g" )
-		endif
-		if g:Copy2UnnamedRegister == 1
+	function! CopyCurDirPath()
+		let l:sCurDirPath = GetCurDirPath( g:sPathDlmtr )
+		if g:lCopy2UnnamedRegister == 1
 			let @* = l:sCurDirPath " * register.
 			let @" = l:sCurDirPath " unnamed register.
 		else
 			let @* = l:sCurDirPath " * register.
 		endif
 		echo "copy directory path : " . l:sCurDirPath
+	endfunction
+	
+	function! CopyCurFileName()
+		let l:sCurFileName = GetCurFileName()
+		if g:lCopy2UnnamedRegister == 1
+			let @* = l:sCurFileName " * register.
+			let @" = l:sCurFileName " unnamed register.
+		else
+			let @* = l:sCurFileName " * register.
+		endif
+		echo "copy file name      : " . l:sCurFileName
 	endfunction
 
 " ==============================================================================
@@ -596,14 +611,14 @@ endif
 " HNXGrep で Grep する
 " [参照] http://thinca.hatenablog.com/entry/20111204/1322932585
 " ==============================================================================
+	let g:sProjectRootFileName = "tags"
 	function! ExecuteHNXgrep()
 		let l:sHNXGrepPath = substitute( g:sHNXGrepPath, "/", "\\", "g" )
-		let l:sCurDirPathTmp = expand("%:p")[ 0:( len( expand("%:p") ) - len( "\\" . expand("%:t") ) - 1 ) ]
-		let l:sCurDirPath = substitute( l:sCurDirPathTmp, "/", "\\", "g" )
+		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), g:sProjectRootFileName )
 		let l:sSearchKeyword = ""
-	"	execute "!cmd.exe /c start /max " . l:sHNXGrepPath . " " . l:sCurDirPath . " /KEYWORD=" . l:sSearchKeyword
-	"	execute "!cmd.exe /c start /b /max " . l:sHNXGrepPath . " " . l:sCurDirPath . " /KEYWORD=" . l:sSearchKeyword
-		execute "!start " . l:sHNXGrepPath . " " . l:sCurDirPath . " /KEYWORD=" . l:sSearchKeyword
+	"	execute "!cmd.exe /c start /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
+	"	execute "!cmd.exe /c start /b /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
+		execute "!start " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
 	endfunction
 
 " ==============================================================================
@@ -611,54 +626,59 @@ endif
 " [参考] http://thinca.hatenablog.com/entry/20111204/1322932585
 " ==============================================================================
 	function! MakeTabLine()
-		let titles = map(range(1, tabpagenr('$')), 's:tabpage_label(v:val)')
-		let sep = ' '  " タブ間の区切り
-		let tabpages = join(titles, sep) . sep . '%#TabLineFill#%T'
-		let info = ''  " 好きな情報を入れる
-	"	let @* = tabpages . '%=' . info " * register.
-	"	let @" = tabpages . '%=' . info " unnamed register.
-		return tabpages . '%=' . info  " タブリストを左に、情報を右に表示
+		let l:asTitles = map(range(1, tabpagenr('$')), 'GetTabPageLabel(v:val)')
+		let l:sDelimiter = ' '  " タブ間の区切り
+		let l:sTabpages = join(l:asTitles, l:sDelimiter) . l:sDelimiter . '%#TabLineFill#%T'
+		let l:sInfo = ''  " 好きな情報を入れる
+		return l:sTabpages . '%=' . l:sInfo  " タブリストを左に、情報を右に表示
 	endfunction
 	" 各タブページのカレントバッファ名+αを表示
-	function! s:tabpage_label(n)
+	function! GetTabPageLabel( lTabPageNum )
 		" t:title と言う変数があったらそれを使う
-		let title = gettabvar(a:n, 'title')
-		if title !=# ''
-			return title
+		let l:sTitle = gettabvar(a:lTabPageNum, 'l:sTitle')
+		if l:sTitle !=# ''
+			return l:sTitle
 		endif
 		
 		" タブページ内のバッファのリスト
-		let bufnrs = tabpagebuflist(a:n)
+		let l:asBufList = tabpagebuflist(a:lTabPageNum)
 		
 		" カレントタブページかどうかでハイライトを切り替える
-		let hi = a:n is tabpagenr() ? '%#TabLineSel#' : '%#TabLine#'
+		let l:sHilight = a:lTabPageNum is tabpagenr() ? '%#TabLineSel#' : '%#TabLine#'
 		
 		" バッファが複数あったらバッファ数を表示
-		let no = ''
-	"	let no = len(bufnrs)
-	"	if no is 1
-	"		let no = ''
+		let l:sBufNum = ''
+	"	let l:sBufNum = len(l:asBufList)
+	"	if l:sBufNum is 1
+	"		let l:sBufNum = ''
 	"	endif
 		
 		" タブページ内に変更ありのバッファがあったら '+' を付ける
-		let mod = len(filter(copy(bufnrs), 'getbufvar(v:val, "&modified")')) ? '+' : ''
-		let sp = (no . mod) ==# '' ? '' : ' '  " 隙間空ける
+		let l:sModifyStat = len(filter(copy(l:asBufList), 'getbufvar(v:val, "&modified")')) ? '+' : ''
+		let l:sSpace = (l:sBufNum . l:sModifyStat) ==# '' ? '' : ' '  " 隙間空ける
 		
 		" カレントバッファ
-		let curbufnr = bufnrs[tabpagewinnr(a:n) - 1]  " tabpagewinnr() は 1 origin
-		let curbufabspath = bufname(curbufnr)
-		if curbufabspath == ""
-			let fname = "(無題)"
+		let l:lCurBufIdx = l:asBufList[tabpagewinnr(a:lTabPageNum) - 1]  " tabpagewinnr() は 1 origin
+		let l:sCurBufAbsPath = bufname(l:lCurBufIdx)
+		if l:sCurBufAbsPath == ""
+			let l:sBufName = "(無題)"
 		else
-			if stridx( curbufabspath, '/' ) == -1
-				let fname = curbufabspath
+			if stridx( l:sCurBufAbsPath, '/' ) == -1
+				let l:sBufName = l:sCurBufAbsPath
 			else
-				let idx = strridx( curbufabspath, '/')
-				let fname = strpart( curbufabspath, idx + 1 )
+				let l:sBufName = strpart( l:sCurBufAbsPath, strridx( l:sCurBufAbsPath, '/') + 1 )
 			endif
 		endif
 		
-		return '%' . a:n . 'T' . hi . ' ' . no . mod . sp . fname . ' ' . '%T%#TabLineFill#'
+		return '%' . a:lTabPageNum . 'T' . l:sHilight . ' ' . l:sBufNum . l:sModifyStat . l:sSpace . l:sBufName . ' ' . '%T%#TabLineFill#'
+	endfunction
+
+" ==============================================================================
+" 現在ファイル削除
+" ==============================================================================
+	command! Delme call DeleteCurFile()
+	function! DeleteCurFile()
+		execute "!del " . GetCurFilePath( "\\" )
 	endfunction
 
 " ==============================================================================

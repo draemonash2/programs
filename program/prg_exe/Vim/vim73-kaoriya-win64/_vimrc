@@ -34,9 +34,9 @@
 " =======================================
 " NeoBundle 用設定
 " [参照] http://d.hatena.ne.jp/tetsuyai/20111202/1325038360
-"   InstallCommand		=> :NeoBundleInstall
-"   UpdateCommand  		=> :NeoBundleUpdate
-"   UninstallCommand    => :NeoBundleClean
+"	InstallCommand		=> :NeoBundleInstall
+"	UpdateCommand		=> :NeoBundleUpdate
+"	UninstallCommand	=> :NeoBundleClean
 " =======================================
 	set nocompatible
 	filetype off
@@ -63,15 +63,21 @@
 	
 	filetype plugin on
 	filetype indent on
-	
+
 " =======================================
 " テキストファイルの自動改行抑止設定
 " =======================================
 	autocmd BufRead *.txt set tw=0
-	
+
 " =======================================
 " 折り畳みマーカー設定
 " =======================================
 	set foldmethod=marker
 	
 	set grepprg=c:/prg/cygwin/bin/grep\ -nH
+
+" =======================================
+" GVim 起動時は同じウィンドウにまとめて起動する。
+" [参考] http://tyru.hatenablog.com/entry/20130430/vim_resident
+" =======================================
+	call singleton#enable()
