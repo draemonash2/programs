@@ -412,8 +412,10 @@ endif
 		endif
 	endfunction
 	
+	let QFixWin_EnableMode = 1		" QuickFixウィンドウでもプレビューや絞り込みを有効化
+	let QFix_UseLocationList = 0	" QFixHowm/QFixGrepの結果表示にロケーションリストを使用する/しない
 	let QFix_PreviewHeight = 12
-"	set shellslash	" Windowsの場合は、shellslash を設定してやると、パスの表記が簡単になります。ex) let MyGrep_ExcludeReg = '/CVS/'
+"	set shellslash					" Windowsの場合は、shellslash を設定してやると、パスの表記が簡単になります。ex) let MyGrep_ExcludeReg = '/CVS/'
 	let MyGrep_ExcludeReg = '[~#]$\|\.bak$\|\.o$\|\.obj$\|\.exe$\|[/\\]tags$\|^tags$'
 "	let MyGrep_Encoding = 'cp932'	"cp932を扱えないGNU grepの場合
 									"Windowsでcp932を扱えないGNU grepを使用する場合、以下の様に設定します。
@@ -421,11 +423,31 @@ endif
 	set winwidth=60					" アクティブウィンドウの横幅指定
 
 " ==============================================================================
+" HNXGrep で Grep する
+" [参照] http://thinca.hatenablog.com/entry/20111204/1322932585
+" ==============================================================================
+	let g:sProjectRootFileName = "tags"
+	function! ExecuteHNXgrep()
+		let l:sHNXGrepPath = substitute( g:sHNXGrepPath, "/", "\\", "g" )
+		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), g:sProjectRootFileName )
+		let l:sSearchKeyword = ""
+	"	execute "!cmd.exe /c start /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
+	"	execute "!cmd.exe /c start /b /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
+		execute "!start " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
+	endfunction
+
+" ==============================================================================
 " Taglist 設定
 " ==============================================================================
 	let Tlist_Show_One_File = 1		" アクティブバッファのみタグ表示
 	let Tlist_Use_Right_Window = 1	" 右ウィンドウ表示
 	let Tlist_Exit_OnlyWindow = 1	" taglistのウインドウだけならVimを閉じる
+
+" ==============================================================================
+" bufferlist 設定
+" ==============================================================================
+	let g:BufferListWidth = 40
+	let g:BufferListMaxWidth = 40
 
 " ==============================================================================
 " MemoFile 書込設定
@@ -609,20 +631,6 @@ endif
 	endfunction
 
 " ==============================================================================
-" HNXGrep で Grep する
-" [参照] http://thinca.hatenablog.com/entry/20111204/1322932585
-" ==============================================================================
-	let g:sProjectRootFileName = "tags"
-	function! ExecuteHNXgrep()
-		let l:sHNXGrepPath = substitute( g:sHNXGrepPath, "/", "\\", "g" )
-		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), g:sProjectRootFileName )
-		let l:sSearchKeyword = ""
-	"	execute "!cmd.exe /c start /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
-	"	execute "!cmd.exe /c start /b /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
-		execute "!start " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
-	endfunction
-
-" ==============================================================================
 " タブページを設定する
 " [参考] http://thinca.hatenablog.com/entry/20111204/1322932585
 " ==============================================================================
@@ -688,4 +696,4 @@ endif
 " [参照] http://nanasi.jp/articles/vim/mark_vim.html
 " ==============================================================================
 	execute 'source ' . g:sMarkVimPath
-	
+

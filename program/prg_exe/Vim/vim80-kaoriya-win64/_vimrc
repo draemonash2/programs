@@ -1,25 +1,11 @@
 " =======================================
-" runtimepath を追加
+" ユーザー定義フォルダを runtimepath に追加
 " =======================================
 	for s:path in split(glob($VIM.'/_plugins_user/*'), '\n')
 		if s:path !~# '\~$' && isdirectory(s:path)
 			let &runtimepath = &runtimepath.','.s:path
 		end
 	endfor
-
-" =======================================
-" qfixappにruntimepathを通す
-" (パスは環境に合わせてください)
-" [参照] https://sites.google.com/site/fudist/Home/grep/install
-" [参照] https://sites.google.com/site/fudist/Home/qfixhowm/install
-" =======================================
-"	set runtimepath+=$VIM/qfixapp
-"	let mygrepprg			= 'internal'
-"	let QFixHowm_Key		= 'g'			" キーマップリーダー
-"	let howm_dir			= '$VIM/howm'	" howm_dirはファイルを保存したいディレクトリを設定
-"	let howm_filename		= '%Y-%m-%d-%H%M%S.txt'
-"	let howm_fileencoding	= 'cp932'
-"	let howm_fileformat		= 'dos'
 
 " =======================================
 " align.vim 用設定
@@ -41,39 +27,6 @@
 	runtime macros/editexisting.vim
 
 " =======================================
-" NeoBundle 用設定
-" [参照] http://d.hatena.ne.jp/tetsuyai/20111202/1325038360
-"	InstallCommand		=> :NeoBundleInstall
-"	UpdateCommand		=> :NeoBundleUpdate
-"	UninstallCommand	=> :NeoBundleClean
-" =======================================
-"	set nocompatible
-"	filetype off
-"	
-"	if has('vim_starting')
-"		"neobundle.vimをruntimepathに追加。
-"		set runtimepath+=$VIM/bundle/neobundle.vim
-"		call neobundle#rc(expand('$VIM/bundle'))
-"	endif
-"	
-"	"インストールするプラグイン
-"	NeoBundle 'git://github.com/mattn/transparency-windows-vim.git'
-"	NeoBundle 'git://github.com/vim-scripts/FavEx.git'
-"	NeoBundle 'git://github.com/vim-scripts/renamer.vim.git'
-"	NeoBundle 'git://github.com/vim-scripts/taglist.vim.git'
-"	NeoBundle 'git://github.com/vim-scripts/DrawIt.git'
-"	NeoBundle 'git://github.com/vim-scripts/Align.git'
-"	NeoBundle 'git://github.com/Shougo/neocomplcache.git'
-"	NeoBundle 'git://github.com/tyru/open-browser.vim.git'
-"	NeoBundle 'git://github.com/fuenor/qfixhowm.git'
-"	NeoBundle 'git://github.com/draemonash2/bufferlist.vim.git'
-"	NeoBundle 'git://github.com/draemonash2/mark.vim.git'
-"	NeoBundle 'git://github.com/koron/minimap-vim.git'
-"	
-"	filetype plugin on
-"	filetype indent on
-
-" =======================================
 " テキストファイルの自動改行抑止設定
 " =======================================
 	autocmd BufRead *.txt set tw=0
@@ -88,10 +41,4 @@
 " [参考] http://tyru.hatenablog.com/entry/20130430/vim_resident
 " =======================================
 	call singleton#enable()
-
-" =======================================
-" bufferlist 設定
-" =======================================
-	let g:BufferListWidth = 40
-	let g:BufferListMaxWidth = 40
 
