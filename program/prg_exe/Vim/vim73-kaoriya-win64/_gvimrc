@@ -687,4 +687,6 @@ endif
 " [参照] http://nanasi.jp/articles/vim/mark_vim.html
 " ==============================================================================
 	execute 'source ' . g:sMarkVimPath
-
+	
+	let g:BufferListWidth = 40
+	let g:BufferListMaxWidth = 40
