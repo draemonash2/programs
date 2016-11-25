@@ -24,11 +24,11 @@
 "
 " Copyright (c) 2009-2012 NanoTech
 "
-" Permission is hereby granted, free of charge, to any perâ€
-" son obtaining a copy of this software and associated docâ€
-" umentation  files  (the â€œSoftwareâ€), to deal in the Softâ€
+" Permission is hereby granted, free of charge, to any per]
+" son obtaining a copy of this software and associated doc]
+" umentation  files  (the gSoftwareh), to deal in the Soft]
 " ware without restriction,  including  without  limitation
-" the rights to use, copy, modify, merge, publish, distribâ€
+" the rights to use, copy, modify, merge, publish, distrib]
 " ute, sublicense, and/or sell copies of the Software,  and
 " to permit persons to whom the Software is furnished to do
 " so, subject to the following conditions:
@@ -37,13 +37,13 @@
 " shall  be  included in all copies or substantial portions
 " of the Software.
 "
-" THE SOFTWARE IS PROVIDED â€œAS ISâ€, WITHOUT WARRANTY OF ANY
+" THE SOFTWARE IS PROVIDED gAS ISh, WITHOUT WARRANTY OF ANY
 " KIND,  EXPRESS  OR  IMPLIED, INCLUDING BUT NOT LIMITED TO
-" THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICUâ€
+" THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICU]
 " LAR  PURPOSE  AND  NONINFRINGEMENT. IN NO EVENT SHALL THE
 " AUTHORS OR COPYRIGHT HOLDERS BE  LIABLE  FOR  ANY  CLAIM,
-" DAMAGES  OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONâ€
-" TRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONâ€
+" DAMAGES  OR OTHER LIABILITY, WHETHER IN AN ACTION OF CON]
+" TRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON]
 " NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 " THE SOFTWARE.
 
@@ -313,18 +313,11 @@ endif
 if version >= 700
   call s:X("CursorLine","","1c1c1c","","",s:termBlack)
   call s:X("CursorColumn","","1c1c1c","","",s:termBlack)
-  call s:X("MatchParen","ffffff","556779","bold","","DarkCyan")
-  "â˜…custom mod <top>
-  call s:X("TabLine","ffffff","404040","","",s:termBlack)
-  call s:X("TabLineFill","9098a0","202020","","",s:termBlack)
-  call s:X("TabLineSel","314200","9ad000","bold",s:termBlack,"White")
-" call s:X("TabLine","ffffff","703030","","",s:termBlack)
-" call s:X("TabLineFill","9098a0","400000","","",s:termBlack)
-" call s:X("TabLineSel","000000","f0D0D0","bold",s:termBlack,"White")
-" call s:X("TabLine","ffffff","808080","","",s:termBlack)
-" call s:X("TabLineFill","9098a0","f0f0f0","","",s:termBlack)
-" call s:X("TabLineSel","f0f0f0","","bold",s:termBlack,"White")
-  "â˜…custom mod <end>
+  call s:X("MatchParen","ffffff","80a090","bold","","DarkCyan")
+
+  call s:X("TabLine","000000","b0b8c0","italic","",s:termBlack)
+  call s:X("TabLineFill","9098a0","","","",s:termBlack)
+  call s:X("TabLineSel","000000","f0f0f0","italic,bold",s:termBlack,"White")
 
   " Auto-completion
   call s:X("Pmenu","ffffff","606060","","White",s:termBlack)
@@ -332,19 +325,18 @@ if version >= 700
 endif
 
 call s:X("Visual","","404040","","",s:termBlack)
-call s:X("Cursor",g:jellybeans_background_color,"b0d0f0","","","")
+call s:X("Cursor","","b0d0f0","","","")
 
 call s:X("LineNr","605958",g:jellybeans_background_color,"none",s:termBlack,"")
-call s:X("CursorLineNr","ccc5c4","","none","White","")
-call s:X("Comment","888888","","","Grey","")	"â˜…custom mod: del italic
+call s:X("Comment","888888","","italic","Grey","")
 call s:X("Todo","c7c7c7","","bold","White",s:termBlack)
 
-call s:X("StatusLine","000000","dddddd","","","White")	"â˜…custom mod: del italic
-call s:X("StatusLineNC","ffffff","403c41","","White","Black")	"â˜…custom mod: del italic
+call s:X("StatusLine","000000","dddddd","italic","","White")
+call s:X("StatusLineNC","ffffff","403c41","italic","White","Black")
 call s:X("VertSplit","777777","403c41","",s:termBlack,s:termBlack)
 call s:X("WildMenu","f0a0c0","302028","","Magenta","")
 
-call s:X("Folded","a0a8b0","384048","",s:termBlack,"")	"â˜…custom mod: del italic
+call s:X("Folded","a0a8b0","384048","italic",s:termBlack,"")
 call s:X("FoldColumn","535D66","1f1f1f","","",s:termBlack)
 call s:X("SignColumn","777777","333333","","",s:termBlack)
 call s:X("ColorColumn","","000000","","",s:termBlack)
@@ -364,7 +356,7 @@ call s:X("Function","fad07a","","","Yellow","")
 call s:X("Statement","8197bf","","","DarkBlue","")
 call s:X("PreProc","8fbfdc","","","LightBlue","")
 
-hi! link Operator Structure
+hi! link Operator Normal
 
 call s:X("Type","ffb964","","","Yellow","")
 call s:X("NonText","606060",g:jellybeans_background_color,"",s:termBlack,"")
@@ -409,9 +401,6 @@ hi! link phpQuoteDouble StringDelimiter
 hi! link phpBoolean Constant
 hi! link phpNull Constant
 hi! link phpArrayPair Operator
-hi! link phpOperator Normal
-hi! link phpRelation Normal
-hi! link phpVarSelector Identifier
 
 " Python
 
@@ -440,14 +429,6 @@ call s:X("rubyRegexp","dd0093","","","DarkMagenta","")
 call s:X("rubyRegexpSpecial","a40073","","","Magenta","")
 
 call s:X("rubyPredefinedIdentifier","de5577","","","Red","")
-
-" Erlang
-
-hi! link erlangAtom rubySymbol
-hi! link erlangBIF rubyPredefinedIdentifier
-hi! link erlangFunction rubyPredefinedIdentifier
-hi! link erlangDirective Statement
-hi! link erlangNode Identifier
 
 " JavaScript
 
@@ -479,10 +460,6 @@ hi! link cocoaFunction Function
 hi! link objcMethodName Identifier
 hi! link objcMethodArg Normal
 hi! link objcMessageName Identifier
-
-" Vimscript
-
-hi! link vimOper Normal
 
 " Debugger.vim
 
@@ -556,3 +533,4 @@ delf s:grey_color
 delf s:grey_level
 delf s:grey_number
 " }}}
+ 
