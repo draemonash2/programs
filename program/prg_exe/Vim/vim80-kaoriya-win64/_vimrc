@@ -8,12 +8,6 @@
 	endfor
 
 " =======================================
-" align.vim 用設定
-" [参照] http://vim-users.jp/2009/09/hack77/
-" =======================================
-	let g:align_xstrlen = 3 " 日本語用
-
-" =======================================
 " neocomplcache 用設定
 " [参照] http://hima-j.in/vim/neocomplcache-vim/
 " =======================================
@@ -41,4 +35,4 @@
 " [参考] http://tyru.hatenablog.com/entry/20130430/vim_resident
 " =======================================
 	call singleton#enable()
-
+	

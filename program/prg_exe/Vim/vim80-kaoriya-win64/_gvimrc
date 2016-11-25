@@ -9,6 +9,10 @@
 "		  http://cocopon.me/blog/?p=3871
 "	- <sirent>：メッセージは表示されず、 メッセージ履歴に残らない
 "	- <expr>：引数が式 (スクリプト) として扱われる。マップが実行されたときに、式が評価される。
+" <<キーバインド覚書>>
+"	- Ctrl+Shift+アルファベットは Vim の仕様上、キーバインドに設定できない。
+"		https://github.com/vim-jp/issues/issues/756
+
 "=== モード共通 ===
 	noremap		<silent>			n			nzz											" 検索結果を画面中央に
 	noremap		<silent>			N			Nzz											" 検索結果を画面中央に
@@ -30,13 +34,16 @@
 	noremap		<silent>			<c-h>		10zh10h										" カーソル移動＋画面移動（左）
 	noremap		<silent>			<c-l>		10zl10l										" カーソル移動＋画面移動（右）
 	map			<silent>			<c-m>		oa<esc>x									" インデントを維持して改行
-	noremap		<silent>			<c-q>		<c-w>w										" ウィンドウ切替（次へ）
-	noremap		<silent>			<c-s-q>		<c-w>W										" ウィンドウ切替（前へ）
+	noremap		<silent>			<c-q>		<c-w>w										" ウィンドウ切替（前へ）
+	noremap		<silent>			<c-s-right>	<c-w>w										" ウィンドウ切替（前へ）
+	noremap		<silent>			<c-s-left>	<c-w>W										" ウィンドウ切替（次へ）
 	noremap		<silent>			<c-tab>		gt											" タブ切替（次へ）
 	noremap		<silent>			<c-s-tab>	gT											" タブ切替（前へ）
-	noremap		<silent>			<c-s-w>		:tabclose<cr>								" タブを閉じる
-	noremap		<silent>			<c-s-n>		:tabnew<cr>									" 新規タブを開く
-	noremap		<silent>			<c-s-g>		:call ExecuteHNXgrep()<cr>					" HNXGrep を実行
+	noremap		<silent>			<c-s-up>	gt											" タブ切替（次へ）
+	noremap		<silent>			<c-s-down>	gT											" タブ切替（前へ）
+"	noremap		<silent>			<c-w>		:tabclose<cr>								" タブを閉じる
+	noremap		<silent>			<c-n>		:tabnew<cr>									" 新規タブを開く
+	noremap		<silent>			<c-g>		:call ExecuteHNXgrep()<cr>					" HNXGrep を実行
 	noremap		<silent>			<esc><esc>	:nohlsearch<cr>								" ハイライト解除
 	
 	noremap		<silent>			<F1>		:call BufferList()<cr>						" バッファリスト作成
@@ -78,13 +85,13 @@
 " Gtags用キーバインド
 " [参照] http://cha.la.coocan.jp/doc/gnu_global.html#sec10
 " ==============================================================================
-	map								<C-o>		:GtagsCursor<CR>
-	nnoremap						<C-d>		:Gtags <C-r><C-w><CR>
-	nnoremap						<C-e>		:Gtags -r <C-r><C-w><CR>
+	map								<c-o>		:GtagsCursor<CR>
+	nnoremap						<c-d>		:Gtags <C-r><C-w><CR>
+	nnoremap						<c-e>		:Gtags -r <C-r><C-w><CR>
 	nnoremap						gs			:Gtags -s <C-r><C-w><CR>
 	nnoremap						gG			:Gtags -g <C-r><C-w><CR>
 	nnoremap						,d			:<C-u>Gtags -f %<CR>
-	nnoremap						<C-t>		<C-o>
+	nnoremap						<c-t>		<C-o>
 
 " **************************************************************************************************
 " *****										  基本設定										   *****
@@ -95,6 +102,11 @@
 "	set guifont=MS_Gothic:h10:cSHIFTJIS					" フォントサイズ設定（フォントサイズ設定は以下の「フォントサイズ設定」参照）
 "	set columns=82										" ウィンドウの横幅を～カラムにします
 "	set lines=35										" ウィンドウの高さを～行にします
+"	set winwidth=1										" カレントウィンドウ 最小の幅
+"	set winminwidth=1									" カレントウィンドウ以外 最小の幅
+"	set winheight=1										" カレントウィンドウ 最小の高さ
+"	set winminheight=1									" カレントウィンドウ以外 最小の高さ
+	set noequalalways									" ウィンドウサイズの自動調整を無効にする
 	set guioptions-=m									" メニューバーを非表示
 	set guioptions-=T									" ツールバーを非表示
 "	set guioptions+=a									" ビジュアルモードで選択している箇所をクリップボードにコピー
@@ -186,12 +198,11 @@ endif
 " ==============================================================================
 " ファイルパス設定
 " ==============================================================================
-	let g:sCtagsPath = "C:/prg_exe/ctags58j2bin"
-	let g:sGtagsPath = "C:/prg_exe/glo627wb/bin"
-	let g:sGrepTrgtDirPath = "C:/codes_sample/c/FreeRTOSV7.1.1/Source"
+	let g:sCtagsPath = expand( "$VIM/../../ctags58j2bin" )
+	let g:sGtagsPath = expand( "$VIM/../../glo627wb/bin" )
 	let g:sMarkVimPath = expand( "$VIM/_plugins_user/mark.vim/plugin/mark.vim" )
 	let g:sHNXGrepPath = expand( "$VIM/../../HNXgrep/HNXgrep.exe" )
-	
+
 " ==============================================================================
 " 共通ユーザ定義関数
 " ==============================================================================
@@ -384,31 +395,20 @@ endif
 	autocmd FileType ruby,c,cpp hi CFunction guifg=orange
 
 " ==============================================================================
-" 環境変数設定
-" ==============================================================================
-	let $dt = "~/Desktop"
-
-" ==============================================================================
-" transparency-windows-vim の設定
-" [参照] http://vim-users.jp/tag/lv1/
-" ==============================================================================
-"	augroup hack234
-"		autocmd!
-"		autocmd FocusGained * set transparency=300
-"		autocmd FocusLost * set transparency=200
-"	augroup END
-
-" ==============================================================================
 " Grep の設定
 " ==============================================================================
 	" :Gc <file_type> ... <word>
 	nnoremap <expr> gcr ":Gc " . expand('<cword>')
 	command! -nargs=+ Gc call s:Grep_Code(<f-args>)
 	function! s:Grep_Code(...)
+		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
+		if l:sRootDirPath == ""
+			let l:sRootDirPath = GetCurDirPath("\\")
+		endif
 		if a:0 < 1
 			echo "error!"
 		else
-			execute "Grep -r ". a:000[(a:0 - 1)] . " " . g:sGrepTrgtDirPath . "/**"
+			execute "Grep -r ". a:000[(a:0 - 1)] . " " . l:sRootDirPath . "/**"
 		endif
 	endfunction
 	
@@ -430,6 +430,9 @@ endif
 	function! ExecuteHNXgrep()
 		let l:sHNXGrepPath = substitute( g:sHNXGrepPath, "/", "\\", "g" )
 		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), g:sProjectRootFileName )
+		if l:sRootDirPath == ""
+			let l:sRootDirPath = GetCurDirPath("\\")
+		endif
 		let l:sSearchKeyword = ""
 	"	execute "!cmd.exe /c start /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
 	"	execute "!cmd.exe /c start /b /max " . l:sHNXGrepPath . " " . l:sRootDirPath . " /KEYWORD=" . l:sSearchKeyword
@@ -437,22 +440,9 @@ endif
 	endfunction
 
 " ==============================================================================
-" Taglist 設定
-" ==============================================================================
-	let Tlist_Show_One_File = 1		" アクティブバッファのみタグ表示
-	let Tlist_Use_Right_Window = 1	" 右ウィンドウ表示
-	let Tlist_Exit_OnlyWindow = 1	" taglistのウインドウだけならVimを閉じる
-
-" ==============================================================================
-" bufferlist 設定
-" ==============================================================================
-	let g:BufferListWidth = 40
-	let g:BufferListMaxWidth = 40
-
-" ==============================================================================
 " MemoFile 書込設定
-" Usage : :Wm 実行でデスクトップ配下に
-"		  XXX.txt を作成する
+" Usage : :Cm 実行でデスクトップ配下に
+"		  temp_XXX.txt を作成する
 " ==============================================================================
 	command! Cm call CreateMemoFile()
 	function! CreateMemoFile()
@@ -527,7 +517,7 @@ endif
 			execute "!start " . g:sCtagsPath . "/ctags.exe -R"
 			execute "!start " . g:sGtagsPath . "/gtags.exe -v"
 			execute "redraw"
-			echo "Update tag file!"
+			echo "update tag file!!  " . l:sDirPath
 		endif
 	endfunction
 
@@ -590,7 +580,7 @@ endif
 		else
 			let @* = l:sCurFilePath " * register.
 		endif
-		echo "copy file path      : " . l:sCurFilePath
+		echo "copy file path	  : " . l:sCurFilePath
 	endfunction
 	
 	function! CopyCurDirPath()
@@ -612,17 +602,17 @@ endif
 		else
 			let @* = l:sCurFileName " * register.
 		endif
-		echo "copy file name      : " . l:sCurFileName
+		echo "copy file name	  : " . l:sCurFileName
 	endfunction
 
 " ==============================================================================
 " 現在のスクリプトを実行する
-"   <<デフォルト時>>
-"     :!%
-"   <<「precmd = "python "」とした場合>>
-"     :python %
-"   <<「postmd = " -v"」とした場合>>
-"     :% -v
+"	<<デフォルト時>>
+"	  :!%
+"	<<「precmd = "python "」とした場合>>
+"	  :python %
+"	<<「postmd = " -v"」とした場合>>
+"	  :% -v
 " ==============================================================================
 	let g:precmd = ""
 	let g:postcmd = ""
@@ -631,12 +621,12 @@ endif
 	endfunction
 
 " ==============================================================================
-" タブページを設定する
+" タブ表示を変更する
 " [参考] http://thinca.hatenablog.com/entry/20111204/1322932585
 " ==============================================================================
 	function! MakeTabLine()
 		let l:asTitles = map(range(1, tabpagenr('$')), 'GetTabPageLabel(v:val)')
-		let l:sDelimiter = ' '  " タブ間の区切り
+		let l:sDelimiter = ' '	" タブ間の区切り
 		let l:sTabpages = join(l:asTitles, l:sDelimiter) . l:sDelimiter . '%#TabLineFill#%T'
 		let l:sInfo = ''  " 好きな情報を入れる
 		return l:sTabpages . '%=' . l:sInfo  " タブリストを左に、情報を右に表示
@@ -690,8 +680,66 @@ endif
 		execute "!del " . GetCurFilePath( "\\" )
 	endfunction
 
+" **************************************************************************************************
+" *****										プラグイン設定									   *****
+" **************************************************************************************************
 " ==============================================================================
-" mark.vimの設定
+" transparency-windows-vim 設定
+" [参照] http://vim-users.jp/tag/lv1/
+" ==============================================================================
+"	augroup hack234
+"		autocmd!
+"		autocmd FocusGained * set transparency=300
+"		autocmd FocusLost * set transparency=200
+"	augroup END
+
+" ==============================================================================
+" Taglist 設定
+" ==============================================================================
+	let Tlist_Show_One_File = 1		" アクティブバッファのみタグ表示
+	let Tlist_Use_Right_Window = 1	" 右ウィンドウ表示
+	let Tlist_Exit_OnlyWindow = 1	" taglistのウインドウだけならVimを閉じる
+
+" ==============================================================================
+" bufferlist 設定
+" ==============================================================================
+	let g:BufferListWidth = 30
+	let g:BufferListMaxWidth = 30
+	let g:BufferListHideBufferList = 0
+	let g:BufferListExpandBufName = 0
+
+" ==============================================================================
+" lightline 設定
+" [参考] https://github.com/itchyny/lightline.vim#landscape-theme-with-the-patched-font
+" [参考] http://itchyny.hatenablog.com/entry/20130917/1379369171
+" ==============================================================================
+"					\	'colorscheme': 'landscape',
+	let g:lightline = {
+					\	'active': {
+					\		'left' : [ ['mode', 'paste'], ['readonly', 'modified', 'filename' ] ],
+					\		'right': [ ['hello'] ]
+					\	},
+					\	'component': {
+					\		'hello': 'Hello, world!'
+					\	}
+					\ }
+
+" ==============================================================================
+" align.vim 設定
+" [参照] http://vim-users.jp/2009/09/hack77/
+" ==============================================================================
+	let g:align_xstrlen = 3 " 日本語用
+
+" ==============================================================================
+" code_overview 設定
+" [参照] http://vim-users.jp/2009/09/hack77/
+" ==============================================================================
+"	let g:code_overview_autostart = 1
+"	let g:code_overview_use_colorscheme = 1
+"	let g:codeoverview_autoupdate = 1
+
+" ==============================================================================
+" mark.vim 設定
 " ★必ず最終行に記述すること！★
 " [参照] http://nanasi.jp/articles/vim/mark_vim.html
 " ==============================================================================
