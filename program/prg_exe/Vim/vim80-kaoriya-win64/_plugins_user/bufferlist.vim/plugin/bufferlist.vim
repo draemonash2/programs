@@ -39,15 +39,6 @@ if !exists('g:BufferListMaxWidth')
   let g:BufferListMaxWidth = 40
 endif
 
-"Åöcustom add <TOP>
-if !exists('g:BufferListHideBufferList')
-  let g:BufferListHideBufferList = 1
-endif
-if !exists('g:BufferListExpandBufName')
-  let g:BufferListExpandBufName = 0
-endif
-"Åöcustom add <END>
-
 " toggled the buffer list on/off
 function! BufferList()
   " if we get called and the list is open --> close it
@@ -67,8 +58,6 @@ function! BufferList()
   " iterate through the buffers
   let l:i = 0 | while l:i <= l:bufcount | let l:i = l:i + 1
     let l:bufname = bufname(l:i)
-    let l:bufname = strpart(l:bufname, strridx(l:bufname, "/") + 1, strlen(l:bufname))      "Åöcustom add
-    
     if strlen(l:bufname)
       \&& getbufvar(l:i, '&modifiable')
       \&& getbufvar(l:i, '&buflisted')
@@ -79,38 +68,15 @@ function! BufferList()
           let l:width = strlen(l:bufname) + 5
         else
           let l:width = g:BufferListMaxWidth
-          "Åö custom add <TOP>
-          if g:BufferListExpandBufName == 1
-              "do nothing
-          else
-            let l:lTailWidth = 6
-            let l:sShortenChar = "~"
-            let l:lPreWordLen = 4
-            let l:lBufNameMaxWidth = l:width - l:lPreWordLen
-            if len( l:bufname ) > l:lBufNameMaxWidth
-              let g:sTailWord = strpart( l:bufname, len( l:bufname ) - l:lTailWidth, l:lTailWidth )
-              let g:sNoseWord = strpart( l:bufname, 0, l:lBufNameMaxWidth - l:lPreWordLen - len( l:sShortenChar ) - l:lTailWidth )
-              let l:bufname = g:sNoseWord . l:sShortenChar . g:sTailWord
-            else
-              "do nothing
-            endif
-          endif
-          "Åö custom add <END>
-"         let l:bufname = '...' . strpart(l:bufname, strlen(l:bufname) - g:BufferListMaxWidth + 8)  "Åöcustom del
+          let l:bufname = '...' . strpart(l:bufname, strlen(l:bufname) - g:BufferListMaxWidth + 8)
         endif
       endif
 
       if bufwinnr(l:i) != -1
-"       let l:bufname = l:bufname . '*'     "Åöcustom del
-        let l:bufname = '*'. l:bufname      "Åöcustom add
-      else                                  "Åöcustom add
-        let l:bufname = ' '. l:bufname      "Åöcustom add
+        let l:bufname = l:bufname . '*'
       endif
       if getbufvar(l:i, '&modified')
-"       let l:bufname = l:bufname . '+'     "Åöcustom del
-        let l:bufname = '+'. l:bufname      "Åöcustom add
-      else                                  "Åöcustom add
-        let l:bufname = ' '. l:bufname      "Åöcustom add
+        let l:bufname = l:bufname . '+'
       endif
       " count displayed buffers
       let l:displayedbufs = l:displayedbufs + 1
@@ -122,7 +88,7 @@ function! BufferList()
       endif
       " fill the name with spaces --> gives a nice selection bar
       " use MAX width here, because the width may change inside of this 'for' loop
-      while strlen(l:bufname) < g:BufferListMaxWidth - 2 "Åöcustom mod
+      while strlen(l:bufname) < g:BufferListMaxWidth
         let l:bufname = l:bufname . ' '
       endwhile
       " add the name to the list
@@ -147,8 +113,6 @@ function! BufferList()
   setlocal nomodifiable
   setlocal nowrap
   setlocal nonumber
-  setlocal winwidth=1 " Åöcustom add
-  setlocal noequalalways " Åöcustom add
 
   " set up syntax highlighting
   if has("syntax")
@@ -277,11 +241,6 @@ function! LoadBuffer()
   bwipeout
   " ...and switch to the buffer number
   exec ":b " . l:str
-  "Åöcustom add <TOP>
-  if g:BufferListHideBufferList == 0
-    call BufferList()
-  endif
-  "Åöcustom add <END>
 endfunction
 
 " deletes the selected buffer
