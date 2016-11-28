@@ -37,10 +37,12 @@
 	endfunction
 
 " =======================================
-" neocomplcache 用設定
-" [参照] http://hima-j.in/vim/neocomplcache-vim/
+" neocomplete.vim 用設定
+" [参照] https://github.com/Shougo/neocomplete.vim
 " =======================================
-"	let g:neocomplcache_enable_at_startup = 1 " 起動時に有効化
+	let g:neocomplete#enable_at_startup = 1 " 起動時に有効化
+	let g:neocomplete#enable_smart_case = 1 " Use smartcase.
+	let g:neocomplete#sources#syntax#min_keyword_length = 3
 
 " =======================================
 " editexisting-ext.vim 用設定
@@ -135,7 +137,8 @@
 	function! GetSelRngRowDiff()
 		return s:sDiffRow
 	endfunction
-
+	
 	function! GetSelRngDiff()
 		return s:sDiffRow . "x" . s:sDiffClm
 	endfunction
+
