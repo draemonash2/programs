@@ -22,9 +22,8 @@
 	noremap		<silent>			g#			g#zz										" 検索結果を画面中央に
 	noremap		<silent>			x			"_x											" １文字削除（切り取りなし）
 	noremap							/			/\v
-																							" veri match で検索
+																							" very match で検索
 	noremap							ciy			ciw<c-r>0<esc>b								" 単語コピー
-																							" 検索モード変更
 	noremap		<silent>			<s-h>		^											" カーソルを先頭に移動
 	noremap		<silent>			<s-l>		$											" カーソルを末尾に移動
 	noremap		<silent>			<tab>		a<tab><esc>									" タブ挿入
@@ -34,13 +33,14 @@
 	noremap		<silent>			<c-h>		10zh10h										" カーソル移動＋画面移動（左）
 	noremap		<silent>			<c-l>		10zl10l										" カーソル移動＋画面移動（右）
 	map			<silent>			<c-m>		oa<esc>x									" インデントを維持して改行
-	noremap		<silent>			<c-q>		<c-w>w										" ウィンドウ切替（前へ）
-	noremap		<silent>			<c-s-right>	<c-w>w										" ウィンドウ切替（前へ）
-	noremap		<silent>			<c-s-left>	<c-w>W										" ウィンドウ切替（次へ）
-	noremap		<silent>			<c-tab>		gt											" タブ切替（次へ）
-	noremap		<silent>			<c-s-tab>	gT											" タブ切替（前へ）
-	noremap		<silent>			<c-s-up>	gt											" タブ切替（次へ）
-	noremap		<silent>			<c-s-down>	gT											" タブ切替（前へ）
+	noremap		<silent>			<c-tab>		<c-w>w										" ウィンドウ切替（次へ）
+	noremap		<silent>			<c-s-tab>	<c-w>W										" ウィンドウ切替（前へ）
+	noremap		<silent>			<c-s-right>	<c-w>w										" ウィンドウ切替（次へ）
+	noremap		<silent>			<c-s-left>	<c-w>W										" ウィンドウ切替（前へ）
+"	noremap		<silent>			<c-tab>		gt											" タブ切替（次へ）
+"	noremap		<silent>			<c-s-tab>	gT											" タブ切替（前へ）
+	noremap		<silent>			<c-s-down>	gt											" タブ切替（次へ）
+	noremap		<silent>			<c-s-up>	gT											" タブ切替（前へ）
 "	noremap		<silent>			<c-w>		:tabclose<cr>								" タブを閉じる
 	noremap		<silent>			<c-n>		:tabnew<cr>									" 新規タブを開く
 	noremap		<silent>			<c-g>		:call ExecuteHNXgrep()<cr>					" HNXGrep を実行
@@ -131,8 +131,8 @@
 "	set statusline+=\ [Asc:0x\%02.2B]					" ステータスライン表示設定 ascii code (hex)
 	set statusline+=\ [SelRng:%{GetSelRngClmDiff()}x%{GetSelRngRowDiff()}]	" ステータスライン表示設定 select width x height
 	set statusline+=\ [XPos:%03v]						" ステータスライン表示設定 cursor position
-	set showtabline=2									" タブページを常に表示
-	set tabline=%!MakeTabLine()							" タブページのラベルを設定
+"	set showtabline=2									" タブページを常に表示
+"	set tabline=%!MakeTabLine()							" タブページのラベルを設定
 "	set cursorcolumn									" カーソル列を目立たせる
 "	set cursorline										" カーソル行を目立たせる
 	set title											" タイトルを表示
@@ -680,6 +680,12 @@ endif
 		execute "!del " . GetCurFilePath( "\\" )
 	endfunction
 
+" ==============================================================================
+" タブ機能無効化
+" ==============================================================================
+"	autocmd! BufNewFile,BufRead *.* execute ("tabonly")
+	autocmd! BufNewFile,BufRead * execute ("tabonly")
+
 " **************************************************************************************************
 " *****										プラグイン設定									   *****
 " **************************************************************************************************
@@ -704,9 +710,10 @@ endif
 " bufferlist 設定
 " ==============================================================================
 	let g:BufferListWidth = 30
-	let g:BufferListMaxWidth = 30
 	let g:BufferListHideBufferList = 0
 	let g:BufferListExpandBufName = 0
+	hi BufferSelected guifg=black guibg=#9ad000 gui=bold
+"	hi BufferNormal guifg=white
 
 " ==============================================================================
 " lightline 設定

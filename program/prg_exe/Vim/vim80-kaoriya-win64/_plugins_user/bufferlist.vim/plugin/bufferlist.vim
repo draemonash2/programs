@@ -35,9 +35,11 @@ if !exists('g:BufferListWidth')
   let g:BufferListWidth = 20
 endif
 
-if !exists('g:BufferListMaxWidth')
-  let g:BufferListMaxWidth = 40
-endif
+"Åö custom del <TOP>
+"if !exists('g:BufferListMaxWidth')
+"  let g:BufferListMaxWidth = 40
+"endif
+"Åö custom del <END>
 
 "Åöcustom add <TOP>
 if !exists('g:BufferListHideBufferList')
@@ -62,7 +64,7 @@ function! BufferList()
   let l:activebufline = 0
   let l:buflist = ''
   let l:bufnumbers = ''
-  let l:width = g:BufferListWidth
+" let l:width = g:BufferListWidth "Åö custom del
 
   " iterate through the buffers
   let l:i = 0 | while l:i <= l:bufcount | let l:i = l:i + 1
@@ -74,30 +76,40 @@ function! BufferList()
       \&& getbufvar(l:i, '&buflisted')
 
       " adapt width and/or buffer name
-      if l:width < (strlen(l:bufname) + 5)
-        if strlen(l:bufname) + 5 < g:BufferListMaxWidth
-          let l:width = strlen(l:bufname) + 5
-        else
-          let l:width = g:BufferListMaxWidth
+      "Åö custom add <TOP>
+      let l:lPreWordLen = 4
+      let l:lTailWidth = 6
+      let l:sShortenChar = "~"
+      "Åö custom add <END>
+      if ( g:BufferListWidth - l:lPreWordLen ) < strlen(l:bufname) "Åö custom mod
+        "Åöcustom del <TOP>
+"       if strlen(l:bufname) + 5 < g:BufferListMaxWidth
+"         let l:width = strlen(l:bufname) + 5
+"       else
+"         let l:width = g:BufferListMaxWidth
+        "Åöcustom del <END>
           "Åö custom add <TOP>
           if g:BufferListExpandBufName == 1
               "do nothing
           else
-            let l:lTailWidth = 6
-            let l:sShortenChar = "~"
-            let l:lPreWordLen = 4
-            let l:lBufNameMaxWidth = l:width - l:lPreWordLen
+            let l:lBufNameMaxWidth = g:BufferListWidth - l:lPreWordLen
             if len( l:bufname ) > l:lBufNameMaxWidth
               let g:sTailWord = strpart( l:bufname, len( l:bufname ) - l:lTailWidth, l:lTailWidth )
-              let g:sNoseWord = strpart( l:bufname, 0, l:lBufNameMaxWidth - l:lPreWordLen - len( l:sShortenChar ) - l:lTailWidth )
+              let g:sNoseWord = strpart( l:bufname, 0, l:lBufNameMaxWidth - len( l:sShortenChar ) - l:lTailWidth )
               let l:bufname = g:sNoseWord . l:sShortenChar . g:sTailWord
             else
               "do nothing
             endif
+            let g:debug = ""
+            let g:debug = g:debug . "g:BufferListWidth : " . g:BufferListWidth . ", "
+            let g:debug = g:debug . "l:lBufNameMaxWidth : " . l:lBufNameMaxWidth . ", "
+            let g:debug = g:debug . "g:sTailWord : " . g:sTailWord . ", "
+            let g:debug = g:debug . "g:sNoseWord : " . g:sNoseWord . ", "
+            let g:debug = g:debug . "l:bufname : " . l:bufname . ", "
           endif
           "Åö custom add <END>
 "         let l:bufname = '...' . strpart(l:bufname, strlen(l:bufname) - g:BufferListMaxWidth + 8)  "Åöcustom del
-        endif
+"       endif "Åöcustom del
       endif
 
       if bufwinnr(l:i) != -1
@@ -122,7 +134,7 @@ function! BufferList()
       endif
       " fill the name with spaces --> gives a nice selection bar
       " use MAX width here, because the width may change inside of this 'for' loop
-      while strlen(l:bufname) < g:BufferListMaxWidth - 2 "Åöcustom mod
+      while strlen(l:bufname) < g:BufferListWidth - 2 "Åöcustom mod
         let l:bufname = l:bufname . ' '
       endwhile
       " add the name to the list
@@ -133,12 +145,14 @@ function! BufferList()
   " generate a variable to fill the buffer afterwards
   " (we need this for "full window" color :)
   let l:fill = "\n"
-  let l:i = 0 | while l:i < l:width | let l:i = l:i + 1
+  let l:i = 0 | while l:i < g:BufferListWidth | let l:i = l:i + 1 "Åö custom mod
     let l:fill = ' ' . l:fill
   endwhile
   
   " now, create the buffer & set it up
-  exec 'silent! ' . l:width . 'vne __BUFFERLIST__'
+  "Åö custom mod <TOP>
+  exec 'silent! ' . ( g:BufferListWidth + 3 ) . 'vne __BUFFERLIST__'
+  "Åö custom mod <END>
   setlocal noshowcmd
   setlocal noswapfile
   setlocal buftype=nofile
