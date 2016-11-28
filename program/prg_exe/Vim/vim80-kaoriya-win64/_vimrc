@@ -1,17 +1,46 @@
 " =======================================
+" ユーザー定義パス
+" =======================================
+	let $USERPLUGINS = $VIM . '/_plugins_user'
+
+" =======================================
 " ユーザー定義フォルダを runtimepath に追加
 " =======================================
-	for s:path in split(glob($VIM.'/_plugins_user/*'), '\n')
+	for s:path in split(glob( $USERPLUGINS . '/*'), '\n')
 		if s:path !~# '\~$' && isdirectory(s:path)
 			let &runtimepath = &runtimepath.','.s:path
-		end
+		endif
 	endfor
+
+" =======================================
+" ユーザー定義フォルダ配下のヘルプファイルのタグを作成する
+"	※処理が遅いため、プラグインインストール時のみ逐次実行すること
+" =======================================
+	function! CreateHelptags()
+		for s:path in split(glob( $USERPLUGINS . '/**/doc'), '\n')
+			let s:txtexists = 0
+			let s:tagsexists = 0
+			for s:subpath in split(glob( s:path . '/*'), '\n')
+				if s:subpath =~? '.*.txt$'
+					let s:txtexists = 1
+				endif
+				if s:subpath =~? '.*tags$'
+					let s:tagsexists = 1
+				endif
+			endfor
+			if s:txtexists == 1 && s:tagsexists == 0
+				if isdirectory(s:path)
+					execute "helptags " . s:path
+				endif
+			endif
+		endfor
+	endfunction
 
 " =======================================
 " neocomplcache 用設定
 " [参照] http://hima-j.in/vim/neocomplcache-vim/
 " =======================================
-	let g:neocomplcache_enable_at_startup = 1 " 起動時に有効化
+"	let g:neocomplcache_enable_at_startup = 1 " 起動時に有効化
 
 " =======================================
 " editexisting-ext.vim 用設定
@@ -35,4 +64,78 @@
 " [参考] http://tyru.hatenablog.com/entry/20130430/vim_resident
 " =======================================
 	call singleton#enable()
+
+" ==============================================================================
+" lightline 設定
+" [参考] https://github.com/itchyny/lightline.vim#landscape-theme-with-the-patched-font
+" [参考] http://itchyny.hatenablog.com/entry/20130917/1379369171
+" ==============================================================================
+	let g:lightline = {}
+"	let g:lightline = {
+"					\	'colorscheme': 'jellybeans',
+"					\	}
+	let g:lightline.enable = {
+					\		'statusline': 1,
+					\		'tabline': 0
+					\	}
+	let g:lightline.active = {
+					\		'left': [
+					\			[ 'mode', 'paste' ],
+					\			[ 'filename' ],
+					\			[ 'readonly', 'modified' ]
+					\		],
+					\		'right': [
+					\			[ 'lineinfo', 'percent' ],
+					\			[ 'rangediff' ],
+					\			[ 'fileformat', 'fileencoding', 'filetype' ]
+					\		]
+					\	}
+	let g:lightline.component_function = {
+					\		'rangediff': 'GetSelRngDiff'
+					\	}
+
+" ==============================================================================
+" ビジュアルモード文字数カウント
+" 覚書：列番号取得には苦労した。。。
+"		詳細は以下 URL 参照。
+"		  http://www49.atwiki.jp/draemonash/pages/69.html
+" ==============================================================================
+	autocmd CursorMoved * call s:CalcSelRngStrNum()
+	let s:sStrtClm = 0
+	let s:sStrtRow = 0
+	let s:sDiffClm = 0
+	let s:sDiffRow = 0
 	
+	function! s:CalcSelRngStrNum()
+		let l:sCurMode = mode()
+		let l:sCurRow = line('.')
+		if l:sCurMode == "v" || l:sCurMode == "V"
+			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
+			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
+			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
+		elseif l:sCurMode == "\<C-v>"
+			let l:sCurClm = virtcol('.')
+			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
+			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
+		elseif l:sCurMode == "n"
+			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
+			let s:sStrtClm = l:sCurClm
+			let s:sStrtRow = l:sCurRow
+			let s:sDiffClm = 0
+			let s:sDiffRow = 0
+		else
+			"Do Nothing
+		endif
+	endfunction
+	
+	function! GetSelRngClmDiff()
+		return s:sDiffClm
+	endfunction
+	
+	function! GetSelRngRowDiff()
+		return s:sDiffRow
+	endfunction
+
+	function! GetSelRngDiff()
+		return s:sDiffRow . "x" . s:sDiffClm
+	endfunction

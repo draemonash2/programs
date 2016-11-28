@@ -21,8 +21,11 @@
 	noremap		<silent>			K			g*zz										" 検索結果を画面中央に
 	noremap		<silent>			g#			g#zz										" 検索結果を画面中央に
 	noremap		<silent>			x			"_x											" １文字削除（切り取りなし）
+	map			<silent>			<c-m>		oa<esc>x									" インデントを維持して改行
 	noremap							/			/\v
-																							" very match で検索
+																							" very magic で検索
+"	noremap							/			/\V
+																							" very nomagic で検索
 	noremap							ciy			ciw<c-r>0<esc>b								" 単語コピー
 	noremap		<silent>			<s-h>		^											" カーソルを先頭に移動
 	noremap		<silent>			<s-l>		$											" カーソルを末尾に移動
@@ -32,7 +35,6 @@
 	noremap		<silent>			<c-k>		5kzz										" カーソル移動＋画面移動（上）
 	noremap		<silent>			<c-h>		10zh10h										" カーソル移動＋画面移動（左）
 	noremap		<silent>			<c-l>		10zl10l										" カーソル移動＋画面移動（右）
-	map			<silent>			<c-m>		oa<esc>x									" インデントを維持して改行
 	noremap		<silent>			<c-tab>		<c-w>w										" ウィンドウ切替（次へ）
 	noremap		<silent>			<c-s-tab>	<c-w>W										" ウィンドウ切替（前へ）
 	noremap		<silent>			<c-s-right>	<c-w>w										" ウィンドウ切替（次へ）
@@ -42,7 +44,7 @@
 	noremap		<silent>			<c-s-down>	gt											" タブ切替（次へ）
 	noremap		<silent>			<c-s-up>	gT											" タブ切替（前へ）
 "	noremap		<silent>			<c-w>		:tabclose<cr>								" タブを閉じる
-	noremap		<silent>			<c-n>		:tabnew<cr>									" 新規タブを開く
+"	noremap		<silent>			<c-n>		:tabnew<cr>									" 新規タブを開く
 	noremap		<silent>			<c-g>		:call ExecuteHNXgrep()<cr>					" HNXGrep を実行
 	noremap		<silent>			<esc><esc>	:nohlsearch<cr>								" ハイライト解除
 	
@@ -50,13 +52,13 @@
 	noremap		<silent>			<F2>		:Tlist<cr>									" タグリスト作成
 	noremap		<silent>			<F3>		a<C-R>=strftime("%Y/%m/%d (%a)")<cr><esc>	" 現在日時出力
 	noremap		<silent>			<F4>		a<C-R>=strftime("%H:%M:%S")<cr><esc>		" 現在時刻出力
-	noremap		<silent>			<F5>		:call ExecCurrentScript()<cr>				" 現在のプログラムを実行
+	noremap		<silent>			<F5>		:execute ExecCurrentScript()<cr>			" 現在のプログラムを実行
 	noremap		<silent>			<F6>		:vs<cr><c-w>wggVGy:q<cr><c-w>W				" 全体をコピー
 "	noremap		<silent>			<F7>		:Vexplore<cr>								" Explorerを起動
 	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>					" フォントサイズをトグル
 	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
 																							" ↑前行の単語をコピーしてインクリメント
-	noremap		<silent>			<F10>		:call UpdateTagFile()<cr>					" タグファイル更新
+"	noremap		<silent>			<F10>		<nop>
 	noremap		<silent>			<F11>		:set expandtab<cr>:retab!<cr>				" タブ⇒空白 変換
 	noremap		<silent>			<F12>		:set noexpandtab<cr>:retab!<cr>				" 空白⇒タブ 変換
 	
@@ -64,11 +66,12 @@
 	noremap		<silent>			<c-F2>		:call CopyCurDirPath()<cr>					" 現在フォルダパスコピー
 	noremap		<silent>			<c-F3>		:call CopyCurFileName()<cr>					" 現在ファイル名コピー
 "	noremap		<silent>			<c-F4>		<nop>
-	noremap		<silent>			<c-F5>		:so %<cr>									" 現在設定ファイル読み込み
+	noremap		<silent>			<c-F5>		:call UpdateTagFile()<cr>					" タグファイル更新
 	
 "	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'	" ペーストしたテキストを再選択できるようにする
 	
 "=== ノーマルモード ===
+"	nnoremap	<silent>			<cr>		<nop>
 	
 "=== 挿入モード ===
 	inoremap	<silent>			<c-j>		<esc>										" Ctrl+J でノーマルモードに移行
@@ -198,26 +201,26 @@ endif
 " ==============================================================================
 " ファイルパス設定
 " ==============================================================================
-	let g:sCtagsPath = expand( "$VIM/../../ctags58j2bin" )
-	let g:sGtagsPath = expand( "$VIM/../../glo627wb/bin" )
-	let g:sMarkVimPath = expand( "$VIM/_plugins_user/mark.vim/plugin/mark.vim" )
-	let g:sHNXGrepPath = expand( "$VIM/../../HNXgrep/HNXgrep.exe" )
+	let $CTAGS = expand( "$VIM/../../ctags58j2bin/ctags.exe" )
+	let $GTAGS = expand( "$VIM/../../glo627wb/bin/gtags.exe" )
+	let $HNXGREP = expand( "$VIM/../../HNXgrep/HNXgrep.exe" )
+	let $MARKVIM = expand( "$VIM/_plugins_user/mark.vim/plugin/mark.vim" )
 
 " ==============================================================================
 " 共通ユーザ定義関数
 " ==============================================================================
 	function! GetCurFilePath( sPathDlmtr )
-		let l:sCurFilePath = substitute( expand('%:p'), "/", a:sPathDlmtr, "g" )
-		return l:sCurFilePath
+		return substitute( expand('%:p'), "/", a:sPathDlmtr, "g" )
 	endfunction
 	function! GetCurDirPath( sPathDlmtr )
 		let l:sCurDirPathTmp = expand("%:p")[ 0:( len( expand("%:p") ) - len( "/" . expand("%:t") ) - 1 ) ]
-		let l:sCurDirPath = substitute( l:sCurDirPathTmp, "/", a:sPathDlmtr, "g" )
-		return l:sCurDirPath
+		return substitute( l:sCurDirPathTmp, "/", a:sPathDlmtr, "g" )
 	endfunction
 	function! GetCurFileName()
-		let l:sCurFileName = expand( '%:t' )
-		return l:sCurFileName
+		return expand( '%:t' )
+	endfunction
+	function! GetCurFileExt()
+		return expand("%:e")
 	endfunction
 	
 	" === ファイルパス検索（＋存在確認） ====
@@ -260,6 +263,7 @@ endif
 " ==============================================================================
 " カラースキーマ設定
 " ==============================================================================
+	syntax on
 	colorscheme jellybeans
 	highlight NonText		guibg=NONE	guifg=#404040
 	highlight SpecialKey	guibg=NONE	guifg=#707070
@@ -428,7 +432,7 @@ endif
 " ==============================================================================
 	let g:sProjectRootFileName = "tags"
 	function! ExecuteHNXgrep()
-		let l:sHNXGrepPath = substitute( g:sHNXGrepPath, "/", "\\", "g" )
+		let l:sHNXGrepPath = substitute( $HNXGREP, "/", "\\", "g" )
 		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), g:sProjectRootFileName )
 		if l:sRootDirPath == ""
 			let l:sRootDirPath = GetCurDirPath("\\")
@@ -460,48 +464,6 @@ endif
 	endfunction
 
 " ==============================================================================
-" ビジュアルモード文字数カウント
-" 覚書：列番号取得には苦労した。。。
-"		詳細は以下 URL 参照。
-"		  http://www49.atwiki.jp/draemonash/pages/69.html
-" ==============================================================================
-	autocmd CursorMoved * call s:CalcSelRngStrNum()
-	let s:sStrtClm = 0
-	let s:sStrtRow = 0
-	let s:sDiffClm = 0
-	let s:sDiffRow = 0
-	
-	function! s:CalcSelRngStrNum()
-		let l:sCurMode = mode()
-		let l:sCurRow = line('.')
-		if l:sCurMode == "v" || l:sCurMode == "V"
-			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
-			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
-			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
-		elseif l:sCurMode == "\<C-v>"
-			let l:sCurClm = virtcol('.')
-			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
-			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
-		elseif l:sCurMode == "n"
-			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
-			let s:sStrtClm = l:sCurClm
-			let s:sStrtRow = l:sCurRow
-			let s:sDiffClm = 0
-			let s:sDiffRow = 0
-		else
-			"Do Nothing
-		endif
-	endfunction
-	
-	function! GetSelRngClmDiff()
-		return s:sDiffClm
-	endfunction
-	
-	function! GetSelRngRowDiff()
-		return s:sDiffRow
-	endfunction
-
-" ==============================================================================
 " 上位階層にあるタグファイルを探して、更新。
 " 注意 : 事前にタグファイルを作成しておくこと。
 " ==============================================================================
@@ -514,8 +476,8 @@ endif
 			echo "update tag file error!! tag file is missing ..."
 		else
 			execute "cd " . l:sDirPath
-			execute "!start " . g:sCtagsPath . "/ctags.exe -R"
-			execute "!start " . g:sGtagsPath . "/gtags.exe -v"
+			execute "!start " . $CTAGS . " -R"
+			execute "!start " . $GTAGS . " -v"
 			execute "redraw"
 			echo "update tag file!!  " . l:sDirPath
 		endif
@@ -580,7 +542,7 @@ endif
 		else
 			let @* = l:sCurFilePath " * register.
 		endif
-		echo "copy file path	  : " . l:sCurFilePath
+		echo "copy file path      : " . l:sCurFilePath
 	endfunction
 	
 	function! CopyCurDirPath()
@@ -602,75 +564,103 @@ endif
 		else
 			let @* = l:sCurFileName " * register.
 		endif
-		echo "copy file name	  : " . l:sCurFileName
+		echo "copy file name      : " . l:sCurFileName
 	endfunction
 
 " ==============================================================================
 " 現在のスクリプトを実行する
 "	<<デフォルト時>>
 "	  :!%
-"	<<「precmd = "python "」とした場合>>
-"	  :python %
-"	<<「postmd = " -v"」とした場合>>
-"	  :% -v
+"	<<「cmdpre = "ruby"」とした場合>>
+"	  :!ruby %
+"	<<「cmdpst = "-v"」とした場合>>
+"	  :!% -v
 " ==============================================================================
-	let g:precmd = ""
-	let g:postcmd = ""
+	let g:cmdpre = ""
+	let g:cmdpst = ""
 	function! ExecCurrentScript()
-		execute "!" . g:precmd . " % " . g:postcmd
+		let l:sCurFileExt = GetCurFileExt()
+		let l:sCurFileName = GetCurFileName()
+		let l:sExecCmd = ""
+		if stridx( l:sCurFileName, "vimrc" ) > 0
+			let l:sExecCmd = "so %"
+		else
+			if l:sCurFileExt == "vim"
+				let l:sExecCmd = "so %"
+			elseif l:sCurFileExt == "py"
+				let l:sExecCmd = "!python % " . g:cmdpst
+			elseif l:sCurFileExt == "rb"
+				let l:sExecCmd = "!ruby % " . g:cmdpst
+			else
+				let l:sExecCmd = "!" . g:cmdpre . " % " . g:cmdpst
+			endif
+		endif
+		return l:sExecCmd
+	endfunction
+
+" ==============================================================================
+" タブ機能無効化
+" ==============================================================================
+	autocmd! BufNewFile,BufRead * call AutoTabPageOnly()
+	function! AutoTabPageOnly()
+		if tabpagenr() == 1
+			"do nothing
+		else
+			execute ("tabonly")
+		endif
 	endfunction
 
 " ==============================================================================
 " タブ表示を変更する
 " [参考] http://thinca.hatenablog.com/entry/20111204/1322932585
 " ==============================================================================
-	function! MakeTabLine()
-		let l:asTitles = map(range(1, tabpagenr('$')), 'GetTabPageLabel(v:val)')
-		let l:sDelimiter = ' '	" タブ間の区切り
-		let l:sTabpages = join(l:asTitles, l:sDelimiter) . l:sDelimiter . '%#TabLineFill#%T'
-		let l:sInfo = ''  " 好きな情報を入れる
-		return l:sTabpages . '%=' . l:sInfo  " タブリストを左に、情報を右に表示
-	endfunction
-	" 各タブページのカレントバッファ名+αを表示
-	function! GetTabPageLabel( lTabPageNum )
-		" t:title と言う変数があったらそれを使う
-		let l:sTitle = gettabvar(a:lTabPageNum, 'l:sTitle')
-		if l:sTitle !=# ''
-			return l:sTitle
-		endif
-		
-		" タブページ内のバッファのリスト
-		let l:asBufList = tabpagebuflist(a:lTabPageNum)
-		
-		" カレントタブページかどうかでハイライトを切り替える
-		let l:sHilight = a:lTabPageNum is tabpagenr() ? '%#TabLineSel#' : '%#TabLine#'
-		
-		" バッファが複数あったらバッファ数を表示
-		let l:sBufNum = ''
-	"	let l:sBufNum = len(l:asBufList)
-	"	if l:sBufNum is 1
-	"		let l:sBufNum = ''
-	"	endif
-		
-		" タブページ内に変更ありのバッファがあったら '+' を付ける
-		let l:sModifyStat = len(filter(copy(l:asBufList), 'getbufvar(v:val, "&modified")')) ? '+' : ''
-		let l:sSpace = (l:sBufNum . l:sModifyStat) ==# '' ? '' : ' '  " 隙間空ける
-		
-		" カレントバッファ
-		let l:lCurBufIdx = l:asBufList[tabpagewinnr(a:lTabPageNum) - 1]  " tabpagewinnr() は 1 origin
-		let l:sCurBufAbsPath = bufname(l:lCurBufIdx)
-		if l:sCurBufAbsPath == ""
-			let l:sBufName = "(無題)"
-		else
-			if stridx( l:sCurBufAbsPath, '/' ) == -1
-				let l:sBufName = l:sCurBufAbsPath
-			else
-				let l:sBufName = strpart( l:sCurBufAbsPath, strridx( l:sCurBufAbsPath, '/') + 1 )
-			endif
-		endif
-		
-		return '%' . a:lTabPageNum . 'T' . l:sHilight . ' ' . l:sBufNum . l:sModifyStat . l:sSpace . l:sBufName . ' ' . '%T%#TabLineFill#'
-	endfunction
+"	function! MakeTabLine()
+"		let l:asTitles = map(range(1, tabpagenr('$')), 'GetTabPageLabel(v:val)')
+"		let l:sDelimiter = ' '	" タブ間の区切り
+"		let l:sTabpages = join(l:asTitles, l:sDelimiter) . l:sDelimiter . '%#TabLineFill#%T'
+"		let l:sInfo = ''  " 好きな情報を入れる
+"		return l:sTabpages . '%=' . l:sInfo  " タブリストを左に、情報を右に表示
+"	endfunction
+"	" 各タブページのカレントバッファ名+αを表示
+"	function! GetTabPageLabel( lTabPageNum )
+"		" t:title と言う変数があったらそれを使う
+"		let l:sTitle = gettabvar(a:lTabPageNum, 'l:sTitle')
+"		if l:sTitle !=# ''
+"			return l:sTitle
+"		endif
+"		
+"		" タブページ内のバッファのリスト
+"		let l:asBufList = tabpagebuflist(a:lTabPageNum)
+"		
+"		" カレントタブページかどうかでハイライトを切り替える
+"		let l:sHilight = a:lTabPageNum is tabpagenr() ? '%#TabLineSel#' : '%#TabLine#'
+"		
+"		" バッファが複数あったらバッファ数を表示
+"		let l:sBufNum = ''
+"	"	let l:sBufNum = len(l:asBufList)
+"	"	if l:sBufNum is 1
+"	"		let l:sBufNum = ''
+"	"	endif
+"		
+"		" タブページ内に変更ありのバッファがあったら '+' を付ける
+"		let l:sModifyStat = len(filter(copy(l:asBufList), 'getbufvar(v:val, "&modified")')) ? '+' : ''
+"		let l:sSpace = (l:sBufNum . l:sModifyStat) ==# '' ? '' : ' '  " 隙間空ける
+"		
+"		" カレントバッファ
+"		let l:lCurBufIdx = l:asBufList[tabpagewinnr(a:lTabPageNum) - 1]  " tabpagewinnr() は 1 origin
+"		let l:sCurBufAbsPath = bufname(l:lCurBufIdx)
+"		if l:sCurBufAbsPath == ""
+"			let l:sBufName = "(無題)"
+"		else
+"			if stridx( l:sCurBufAbsPath, '/' ) == -1
+"				let l:sBufName = l:sCurBufAbsPath
+"			else
+"				let l:sBufName = strpart( l:sCurBufAbsPath, strridx( l:sCurBufAbsPath, '/') + 1 )
+"			endif
+"		endif
+"		
+"		return '%' . a:lTabPageNum . 'T' . l:sHilight . ' ' . l:sBufNum . l:sModifyStat . l:sSpace . l:sBufName . ' ' . '%T%#TabLineFill#'
+"	endfunction
 
 " ==============================================================================
 " 現在ファイル削除
@@ -681,10 +671,21 @@ endif
 	endfunction
 
 " ==============================================================================
-" タブ機能無効化
+" 日本語入力に関する設定
 " ==============================================================================
-"	autocmd! BufNewFile,BufRead *.* execute ("tabonly")
-	autocmd! BufNewFile,BufRead * execute ("tabonly")
+	if has('multi_byte_ime') || has('xim')
+		" IME ON時のカーソルの色を設定(設定例:紫)
+		highlight CursorIM guibg=Purple guifg=NONE
+		" 挿入モード・検索モードでのデフォルトのIME状態設定
+		set iminsert=0 imsearch=0
+		if has('xim') && has('GUI_GTK')
+			" XIMの入力開始キーを設定:
+			" 下記の s-space はShift+Spaceの意味でkinput2+canna用設定
+			"set imactivatekey=s-space
+		endif
+		" 挿入モードでのIME状態を記憶させない場合、次行のコメントを解除
+		"inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
+	endif
 
 " **************************************************************************************************
 " *****										プラグイン設定									   *****
@@ -716,22 +717,6 @@ endif
 "	hi BufferNormal guifg=white
 
 " ==============================================================================
-" lightline 設定
-" [参考] https://github.com/itchyny/lightline.vim#landscape-theme-with-the-patched-font
-" [参考] http://itchyny.hatenablog.com/entry/20130917/1379369171
-" ==============================================================================
-"					\	'colorscheme': 'landscape',
-	let g:lightline = {
-					\	'active': {
-					\		'left' : [ ['mode', 'paste'], ['readonly', 'modified', 'filename' ] ],
-					\		'right': [ ['hello'] ]
-					\	},
-					\	'component': {
-					\		'hello': 'Hello, world!'
-					\	}
-					\ }
-
-" ==============================================================================
 " align.vim 設定
 " [参照] http://vim-users.jp/2009/09/hack77/
 " ==============================================================================
@@ -745,10 +730,16 @@ endif
 "	let g:code_overview_use_colorscheme = 1
 "	let g:codeoverview_autoupdate = 1
 
+" =======================================
+" open-browser の設定
+" =======================================
+	let g:netrw_nogx = 1 " disable netrw's gx mapping.
+	map go <Plug>(openbrowser-smart-search)
+
 " ==============================================================================
 " mark.vim 設定
 " ★必ず最終行に記述すること！★
 " [参照] http://nanasi.jp/articles/vim/mark_vim.html
 " ==============================================================================
-	execute 'source ' . g:sMarkVimPath
+	execute 'source ' . $MARKVIM
 
