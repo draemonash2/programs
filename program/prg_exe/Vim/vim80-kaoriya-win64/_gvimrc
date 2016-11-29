@@ -55,6 +55,7 @@
 	noremap		<silent>			<F5>		:execute ExecCurrentScript()<cr>			" 現在のプログラムを実行
 	noremap		<silent>			<F6>		:vs<cr><c-w>wggVGy:q<cr><c-w>W				" 全体をコピー
 "	noremap		<silent>			<F7>		:Vexplore<cr>								" Explorerを起動
+	noremap		<silent>			<F7>		:NERDTreeToggle<CR>							" NERDtreeを起動
 	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>					" フォントサイズをトグル
 	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
 																							" ↑前行の単語をコピーしてインクリメント
@@ -88,12 +89,12 @@
 " Gtags用キーバインド
 " [参照] http://cha.la.coocan.jp/doc/gnu_global.html#sec10
 " ==============================================================================
-	map								<c-o>		:GtagsCursor<CR>
-	nnoremap						<c-d>		:Gtags <C-r><C-w><CR>
+"	map								<c-o>		:GtagsCursor<CR>
+"	nnoremap						<c-d>		:Gtags <C-r><C-w><CR>
 	nnoremap						<c-e>		:Gtags -r <C-r><C-w><CR>
-	nnoremap						gs			:Gtags -s <C-r><C-w><CR>
-	nnoremap						gG			:Gtags -g <C-r><C-w><CR>
-	nnoremap						,d			:<C-u>Gtags -f %<CR>
+"	nnoremap						gs			:Gtags -s <C-r><C-w><CR>
+"	nnoremap						gG			:Gtags -g <C-r><C-w><CR>
+"	nnoremap						,d			:<C-u>Gtags -f %<CR>
 	nnoremap						<c-t>		<C-o>
 
 " **************************************************************************************************
@@ -111,6 +112,7 @@
 "	set winminheight=1									" カレントウィンドウ以外 最小の高さ
 	set noequalalways									" ウィンドウサイズの自動調整を無効にする
 	set guioptions-=m									" メニューバーを非表示
+	set guioptions+=M									" $VIMRUNTIME/menu.vim を読み込まない
 	set guioptions-=T									" ツールバーを非表示
 "	set guioptions+=a									" ビジュアルモードで選択している箇所をクリップボードにコピー
 	set guioptions+=rl									" 縦スクロールバー表示
@@ -122,18 +124,18 @@
 	set ruler											" ルーラーを表示 (noruler:非表示)
 	set cmdheight=2										" コマンドラインの高さ (gvimはgvimrcで指定)
 	set laststatus=2									" コマンドをステータス行に表示
-	set statusline=										" ステータスライン表示設定
-	set statusline+=\ [BufNo:\%03.3n]					" ステータスライン表示設定 buffer number
+"	set statusline=										" ステータスライン表示設定
+"	set statusline+=\ [BufNo:\%03.3n]					" ステータスライン表示設定 buffer number
 "	set statusline+=\ [Func:%{cfi#get_func_name()}]		" ステータスライン表示設定 func name（タグジャンプに異常をきたすため、使用しない）
 "	set statusline+=\ %F								" ステータスライン表示設定 filepath
-	set statusline+=\ <<%t>>							" ステータスライン表示設定 filename
+"	set statusline+=\ <<%t>>							" ステータスライン表示設定 filename
 "	set statusline+=\ %-40(\ %m%r%h%w\ %)				" ステータスライン表示設定 status flags
-	set statusline+=\ %=								" ステータスライン表示設定 right align remainder
-	set statusline+=\ [Frmt:%{&fenc!=''?&fenc:&enc}]	" ステータスライン表示設定 file format
-	set statusline+=\ [CR/LF:%{&ff}]					" ステータスライン表示設定 line feed
+"	set statusline+=\ %=								" ステータスライン表示設定 right align remainder
+"	set statusline+=\ [Frmt:%{&fenc!=''?&fenc:&enc}]	" ステータスライン表示設定 file format
+"	set statusline+=\ [CR/LF:%{&ff}]					" ステータスライン表示設定 line feed
 "	set statusline+=\ [Asc:0x\%02.2B]					" ステータスライン表示設定 ascii code (hex)
-	set statusline+=\ [SelRng:%{GetSelRngClmDiff()}x%{GetSelRngRowDiff()}]	" ステータスライン表示設定 select width x height
-	set statusline+=\ [XPos:%03v]						" ステータスライン表示設定 cursor position
+"	set statusline+=\ [SelRng:%{GetSelRngClmDiff()}x%{GetSelRngRowDiff()}]	" ステータスライン表示設定 select width x height
+"	set statusline+=\ [XPos:%03v]						" ステータスライン表示設定 cursor position
 "	set showtabline=2									" タブページを常に表示
 "	set tabline=%!MakeTabLine()							" タブページのラベルを設定
 "	set cursorcolumn									" カーソル列を目立たせる
@@ -141,21 +143,22 @@
 	set title											" タイトルを表示
 	set noshowcmd										" 選択中の行数、列数を表示しない（自作したので不要）
 	set fileformat=dos									" 改行をWindowsの形式に変更。
-	set nowritebackup									" ファイルの上書きの前にバックアップを作る/作らない
+	set scrolloff=5										" カーソル周辺行数
+	set swapfile										" スワップファイル(.swpファイル)を作成
+	set directory=$VIM/__swapfiles						" スワップファイル(.swpファイル)の出力先を指定
+	set undofile										" アンドゥファイル(.un~ファイル)を作成
+	set undodir=$VIM/__undofiles						" アンドゥファイル(.un~ファイル)の出力先を指定
+	set backup											" バックアップファイル(~ファイル)を作成
+	set backupdir=$VIM/__backupfiles					" バックアップファイル(~ファイル)の出力先を指定
+	set writebackup										" ファイルの上書きの前にバックアップを作る
 														" set writebackupを指定してもオプション 'backup' がオンでない限り、
 														" バックアップは上書きに成功した後に削除される。
-	set scrolloff=5										" カーソル周辺行数
-	set swapfile										" スワップファイル(.swpファイル)を作成する
-	set directory=$VIM/_swapfiles						" スワップファイル(.swpファイル)の出力先
-"	set noundofile										" アンドゥファイル(.un~ファイル)を作成しない
-	set undodir=$VIM/_undofiles							" アンドゥファイル(.un~ファイル)の出力先
-	set nobackup										" バックアップファイル(~ファイル)を作成しない
 	set hidden											" 編集結果非保存のバッファから、新しいバッファを開くときに警告を出さない
 	set history=50										" ヒストリの保存数
 	set textwidth=0										" 一行が長くなった場合の自動改行を抑止する
 "	set formatoptions+=mM								" 日本語の行の連結時には空白を入力しない
 	set formatoptions-=tc								" 一行が長くなった場合の自動改行を抑止する
-"	set formatoptions+=q								" 一行が長くなった場合の自動改行を抑止する
+"	set formatoptions+=q								" コメントを整形する
 	set virtualedit=block								" Visual blockモードでフリーカーソルを有効にする
 	set backspace=indent,eol,start						" バックスペースでインデントや改行を削除できるようにする
 	set ambiwidth=double								" □や○の文字があってもカーソル位置がずれないようにする
@@ -197,6 +200,8 @@ if has('mouse')
 	set mouse=a											" マウスを有効にする
 endif
 	set viminfo+=n$VIM/_viminfo							" VIMINFO ファイル出力先設定
+	set iminsert=0										" 挿入モードでのデフォルトのIME状態設定（IM オフ）
+	set imsearch=0										" 検索モードでのデフォルトのIME状態設定（IM オフ）
 
 " ==============================================================================
 " ファイルパス設定
@@ -670,36 +675,9 @@ endif
 		execute "!del " . GetCurFilePath( "\\" )
 	endfunction
 
-" ==============================================================================
-" 日本語入力に関する設定
-" ==============================================================================
-	if has('multi_byte_ime') || has('xim')
-		" IME ON時のカーソルの色を設定(設定例:紫)
-		highlight CursorIM guibg=Purple guifg=NONE
-		" 挿入モード・検索モードでのデフォルトのIME状態設定
-		set iminsert=0 imsearch=0
-		if has('xim') && has('GUI_GTK')
-			" XIMの入力開始キーを設定:
-			" 下記の s-space はShift+Spaceの意味でkinput2+canna用設定
-			"set imactivatekey=s-space
-		endif
-		" 挿入モードでのIME状態を記憶させない場合、次行のコメントを解除
-		"inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
-	endif
-
 " **************************************************************************************************
 " *****										プラグイン設定									   *****
 " **************************************************************************************************
-" ==============================================================================
-" transparency-windows-vim 設定
-" [参照] http://vim-users.jp/tag/lv1/
-" ==============================================================================
-"	augroup hack234
-"		autocmd!
-"		autocmd FocusGained * set transparency=300
-"		autocmd FocusLost * set transparency=200
-"	augroup END
-
 " ==============================================================================
 " Taglist 設定
 " ==============================================================================
@@ -738,7 +716,7 @@ endif
 
 " ==============================================================================
 " mark.vim 設定
-" ★必ず最終行に記述すること！★
+" ★カラースキーマ設定の後に記述すること！★
 " [参照] http://nanasi.jp/articles/vim/mark_vim.html
 " ==============================================================================
 	execute 'source ' . $MARKVIM
