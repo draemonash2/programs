@@ -141,7 +141,6 @@
 "	set cursorcolumn									" カーソル列を目立たせる
 "	set cursorline										" カーソル行を目立たせる
 	set title											" タイトルを表示
-	set noshowcmd										" 選択中の行数、列数を表示しない（自作したので不要）
 	set fileformat=dos									" 改行をWindowsの形式に変更。
 	set scrolloff=5										" カーソル周辺行数
 	set swapfile										" スワップファイル(.swpファイル)を作成
@@ -170,6 +169,7 @@
 	set nrformats-=alpha								" <C-a>,<C-x> 実行にて アルファベットを無効にする。
 "	set browsedir=buffer								" ファイル保存ダイアログの初期ディレクトリをバッファファイル位置に設定
 	set nocompatible									" vi互換をオフ
+	set noshowcmd										" 選択中の行数、列数を表示しない（自作したので不要）（compatible 以降に記載すること）
 	set shellslash										" Windowsでディレクトリパスの区切り文字表示に / を使えるようにする
 	set showmatch										" 括弧の対応を数秒（0.1秒単位）表示
 	set smarttab										" 行頭の余白内で tab を打ち込むと、'shiftwidth' の数だけインデントする。

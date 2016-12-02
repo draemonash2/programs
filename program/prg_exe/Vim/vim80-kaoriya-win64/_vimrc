@@ -103,7 +103,8 @@
 "		詳細は以下 URL 参照。
 "		  http://www49.atwiki.jp/draemonash/pages/69.html
 " ==============================================================================
-	autocmd CursorMoved * call s:CalcSelRngStrNum()
+	set updatetime=100 "CursorHold の閾値[ms]
+	autocmd CursorMoved,CursorHold * call s:CalcSelRngStrNum()
 	let s:sStrtClm = 0
 	let s:sStrtRow = 0
 	let s:sDiffClm = 0
@@ -112,34 +113,35 @@
 	function! s:CalcSelRngStrNum()
 		let l:sCurMode = mode()
 		let l:sCurRow = line('.')
-		if l:sCurMode == "v" || l:sCurMode == "V"
+		if l:sCurMode ==# "v" || l:sCurMode ==# "V"
 			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
 			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
 			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
-		elseif l:sCurMode == "\<C-v>"
+		elseif l:sCurMode ==# "\<C-v>"
 			let l:sCurClm = virtcol('.')
 			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
 			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
-		elseif l:sCurMode == "n"
+		elseif l:sCurMode ==# "n"
 			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
 			let s:sStrtClm = l:sCurClm
 			let s:sStrtRow = l:sCurRow
-			let s:sDiffClm = 0
-			let s:sDiffRow = 0
+			let s:sDiffClm = 1
+			let s:sDiffRow = 1
 		else
 			"Do Nothing
 		endif
 	endfunction
 	
-	function! GetSelRngClmDiff()
-		return s:sDiffClm
-	endfunction
-	
-	function! GetSelRngRowDiff()
-		return s:sDiffRow
-	endfunction
-	
 	function! GetSelRngDiff()
-		return s:sDiffRow . "x" . s:sDiffClm
+		let l:sCurMode = mode()
+		if l:sCurMode ==# "v" || l:sCurMode ==# "\<C-v>"
+			return "r" . s:sDiffRow . " c" . s:sDiffClm
+		elseif l:sCurMode ==# "V"
+			return "r" . s:sDiffRow
+		elseif l:sCurMode ==# "n"
+			return "-"
+		else
+			return "error"
+		endif
 	endfunction
 
