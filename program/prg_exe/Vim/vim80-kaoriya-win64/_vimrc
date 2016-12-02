@@ -84,7 +84,8 @@
 					\		'left': [
 					\			[ 'mode', 'paste' ],
 					\			[ 'filename' ],
-					\			[ 'readonly', 'modified' ]
+					\			[ 'readonly', 'modified' ],
+					\			[ 'filepath' ]
 					\		],
 					\		'right': [
 					\			[ 'lineinfo', 'percent' ],

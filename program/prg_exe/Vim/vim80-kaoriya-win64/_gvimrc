@@ -110,7 +110,7 @@
 "	set winminwidth=1									" カレントウィンドウ以外 最小の幅
 "	set winheight=1										" カレントウィンドウ 最小の高さ
 "	set winminheight=1									" カレントウィンドウ以外 最小の高さ
-	set noequalalways									" ウィンドウサイズの自動調整を無効にする
+	set equalalways										" ウィンドウサイズの自動調整を無効にする
 	set guioptions-=m									" メニューバーを非表示
 	set guioptions+=M									" $VIMRUNTIME/menu.vim を読み込まない
 	set guioptions-=T									" ツールバーを非表示
@@ -153,6 +153,7 @@
 	set writebackup										" ファイルの上書きの前にバックアップを作る
 														" set writebackupを指定してもオプション 'backup' がオンでない限り、
 														" バックアップは上書きに成功した後に削除される。
+	set viminfo+=n$VIM/_viminfo							" VIMINFO ファイル出力先設定
 	set hidden											" 編集結果非保存のバッファから、新しいバッファを開くときに警告を出さない
 	set history=50										" ヒストリの保存数
 	set textwidth=0										" 一行が長くなった場合の自動改行を抑止する
@@ -166,7 +167,7 @@
 	set timeout timeoutlen=3000 ttimeoutlen=100			" キーコードやマッピングされたキー列が完了するのを待つ時間(ミリ秒)
 	set clipboard+=unnamed								" クリップボードを共有
 	set nrformats-=octal								" <C-a>,<C-x> 実行にて 8 進数を無効にする。
-"	set nrformats+=alpha								" <C-a>,<C-x> 実行にて アルファベットを有効にする。
+	set nrformats-=alpha								" <C-a>,<C-x> 実行にて アルファベットを無効にする。
 "	set browsedir=buffer								" ファイル保存ダイアログの初期ディレクトリをバッファファイル位置に設定
 	set nocompatible									" vi互換をオフ
 	set shellslash										" Windowsでディレクトリパスの区切り文字表示に / を使えるようにする
@@ -199,7 +200,6 @@
 if has('mouse')
 	set mouse=a											" マウスを有効にする
 endif
-	set viminfo+=n$VIM/_viminfo							" VIMINFO ファイル出力先設定
 	set iminsert=0										" 挿入モードでのデフォルトのIME状態設定（IM オフ）
 	set imsearch=0										" 検索モードでのデフォルトのIME状態設定（IM オフ）
 

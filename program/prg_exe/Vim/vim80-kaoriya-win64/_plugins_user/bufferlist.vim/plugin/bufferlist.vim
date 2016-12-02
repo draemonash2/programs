@@ -162,7 +162,7 @@ function! BufferList()
   setlocal nowrap
   setlocal nonumber
   setlocal winwidth=1 " Åöcustom add
-  setlocal noequalalways " Åöcustom add
+"  setlocal noequalalways " Åöcustom add
 
   " set up syntax highlighting
   if has("syntax")
