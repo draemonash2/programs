@@ -110,7 +110,7 @@
 "	set winminwidth=1									" カレントウィンドウ以外 最小の幅
 "	set winheight=1										" カレントウィンドウ 最小の高さ
 "	set winminheight=1									" カレントウィンドウ以外 最小の高さ
-	set equalalways										" ウィンドウサイズの自動調整を無効にする
+	set equalalways										" ウィンドウサイズの自動調整を有効にする
 	set guioptions-=m									" メニューバーを非表示
 	set guioptions+=M									" $VIMRUNTIME/menu.vim を読み込まない
 	set guioptions-=T									" ツールバーを非表示
@@ -691,6 +691,7 @@ endif
 	let g:BufferListWidth = 30
 	let g:BufferListHideBufferList = 0
 	let g:BufferListExpandBufName = 0
+	let g:BufferListPreview = 1
 	hi BufferSelected guifg=black guibg=#9ad000 gui=bold
 "	hi BufferNormal guifg=white
 

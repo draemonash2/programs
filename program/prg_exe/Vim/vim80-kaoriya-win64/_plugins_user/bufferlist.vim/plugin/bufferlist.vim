@@ -43,10 +43,13 @@ endif
 
 "Åöcustom add <TOP>
 if !exists('g:BufferListHideBufferList')
-  let g:BufferListHideBufferList = 1
+  let g:BufferListHideBufferList = 0
 endif
 if !exists('g:BufferListExpandBufName')
   let g:BufferListExpandBufName = 0
+endif
+if !exists('g:BufferListPreview')
+  let g:BufferListPreview = 1
 endif
 "Åöcustom add <END>
 
@@ -162,7 +165,7 @@ function! BufferList()
   setlocal nowrap
   setlocal nonumber
   setlocal winwidth=1 " Åöcustom add
-"  setlocal noequalalways " Åöcustom add
+  setlocal winfixwidth " Åöcustom add
 
   " set up syntax highlighting
   if has("syntax")
@@ -192,17 +195,32 @@ function! BufferList()
   setlocal nomodifiable
 
   " set up the keymap
-  noremap <silent> <buffer> <CR> :call LoadBuffer()<CR>
+  "Åöcustom mod <TOP>
+  noremap <silent> <buffer> <CR> :call LoadBuffer(0)<CR>
+  "Åöcustom mod <END>
+  "Åöcustom add <TOP>
+  nnoremap <silent> <buffer> <c-CR> :call LoadBuffer(1)<CR>
+  "Åöcustom add <END>
   map <silent> <buffer> q :bwipeout<CR> 
-  map <silent> <buffer> j :call BufferListMove("down")<CR>
-  map <silent> <buffer> k :call BufferListMove("up")<CR>
+  "Åöcustom mod <TOP>
+  map <silent> <buffer> j :call BufferListMove2("down")<CR>
+  map <silent> <buffer> k :call BufferListMove2("up")<CR>
+  "Åöcustom mod <END>
+  "Åöcustom add <TOP>
+  map <silent> <buffer> <c-j> :call BufferListMove2("down3")<CR>
+  map <silent> <buffer> <c-k> :call BufferListMove2("up3")<CR>
+  "Åöcustom add <END>
   map <silent> <buffer> d :call BufferListDeleteBuffer()<CR>
-  map <silent> <buffer> <MouseDown> :call BufferListMove("up")<CR>
-  map <silent> <buffer> <MouseUp> :call BufferListMove("down")<CR>
+  "Åöcustom mod <TOP>
+  map <silent> <buffer> <MouseDown> :call BufferListMove2("up")<CR>
+  map <silent> <buffer> <MouseUp> :call BufferListMove2("down")<CR>
+  "Åöcustom mod <END>
   map <silent> <buffer> <LeftDrag> <Nop>
-  map <silent> <buffer> <LeftRelease> :call BufferListMove("mouse")<CR>
-  map <silent> <buffer> <2-LeftMouse> :call BufferListMove("mouse")<CR>
-    \:call LoadBuffer()<CR>
+  "Åöcustom mod <TOP>
+  map <silent> <buffer> <LeftRelease> :call BufferListMove2("mouse")<CR>
+  map <silent> <buffer> <2-LeftMouse> :call BufferListMove2("mouse")<CR>
+    \:call LoadBuffer(0)<CR>
+  "Åöcustom mod <END>
   map <silent> <buffer> <Down> j
   map <silent> <buffer> <Up> k
   map <buffer> h <Nop>
@@ -215,8 +233,10 @@ function! BufferList()
   map <buffer> A <Nop>
   map <buffer> o <Nop>
   map <buffer> O <Nop>
-  map <silent> <buffer> <Home> :call BufferListMove(1)<CR>
-  map <silent> <buffer> <End> :call BufferListMove(line("$"))<CR>
+  "Åöcustom mod <TOP>
+  map <silent> <buffer> <Home> :call BufferListMove2(1)<CR>
+  map <silent> <buffer> <End> :call BufferListMove2(line("$"))<CR>
+  "Åöcustom mod <END>
 
   " make the buffer count & the buffer numbers available
   " for our other functions
@@ -226,6 +246,17 @@ function! BufferList()
   " go to the correct line
   call BufferListMove(l:activebufline)
 endfunction
+
+" Åö custom add <TOP>
+function! BufferListMove2(where)
+  if g:BufferListPreview == 1
+    call BufferListMove(a:where)
+    call LoadBuffer(1)
+  else
+    call BufferListMove(a:where)
+  endif
+endfunction
+" Åö custom add <END>
 
 " move the selection bar of the list:
 " where can be "up"/"down"/"mouse" or
@@ -255,6 +286,16 @@ function! BufferListMove(where)
     call BufferListGoto(line(".")-1)
   elseif a:where == "down"
     call BufferListGoto(line(".")+1)
+  " Åö custom add <TOP>
+  elseif a:where == "up3"
+    call BufferListGoto(line(".")-3)
+  elseif a:where == "down3"
+    call BufferListGoto(line(".")+3)
+  elseif a:where == "up5"
+    call BufferListGoto(line(".")-5)
+  elseif a:where == "down5"
+    call BufferListGoto(line(".")+5)
+  " Åö custom add <END>
   elseif a:where == "mouse"
     call BufferListGoto(l:newpos)
   else
@@ -267,7 +308,6 @@ function! BufferListMove(where)
   " remember this line, in case the mouse is clicked
   " (which automatically moves the cursor there)
   let b:lastline = line(".")
-
   setlocal nomodifiable
 endfunction
 
@@ -284,7 +324,7 @@ function! BufferListGoto(line)
 endfunction
 
 " loads the selected buffer
-function! LoadBuffer()
+function! LoadBuffer(ispreview) "Åöcustom mod
   " get the selected buffer
   let l:str = BufferListGetSelectedBuffer()
   " kill the buffer list
@@ -294,6 +334,11 @@ function! LoadBuffer()
   "Åöcustom add <TOP>
   if g:BufferListHideBufferList == 0
     call BufferList()
+    if a:ispreview == 1
+      "do nothing
+    else
+      call feedkeys("\<c-w>w", 't')
+    endif
   endif
   "Åöcustom add <END>
 endfunction
