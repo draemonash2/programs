@@ -691,7 +691,7 @@ endif
 	let g:BufferListWidth = 30
 	let g:BufferListHideBufferList = 0
 	let g:BufferListExpandBufName = 0
-	let g:BufferListPreview = 1
+	let g:BufferListPreview = 0
 	hi BufferSelected guifg=black guibg=#9ad000 gui=bold
 "	hi BufferNormal guifg=white
 
