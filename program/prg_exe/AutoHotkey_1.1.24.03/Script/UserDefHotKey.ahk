@@ -5,7 +5,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;#SingleInstance force	;このスクリプトが再度呼び出されたらリロードして置き換え
 
 ;[参考]
-;  https://sites.google.com/site/autohotkeyjp/home
+;	https://sites.google.com/site/autohotkeyjp/home
 
 ;* ***************************************************************
 ;* keys
@@ -17,24 +17,22 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;  ^）		Control
 ;  !）		Alt
 ;  #）		Windowsロゴキー
-vk1Dsc07B & F5::Run "%A_ScriptFullPath%"
+vk1Dsc07B & 1::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_MyDocuments%\Dropbox\000_ToDo.txt" "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
+vk1Dsc07B & 2::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
+vk1Dsc07B & 3::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_ScriptFullPath%"
 
-vk1Dsc07B & 1::Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_MyDocuments%\Dropbox\000_ToDo.txt" "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
-vk1Dsc07B & 2::Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
-vk1Dsc07B & 3::Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_ScriptFullPath%"
-
-vk1Dsc07B & c::RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe" )
-vk1Dsc07B & f::Run "C:\prg\Everything\Everything.exe"
-vk1Dsc07B & v::Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_Desktop%\temp.txt"
+vk1Dsc07B & c::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe" )
+vk1Dsc07B & f::	Run "C:\prg\Everything\Everything.exe"
+vk1Dsc07B & v::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_Desktop%\temp.txt"
 
 #IfWinActive ahk_exe kinza.exe
 ;	::^+u
 #IfWinActive
 
 #IfWinActive ahk_exe CherryPlayer.exe
-	#Up::WinMaximize, ahk_exe CherryPlayer.exe
-	#Right::WinRestore, ahk_exe CherryPlayer.exe
-	#Down::WinMinimize, ahk_exe CherryPlayer.exe
+	win_title = "ahk_exe CherryPlayer.exe"
+	#Up::	WinSizeToggle( win_title, "up" )
+	#Down::	WinSizeToggle( win_title, "down" )
 #IfWinActive
 
 ;* ***************************************************************
@@ -50,13 +48,57 @@ RunSuppressMultiStart( path )
 		}
 		Process, Exist, % filename
 		If ErrorLevel<>0
+		{
 			WinActivate,ahk_pid %ErrorLevel%
+		}
 		else
+		{
 			Run % path
+		}
 	}
 	else
 	{
 		MsgBox argument error!
+	}
+	return
+}
+
+WinSizeToggle( win_title, updown )
+{
+	WinGetActiveStats, A, WinWidth, WinHeight, WinX, WinY
+	if updown = up
+	{
+		if WinX = -32000
+		{
+			WinRestore, % win_title
+		}
+		else if WinX = 0
+		{
+			WinMaximize, % win_title
+		}
+		else
+		{
+			WinMaximize, % win_title
+		}
+	}
+	else if updown = down
+	{
+		if WinX = -32000
+		{
+			WinMinimize, % win_title
+		}
+		else if WinX = 0
+		{
+			WinRestore, % win_title
+		}
+		else
+		{
+			WinMinimize, % win_title
+		}
+	}
+	else
+	{
+		MsgBox "[error] please select up or down."
 	}
 	return
 }
