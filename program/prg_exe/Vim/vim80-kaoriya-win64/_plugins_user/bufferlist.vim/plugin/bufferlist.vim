@@ -200,6 +200,7 @@ function! BufferList()
   "Åöcustom mod <END>
   "Åöcustom add <TOP>
   nnoremap <silent> <buffer> <c-CR> :call LoadBuffer(1)<CR>
+  nnoremap <silent> <buffer> <c-p> :call BufferListTogglePreviewEnable()<CR>
   "Åöcustom add <END>
   map <silent> <buffer> q :bwipeout<CR> 
   "Åöcustom mod <TOP>
@@ -371,3 +372,12 @@ function! BufferListGetSelectedBuffer()
   return l:str
 endfunction
 
+"Åöcustom add <TOP>
+function! BufferListTogglePreviewEnable()
+  if g:BufferListPreview == 1
+    let g:BufferListPreview = 0
+  else
+    let g:BufferListPreview = 1
+  endif
+endfunction
+"Åöcustom add <END>
