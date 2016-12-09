@@ -1,6 +1,6 @@
 " favex.vim - Favorite file and directory explorer
 " Author: Ajit J. Thakkar (ajit AT unb DOT ca)
-" Last Change: 2003 Feb. 17
+" Last Change: 09-Dec-2016. 17
 " Version: 1.1
 "
 " favex.vim is a plugin to update a list (favlist) of favorite files and
@@ -204,7 +204,9 @@ fun! s:FavOpen(newwin)
   elseif a:newwin == 2
     split
   endif
-  exe cmd." ".thisline
+  "Åöcustom mod <TOP>
+  exe cmd." ".expand( thisline )
+  "Åöcustom mod <END>
 endfun
 "}}}
 " FavList: find favlist file; create it if necessary {{{
