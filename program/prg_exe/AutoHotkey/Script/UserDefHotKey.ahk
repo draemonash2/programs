@@ -17,13 +17,13 @@
 ;* Keys
 ;* ***************************************************************
 ;*** Global ***
-vk1Dsc07B & 1::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_MyDocuments%\Dropbox\000_ToDo.txt" "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
+vk1Dsc07B & 1::	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\000_ToDo.txt" "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
 vk1Dsc07B & 2::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
-vk1Dsc07B & 3::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_ScriptFullPath%"
+vk1Dsc07B & 3::	Run "C:\prg_exe\Vim\gvim.exe" "%A_ScriptFullPath%"
 
 vk1Dsc07B & c::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 vk1Dsc07B & f::	Run "C:\prg_exe\Everything\Everything.exe"
-vk1Dsc07B & v::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_Desktop%\temp.txt"
+vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 
 ;*** Software local ***
 #IfWinActive ahk_exe kinza.exe
