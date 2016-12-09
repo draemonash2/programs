@@ -21,8 +21,8 @@ vk1Dsc07B & 1::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_MyDocument
 vk1Dsc07B & 2::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
 vk1Dsc07B & 3::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_ScriptFullPath%"
 
-vk1Dsc07B & c::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe" )
-vk1Dsc07B & f::	Run "C:\prg\Everything\Everything.exe"
+vk1Dsc07B & c::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
+vk1Dsc07B & f::	Run "C:\prg_exe\Everything\Everything.exe"
 vk1Dsc07B & v::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_Desktop%\temp.txt"
 
 ;*** Software local ***
@@ -30,18 +30,27 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\vim80-kaoriya-win64\gvim.exe" "%A_Desktop%\t
 	;The Great Suspender 用
 	F8::^+s
 	F9::^+u
+	+LButton::
+		Send, ^{LButton}
+		Sleep 200
+		Send, ^+{Tab}
+		return
 #IfWinActive
 
 #IfWinActive ahk_exe CherryPlayer.exe
 	win_title = "ahk_exe CherryPlayer.exe"
-	#Up::	WinSizeToggle( win_title, "up" )
-	#Down::	WinSizeToggle( win_title, "down" )
+	#Up::	WinSizeChange( win_title, "up" )
+	#Down::	WinSizeChange( win_title, "down" )
+#IfWinActive
+
+#IfWinActive ahk_exe EXCEL.EXE
+	F1::return
 #IfWinActive
 
 ;* ***************************************************************
 ;* Functions
 ;* ***************************************************************
-RunSuppressMultiStart( path )
+RunSuppressMultiStart( path, argument )
 {
 	IfInString, path, \
 	{
@@ -56,7 +65,7 @@ RunSuppressMultiStart( path )
 		}
 		else
 		{
-			Run % path
+			Run % path . " " . argument
 		}
 	}
 	else
@@ -66,7 +75,7 @@ RunSuppressMultiStart( path )
 	return
 }
 
-WinSizeToggle( win_title, updown )
+WinSizeChange( win_title, updown )
 {
 	WinGetActiveStats, A, WinWidth, WinHeight, WinX, WinY
 	if updown = up
