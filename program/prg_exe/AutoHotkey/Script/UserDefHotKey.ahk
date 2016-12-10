@@ -30,6 +30,7 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 	;The Great Suspender 用
 	F8::^+s
 	F9::^+u
+	;Shift＋クリックでバックグラウンドで開く
 	+LButton::
 		Send, ^{LButton}
 		Sleep 200
@@ -44,7 +45,14 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 #IfWinActive
 
 #IfWinActive ahk_exe EXCEL.EXE
+	;F1ヘルプ無効化
 	F1::return
+#IfWinActive
+
+#IfWinActive ahk_exe mpc-hc.exe
+	win_title = "ahk_exe mpc-hc.exe"
+	[::	WinSizeChange( win_title, "max" )
+	]::	WinSizeChange( win_title, "min" )
 #IfWinActive
 
 ;* ***************************************************************
@@ -75,11 +83,11 @@ RunSuppressMultiStart( path, argument )
 	return
 }
 
-WinSizeChange( win_title, updown )
+WinSizeChange( win_title, size )
 {
-	WinGetActiveStats, A, WinWidth, WinHeight, WinX, WinY
-	if updown = up
+	if size = up
 	{
+		WinGetActiveStats, A, WinWidth, WinHeight, WinX, WinY
 		if WinX = -32000
 		{
 			WinRestore, % win_title
@@ -93,8 +101,9 @@ WinSizeChange( win_title, updown )
 			WinMaximize, % win_title
 		}
 	}
-	else if updown = down
+	else if size = down
 	{
+		WinGetActiveStats, A, WinWidth, WinHeight, WinX, WinY
 		if WinX = -32000
 		{
 			WinMinimize, % win_title
@@ -107,6 +116,18 @@ WinSizeChange( win_title, updown )
 		{
 			WinMinimize, % win_title
 		}
+	}
+	else if size = max
+	{
+		WinMaximize, % win_title
+	}
+	else if size = restore
+	{
+		WinRestore, % win_title
+	}
+	else if size = min
+	{
+		WinMinimize, % win_title
 	}
 	else
 	{
