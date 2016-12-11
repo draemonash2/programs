@@ -145,9 +145,11 @@
 	set scrolloff=5										" カーソル周辺行数
 	set swapfile										" スワップファイル(.swpファイル)を作成
 	set directory=$VIM/__swapfiles						" スワップファイル(.swpファイル)の出力先を指定
-	set undofile										" アンドゥファイル(.un~ファイル)を作成
+"	set undofile										" アンドゥファイル(.un~ファイル)を作成する
+	set noundofile										" アンドゥファイル(.un~ファイル)を作成しない
 	set undodir=$VIM/__undofiles						" アンドゥファイル(.un~ファイル)の出力先を指定
-	set backup											" バックアップファイル(~ファイル)を作成
+"	set backup											" バックアップファイル(~ファイル)を作成する
+	set nobackup										" バックアップファイル(~ファイル)を作成しない
 	set backupdir=$VIM/__backupfiles					" バックアップファイル(~ファイル)の出力先を指定
 	set writebackup										" ファイルの上書きの前にバックアップを作る
 														" set writebackupを指定してもオプション 'backup' がオンでない限り、
