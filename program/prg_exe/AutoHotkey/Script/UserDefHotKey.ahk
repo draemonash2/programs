@@ -30,12 +30,10 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 	;The Great Suspender 用
 	F8::^+s
 	F9::^+u
-	;Shift＋クリックでバックグラウンドで開く
-	+LButton::
-		Send, ^{LButton}
-		Sleep 200
-		Send, ^+{Tab}
-		return
+	;Shift＋クリックで新規タブ（バックグラウンド）で開く
+	+LButton::Send, ^{LButton}
+	;Ctrl＋クリックで新規タブで開く
+	^LButton::Send, +^{LButton}
 #IfWinActive
 
 #IfWinActive ahk_exe CherryPlayer.exe
@@ -51,8 +49,8 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 
 #IfWinActive ahk_exe mpc-hc.exe
 	win_title = "ahk_exe mpc-hc.exe"
-	[::	WinSizeChange( win_title, "max" )
-	]::	WinSizeChange( win_title, "min" )
+	[::		WinSizeChange( win_title, "max" )
+	]::		WinSizeChange( win_title, "restore" )
 #IfWinActive
 
 ;* ***************************************************************
