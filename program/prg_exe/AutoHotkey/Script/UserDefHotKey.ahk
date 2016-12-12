@@ -40,6 +40,8 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 	win_title = "ahk_exe CherryPlayer.exe"
 	#Up::	WinSizeChange( win_title, "up" )
 	#Down::	WinSizeChange( win_title, "down" )
+	[::		WinSizeChange( win_title, "up" )
+	]::		WinSizeChange( win_title, "down" )
 #IfWinActive
 
 #IfWinActive ahk_exe EXCEL.EXE
@@ -49,8 +51,8 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 
 #IfWinActive ahk_exe mpc-hc.exe
 	win_title = "ahk_exe mpc-hc.exe"
-	[::		WinSizeChange( win_title, "max" )
-	]::		WinSizeChange( win_title, "restore" )
+	[::	WinSizeChange( win_title, "up" )
+	]::	WinSizeChange( win_title, "down" )
 #IfWinActive
 
 ;* ***************************************************************
