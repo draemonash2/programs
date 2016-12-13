@@ -208,10 +208,7 @@ endif
 " ==============================================================================
 " ファイルパス設定
 " ==============================================================================
-	let $CTAGS = expand( "$VIM/../ctags58j2bin/ctags.exe" )
-	let $GTAGS = expand( "$VIM/../glo627wb/bin/gtags.exe" )
-	let $HNXGREP = expand( "$VIM/../HNXgrep/HNXgrep.exe" )
-	let $MARKVIM = expand( "$VIM/_plugins_user/mark.vim/plugin/mark.vim" )
+	"ファイルパスは _vimrc にまとめて記載
 
 " ==============================================================================
 " 共通ユーザ定義関数
