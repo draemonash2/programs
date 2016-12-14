@@ -1,7 +1,8 @@
-﻿	#NoEnv							; Recommended for performance and compatibility with future AutoHotkey releases.
+﻿	#NoEnv							; 通常、値が割り当てられていない変数名を参照しようとしたとき、システムの環境変数に同名の変数がないかを調べ、
+									; もし存在すればその環境変数の値が参照される。スクリプト中に #NoEnv を記述することにより、この動作を無効化できる。
 ;	#Warn							; Enable warnings to assist with detecting common errors.
-	SendMode Input					; Recommended for new scripts due to its superior speed and reliability.
-;	SetWorkingDir %A_ScriptDir%		; Ensures a consistent starting directory.
+	SendMode Input					; WindowsAPIの SendInput関数を利用してシステムに一連の操作イベントをまとめて送り込む方式。
+;	SetWorkingDir %A_ScriptDir%		; スクリプトの作業ディレクトリを本スクリプトの格納ディレクトリに変更。
 ;	#SingleInstance force			; このスクリプトが再度呼び出されたらリロードして置き換え
 
 ;[参考URL]
