@@ -12,19 +12,20 @@
 ;		^）		Control
 ;		!）		Alt
 ;		#）		Windowsロゴキー
+;	http://ahkwiki.net/Top
 
 ;* ***************************************************************
 ;* Keys
 ;* ***************************************************************
 ;*** Global ***
-vk1Dsc07B & 1::	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\000_ToDo.txt"
-vk1Dsc07B & 2::	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
-vk1Dsc07B & 3::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
-vk1Dsc07B & 5::	Run "C:\prg_exe\Vim\gvim.exe" "%A_ScriptFullPath%"
+vk1Dsc07B & 1::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\000_ToDo.txt"
+vk1Dsc07B & 2::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
+vk1Dsc07B & 3::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_ScriptFullPath%"
+vk1Dsc07B & 5::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
 
+vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_Desktop%\temp.txt"
 vk1Dsc07B & c::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 vk1Dsc07B & f::	Run "C:\prg_exe\Everything\Everything.exe"
-vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 
 ;*** Software local ***
 #IfWinActive ahk_exe kinza.exe
@@ -35,14 +36,29 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 	+LButton::Send, ^{LButton}
 	;Ctrl＋クリックで新規タブで開く
 	^LButton::Send, +^{LButton}
+	+^v::
+		Send, ^c
+		Sleep 100
+		Send, !d
+		Sleep 100
+		Send, ^v
+		Sleep 100
+		Send, {Home}
+		Sleep 100
+		Send, ^{Right}
+		Sleep 100
+		Send, {Delete}
+		Send, {Delete}
+		Sleep 100
+		Send, {Enter}
+		return
 #IfWinActive
 
 #IfWinActive ahk_exe CherryPlayer.exe
-	win_title = "ahk_exe CherryPlayer.exe"
-	#Up::	WinSizeChange( win_title, "up" )
-	#Down::	WinSizeChange( win_title, "down" )
-	[::		WinSizeChange( win_title, "up" )
-	]::		WinSizeChange( win_title, "down" )
+	#Up::	WinSizeChange( "up",   0, 0 )
+	#Down::	WinSizeChange( "down", 0, 0 )
+	[::		WinSizeChange( "up",   0, 0 )
+	]::		WinSizeChange( "down", 0, 0 )
 #IfWinActive
 
 #IfWinActive ahk_exe EXCEL.EXE
@@ -51,9 +67,8 @@ vk1Dsc07B & v::	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 #IfWinActive
 
 #IfWinActive ahk_exe mpc-hc.exe
-	win_title = "ahk_exe mpc-hc.exe"
-	[::	WinSizeChange( win_title, "up" )
-	]::	WinSizeChange( win_title, "down" )
+	[::		WinSizeChange( "up",   -9, -9 )
+	]::		WinSizeChange( "down", -9, -9 )
 #IfWinActive
 
 ;* ***************************************************************
@@ -84,55 +99,47 @@ RunSuppressMultiStart( path, argument )
 	return
 }
 
-WinSizeChange( win_title, size )
+WinSizeChange( size, maxwinx, maxwiny )
 {
 	if size = up
 	{
 		WinGetActiveStats, A, WinWidth, WinHeight, WinX, WinY
-		if WinX = -32000
+		if ( WinX = maxwinx && WinY = maxwiny )
 		{
-			WinRestore, % win_title
-		}
-		else if WinX = 0
-		{
-			WinMaximize, % win_title
+			WinMaximize
 		}
 		else
 		{
-			WinMaximize, % win_title
+			WinMaximize
 		}
 	}
 	else if size = down
 	{
 		WinGetActiveStats, A, WinWidth, WinHeight, WinX, WinY
-		if WinX = -32000
+		if ( WinX = maxwinx && WinY = maxwiny )
 		{
-			WinMinimize, % win_title
-		}
-		else if WinX = 0
-		{
-			WinRestore, % win_title
+			WinRestore
 		}
 		else
 		{
-			WinMinimize, % win_title
+			WinMinimize
 		}
 	}
 	else if size = max
 	{
-		WinMaximize, % win_title
+		WinMaximize
 	}
 	else if size = restore
 	{
-		WinRestore, % win_title
+		WinRestore
 	}
 	else if size = min
 	{
-		WinMinimize, % win_title
+		WinMinimize
 	}
 	else
 	{
-		MsgBox "[error] please select up or down."
+		MsgBox "[error] please select up / down / max / restore / min."
 	}
 	return
 }
