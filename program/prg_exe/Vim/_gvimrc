@@ -605,12 +605,17 @@ endif
 " ==============================================================================
 " タブ機能無効化
 " ==============================================================================
-	autocmd! BufNewFile,BufRead * call AutoTabPageOnly()
+	autocmd! BufNewFile,BufRead,BufEnter,BufNew,BufWinEnter * call AutoTabPageOnly()
+	let g:TabPageOnlyEnable = 1
 	function! AutoTabPageOnly()
-		if tabpagenr() == 1
-			"do nothing
+		if g:TabPageOnlyEnable == 1
+			if tabpagenr() == 1
+				"do nothing
+			else
+				execute ("tabonly")
+			endif
 		else
-			execute ("tabonly")
+			"do nothing
 		endif
 	endfunction
 
@@ -691,6 +696,8 @@ endif
 	let g:BufferListHideBufferList = 0
 	let g:BufferListExpandBufName = 0
 	let g:BufferListPreview = 0
+	let g:BufferListTailWidth = 9
+	let g:BufferListShortenChar = "..."
 	hi BufferSelected guifg=black guibg=#9ad000 gui=bold
 "	hi BufferNormal guifg=white
 

@@ -51,6 +51,12 @@ endif
 if !exists('g:BufferListPreview')
   let g:BufferListPreview = 1
 endif
+if !exists('g:BufferListTailWidth')
+  let g:BufferListTailWidth = 6
+endif
+if !exists('g:BufferListShortenChar')
+  let g:BufferListShortenChar = "~"
+endif
 "Åöcustom add <END>
 
 " toggled the buffer list on/off
@@ -81,8 +87,6 @@ function! BufferList()
       " adapt width and/or buffer name
       "Åö custom add <TOP>
       let l:lPreWordLen = 4
-      let l:lTailWidth = 6
-      let l:sShortenChar = "~"
       "Åö custom add <END>
       if ( g:BufferListWidth - l:lPreWordLen ) < strlen(l:bufname) "Åö custom mod
         "Åöcustom del <TOP>
@@ -97,17 +101,17 @@ function! BufferList()
           else
             let l:lBufNameMaxWidth = g:BufferListWidth - l:lPreWordLen
             if len( l:bufname ) > l:lBufNameMaxWidth
-              let g:sTailWord = strpart( l:bufname, len( l:bufname ) - l:lTailWidth, l:lTailWidth )
-              let g:sNoseWord = strpart( l:bufname, 0, l:lBufNameMaxWidth - len( l:sShortenChar ) - l:lTailWidth )
-              let l:bufname = g:sNoseWord . l:sShortenChar . g:sTailWord
+              let l:sTailWord = strpart( l:bufname, len( l:bufname ) - g:BufferListTailWidth, g:BufferListTailWidth )
+              let l:sNoseWord = strpart( l:bufname, 0, l:lBufNameMaxWidth - len( g:BufferListShortenChar ) - g:BufferListTailWidth )
+              let l:bufname = l:sNoseWord . g:BufferListShortenChar . l:sTailWord
             else
               "do nothing
             endif
             let g:debug = ""
             let g:debug = g:debug . "g:BufferListWidth : " . g:BufferListWidth . ", "
             let g:debug = g:debug . "l:lBufNameMaxWidth : " . l:lBufNameMaxWidth . ", "
-            let g:debug = g:debug . "g:sTailWord : " . g:sTailWord . ", "
-            let g:debug = g:debug . "g:sNoseWord : " . g:sNoseWord . ", "
+            let g:debug = g:debug . "l:sTailWord : " . l:sTailWord . ", "
+            let g:debug = g:debug . "l:sNoseWord : " . l:sNoseWord . ", "
             let g:debug = g:debug . "l:bufname : " . l:bufname . ", "
           endif
           "Åö custom add <END>

@@ -62,8 +62,9 @@
 " editexisting-ext.vim 用設定
 " (他のVimで開いているファイルを開こうとしたときポップアップさせる)
 " [参照] http://vimwiki.net/?tips%2F94
+" [参照] https://github.com/koron/vim-kaoriya/issues/9
 " =======================================
-	runtime macros/editexisting.vim
+"	packadd! editexisting
 
 " =======================================
 " テキストファイルの自動改行抑止設定
