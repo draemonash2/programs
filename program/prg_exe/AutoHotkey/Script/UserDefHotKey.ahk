@@ -37,7 +37,7 @@
 	+LButton::Send, ^{LButton}
 	;Ctrl＋クリックで新規タブで開く
 	^LButton::Send, +^{LButton}
-	+^o::
+	+^i::
 		Send, ^c
 		Sleep 100
 		Send, !d
