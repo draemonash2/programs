@@ -20,13 +20,12 @@
 ;* ***************************************************************
 ;*** Global ***
 ^+1::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\000_ToDo.txt"
-^+2::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
+^+2::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
 ^+3::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_ScriptFullPath%"
-^+5::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
+^+4::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
 
 ^+v::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_Desktop%\temp.txt"
 ^+m::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
-^+f::	Run "C:\prg_exe\Everything\Everything.exe"
 
 ;*** Software local ***
 #IfWinActive ahk_exe kinza.exe
