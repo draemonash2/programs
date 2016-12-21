@@ -2,10 +2,6 @@
 " ユーザー定義パス
 " =======================================
 	let $USERPLUGINS = $VIM . '/_plugins_user'
-	let $CTAGS = expand( "$VIM/../Ctags/ctags.exe" )
-	let $GTAGS = expand( "$VIM/../Gtags/bin/gtags.exe" )
-	let $HNXGREP = expand( "$VIM/../HNXgrep/HNXgrep.exe" )
-	let $MARKVIM = expand( "$VIM/_plugins_user/mark.vim/plugin/mark.vim" )
 	
 	function! CheckPathExists( sPath )
 		if filereadable( a:sPath )

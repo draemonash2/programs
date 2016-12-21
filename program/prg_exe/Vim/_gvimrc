@@ -20,15 +20,15 @@
 	noremap		<silent>			#			#nzz										" 検索結果を画面中央に
 	noremap		<silent>			K			g*zz										" 検索結果を画面中央に
 	noremap		<silent>			g#			g#zz										" 検索結果を画面中央に
-	noremap		<silent>			x			"_x											" １文字削除（切り取りなし）
+	noremap		<silent>			x			"_x											" 削除（切り取りなし）
+	noremap		<silent>			H			0											" カーソルを先頭に移動
+	noremap		<silent>			L			$											" カーソルを末尾に移動
 	map			<silent>			<c-m>		oa<esc>x									" インデントを維持して改行
 	noremap							/			/\v
 																							" very magic で検索
 "	noremap							/			/\V
 																							" very nomagic で検索
 	noremap							ciy			ciw<c-r>0<esc>b								" 単語コピー
-	noremap		<silent>			<s-h>		^											" カーソルを先頭に移動
-	noremap		<silent>			<s-l>		$											" カーソルを末尾に移動
 	noremap		<silent>			<tab>		a<tab><esc>									" タブ挿入
 	noremap		<silent>			<space>		<nop>										" スペースキー無効
 	noremap		<silent>			<c-j>		5jzz										" カーソル移動＋画面移動（下）
@@ -208,7 +208,10 @@ endif
 " ==============================================================================
 " ファイルパス設定
 " ==============================================================================
-	"ファイルパスは _vimrc にまとめて記載
+	let $CTAGS = expand( "$VIM/../Ctags/ctags.exe" )
+	let $GTAGS = expand( "$VIM/../Gtags/bin/gtags.exe" )
+	let $HNXGREP = expand( "$VIM/../HNXgrep/HNXgrep.exe" )
+	let $MARKVIM = expand( "$VIM/_plugins_user/mark.vim/plugin/mark.vim" )
 
 " ==============================================================================
 " 共通ユーザ定義関数
@@ -672,12 +675,18 @@ endif
 "	endfunction
 
 " ==============================================================================
-" 現在ファイル削除
+" 現在ファイル削除コマンド
 " ==============================================================================
 	command! Delme call DeleteCurFile()
 	function! DeleteCurFile()
 		execute "!del " . GetCurFilePath( "\\" )
 	endfunction
+
+" ==============================================================================
+" ウィンドウサイズ最大化
+" [参考] http://d.hatena.ne.jp/akishin999/20090509/1241855699
+" ==============================================================================
+	au GUIEnter * simalt ~x
 
 " **************************************************************************************************
 " *****										プラグイン設定									   *****
@@ -688,6 +697,7 @@ endif
 	let Tlist_Show_One_File = 1		" アクティブバッファのみタグ表示
 	let Tlist_Use_Right_Window = 1	" 右ウィンドウ表示
 	let Tlist_Exit_OnlyWindow = 1	" taglistのウインドウだけならVimを閉じる
+	let Tlist_Display_Prototype = 0
 
 " ==============================================================================
 " bufferlist 設定
