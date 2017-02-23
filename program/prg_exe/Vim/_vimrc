@@ -84,23 +84,22 @@
 " [参考] http://itchyny.hatenablog.com/entry/20130917/1379369171
 " ==============================================================================
 	let g:lightline = {}
-"	let g:lightline = {
-"					\	'colorscheme': 'jellybeans',
-"					\	}
+"	let g:lightline.colorscheme = 'jellybeans'
 	let g:lightline.enable = {
 					\		'statusline': 1,
 					\		'tabline': 0
 					\	}
+	let g:lightline.separator = { 'left': '', 'right': '' }
+	let g:lightline.subseparator = { 'left': '', 'right': '|' }
 	let g:lightline.active = {
 					\		'left': [
 					\			[ 'mode', 'paste' ],
-					\			[ 'filename' ],
-					\			[ 'readonly', 'modified' ],
-					\			[ 'filepath' ]
+					\			[ 'bufnum', 'filename' ],
+					\			[ 'readonly', 'modified' ]
 					\		],
 					\		'right': [
-					\			[ 'lineinfo', 'percent' ],
 					\			[ 'rangediff' ],
+					\			[ 'lineinfo', 'percent' ],
 					\			[ 'fileformat', 'fileencoding', 'filetype' ]
 					\		]
 					\	}
@@ -124,11 +123,7 @@
 	function! s:CalcSelRngStrNum()
 		let l:sCurMode = mode()
 		let l:sCurRow = line('.')
-		if l:sCurMode ==# "v" || l:sCurMode ==# "V"
-			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
-			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
-			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
-		elseif l:sCurMode ==# "\<C-v>"
+		if l:sCurMode ==# "v" || l:sCurMode ==# "V" || l:sCurMode ==# "\<C-v>"
 			let l:sCurClm = virtcol('.')
 			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
 			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
@@ -136,23 +131,27 @@
 			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
 			let s:sStrtClm = l:sCurClm
 			let s:sStrtRow = l:sCurRow
-			let s:sDiffClm = 1
-			let s:sDiffRow = 1
+			let s:sDiffClm = 0
+			let s:sDiffRow = 0
 		else
 			"Do Nothing
 		endif
 	endfunction
 	
 	function! GetSelRngDiff()
-		let l:sCurMode = mode()
-		if l:sCurMode ==# "v" || l:sCurMode ==# "\<C-v>"
-			return "r" . s:sDiffRow . " c" . s:sDiffClm
-		elseif l:sCurMode ==# "V"
-			return "r" . s:sDiffRow
-		elseif l:sCurMode ==# "n"
+		if s:sDiffClm == 0 && s:sDiffRow == 0
 			return "-"
 		else
-			return "error"
+			let l:sCurMode = mode()
+			if l:sCurMode ==# "v" || l:sCurMode ==# "\<C-v>"
+				return "h" . s:sDiffRow . " w" . s:sDiffClm
+			elseif l:sCurMode ==# "V"
+				return "h" . s:sDiffRow
+			elseif l:sCurMode ==# "n"
+				return "-"
+			else
+				return "error"
+			endif
 		endif
 	endfunction
 
