@@ -19,16 +19,28 @@
 ;* Keys
 ;* ***************************************************************
 ;*** Global ***
-^+1::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\000_ToDo.txt"
-^+2::	Run "%A_MyDocuments%\Dropbox\300_Mny_AccountsBook.xlsm"
-^+3::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_ScriptFullPath%"
-^+4::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\920_Music.txt" "%A_MyDocuments%\Dropbox\999_Other.txt"
+^+1::
+^+\::
+	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\000_ToDo.txt"
+	return
+^+2::
+^+^::
+	Run "%A_MyDocuments%\Dropbox\300_【金額】家計簿.xlsm"
+	return
+^+3::
+^+-::
+	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_ScriptFullPath%"
+	return
+^+4::
+^+0::
+	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\920_【音楽】.txt" "%A_MyDocuments%\Dropbox\999_その他.txt"
+	return
 
 ^+v::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_Desktop%\temp.txt"
 ^+m::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 
 ;*** Software local ***
-#IfWinActive ahk_exe kinza.exe
+#IfWINaCTIVE AHK_Exe kinza.exe
 	;The Great Suspender 用
 	F8::^+s
 	F9::^+u
@@ -67,8 +79,8 @@
 #IfWinActive
 
 #IfWinActive ahk_exe mpc-hc.exe
-	[::		WinSizeChange( "up",   -9, -9 )
-	]::		WinSizeChange( "down", -9, -9 )
+	[::		WinSizeChange( "max", -9, -9 )
+	]::		WinSizeChange( "min", -9, -9 )
 #IfWinActive
 
 ;* ***************************************************************
