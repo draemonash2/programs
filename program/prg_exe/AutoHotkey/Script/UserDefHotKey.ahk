@@ -21,23 +21,18 @@
 ;*** Global ***
 ^+1::
 ^+\::
-	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\000_ToDo.txt"
+	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\000_ToDo.txt" "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\200_【音楽】ストック.txt" "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\999_その他.txt" "%A_ScriptFullPath%"
 	return
 ^+2::
 ^+^::
-	Run "%A_MyDocuments%\Dropbox\300_【金額】家計簿.xlsm"
+	Run "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\300_【金額】家計簿.xlsm"
 	return
-^+3::
-^+-::
-	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_ScriptFullPath%"
+^+v::
+	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
 	return
-^+4::
-^+0::
-	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_MyDocuments%\Dropbox\920_【音楽】.txt" "%A_MyDocuments%\Dropbox\999_その他.txt"
+^+m::
+	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 	return
-
-^+v::	Run "C:\prg_exe\Vim\gvim.exe" --remote-tab-silent "%A_Desktop%\temp.txt"
-^+m::	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 
 ;*** Software local ***
 #IfWINaCTIVE AHK_Exe kinza.exe
@@ -64,13 +59,6 @@
 		Sleep 100
 		Send, {Enter}
 		return
-#IfWinActive
-
-#IfWinActive ahk_exe CherryPlayer.exe
-	#Up::	WinSizeChange( "up",   0, 0 )
-	#Down::	WinSizeChange( "down", 0, 0 )
-	[::		WinSizeChange( "up",   0, 0 )
-	]::		WinSizeChange( "down", 0, 0 )
 #IfWinActive
 
 #IfWinActive ahk_exe EXCEL.EXE
