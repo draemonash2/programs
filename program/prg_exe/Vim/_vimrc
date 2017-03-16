@@ -60,7 +60,7 @@
 " [参照] http://vimwiki.net/?tips%2F94
 " [参照] https://github.com/koron/vim-kaoriya/issues/9
 " =======================================
-"	packadd! editexisting
+	packadd! editexisting
 
 " =======================================
 " テキストファイルの自動改行抑止設定
@@ -76,7 +76,7 @@
 " GVim 起動時は同じウィンドウにまとめて起動する。
 " [参考] http://tyru.hatenablog.com/entry/20130430/vim_resident
 " =======================================
-	call singleton#enable()
+"	call singleton#enable()
 
 " ==============================================================================
 " lightline 設定
