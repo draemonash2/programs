@@ -21,14 +21,17 @@
 ;*** Global ***
 ^+1::
 ^+\::
-	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\000_ToDo.txt" "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\200_【音楽】ストック.txt" "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\999_その他.txt" "%A_ScriptFullPath%"
+	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\100_ToDo.txt" "%A_MyDocuments%\Dropbox\100_Documents\132_【生活】＜趣味＞音楽\音楽ストック.txt" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\999_その他.txt" "%A_ScriptFullPath%"
 	return
 ^+2::
 ^+^::
-	Run "%A_MyDocuments%\Dropbox\000_【TEXT】Basic\300_【金額】家計簿.xlsm"
+	Run "%A_MyDocuments%\Dropbox\100_Documents\141_【生活】＜衣食住＞家計\100_家計簿.xlsm"
 	return
 ^+v::
 	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
+	return
+^+e::
+	Run "C:\codes\vbs\500_CreateExcelFile.vbs"
 	return
 ^+m::
 	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
@@ -66,9 +69,8 @@
 	F1::return
 #IfWinActive
 
-#IfWinActive ahk_exe mpc-hc.exe
-	[::		WinSizeChange( "max", -9, -9 )
-	]::		WinSizeChange( "min", -9, -9 )
+#IfWinActive ahk_class MPC-BE
+	]::Send, {Space}
 #IfWinActive
 
 ;* ***************************************************************
