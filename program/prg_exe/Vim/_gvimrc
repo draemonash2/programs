@@ -143,7 +143,8 @@
 	set title											" タイトルを表示
 	set fileformat=dos									" 改行をWindowsの形式に変更。
 	set scrolloff=5										" カーソル周辺行数
-	set swapfile										" スワップファイル(.swpファイル)を作成
+"	set swapfile										" スワップファイル(.swpファイル)を作成する
+	set noswapfile										" スワップファイル(.swpファイル)を作成しない
 	set directory=$VIM/__swapfiles						" スワップファイル(.swpファイル)の出力先を指定
 "	set undofile										" アンドゥファイル(.un~ファイル)を作成する
 	set noundofile										" アンドゥファイル(.un~ファイル)を作成しない
