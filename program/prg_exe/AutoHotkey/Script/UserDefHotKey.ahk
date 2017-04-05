@@ -21,24 +21,24 @@
 ;*** Global ***
 ^+1::
 ^+\::
-	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\100_ToDo.txt" "%A_MyDocuments%\Dropbox\100_Documents\132_【生活】＜趣味＞音楽\音楽ストック.txt" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\999_その他.txt" "%A_ScriptFullPath%"
+	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\100_ToDo.txt" "%A_MyDocuments%\Dropbox\100_Documents\132_【生活】＜趣味＞音楽\音楽ストック.txt" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\999_その他.txt" "%A_ScriptFullPath%" -c "call BufferList()"
 	return
 ^+2::
 ^+^::
 	Run "%A_MyDocuments%\Dropbox\100_Documents\141_【生活】＜衣食住＞家計\100_家計簿.xlsm"
 	return
-^+v::
-	Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
-	return
-^+e::
-	Run "C:\codes\vbs\500_CreateExcelFile.vbs"
-	return
-^+m::
-	RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
-	return
+^+e::Run "C:\codes\vbs\500_CreateExcelFile.vbs"
+^+v::Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
+^+r::Run "C:\prg_exe\Rapture\rapture.exe"
+^+m::RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 
 ;*** Software local ***
-#IfWINaCTIVE AHK_Exe kinza.exe
+#IfWinActive ahk_exe EXCEL.EXE
+	;F1ヘルプ無効化
+	F1::return
+#IfWinActive
+
+#IfWinActive AHK_Exe kinza.exe
 	;The Great Suspender 用
 	F8::^+s
 	F9::^+u
@@ -62,11 +62,6 @@
 		Sleep 100
 		Send, {Enter}
 		return
-#IfWinActive
-
-#IfWinActive ahk_exe EXCEL.EXE
-	;F1ヘルプ無効化
-	F1::return
 #IfWinActive
 
 #IfWinActive ahk_class MPC-BE
