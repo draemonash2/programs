@@ -46,5 +46,5 @@ ElseIf cSelected.Count = 1 Then
         MsgBox "以下を比較対象として選択します。" & vbNewLine & vbNewLine & sDiffPath1
     End If
 Else
-    'Do Nothing
+    MsgBox "ファイルが選択されていません", vbYes, PROG_NAME
 End If
