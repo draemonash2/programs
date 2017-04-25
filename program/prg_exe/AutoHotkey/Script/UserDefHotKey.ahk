@@ -19,18 +19,13 @@
 ;* Keys
 ;* ***************************************************************
 ;*** Global ***
-^+1::
-^+\::
-	Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\100_ToDo.txt" "%A_MyDocuments%\Dropbox\100_Documents\132_【生活】＜趣味＞音楽\音楽ストック.txt" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\999_その他.txt" "%A_ScriptFullPath%" -c "call BufferList()"
-	return
-^+2::
-^+^::
-	Run "%A_MyDocuments%\Dropbox\100_Documents\141_【生活】＜衣食住＞家計\100_家計簿.xlsm"
-	return
-^+e::Run "C:\codes\vbs\500_CreateExcelFile.vbs"
-^+v::Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
-^+r::Run "C:\prg_exe\Rapture\rapture.exe"
-^+m::RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
+#1::Run "C:\prg_exe\Vim\gvim.exe" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\100_ToDo.txt" "%A_MyDocuments%\Dropbox\100_Documents\132_【生活】＜趣味＞音楽\音楽ストック.txt" "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\999_その他.txt" -c "call BufferList()"
+#2::Run "%A_MyDocuments%\Dropbox\100_Documents\141_【生活】＜衣食住＞家計\100_家計簿.xlsm"
+#\::Run "C:\prg_exe\Vim\gvim.exe" "%A_ScriptFullPath%"
+#F1::Run "C:\prg_exe\Vim\gvim.exe" "%A_Desktop%\temp.txt"
+#F2::Run "C:\codes\vbs\500_CreateExcelFile.vbs" "%A_Desktop%\temp.xlsm"
+#F3::Run "C:\prg_exe\Rapture\rapture.exe"
+#F4::RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 
 ;*** Software local ***
 #IfWinActive ahk_exe EXCEL.EXE
