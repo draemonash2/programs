@@ -1,8 +1,8 @@
 " =======================================
-" ユーザー定義パス
+" ファイルパス存在チェック
+" <usage>
+"   call CheckPathExists( $CTAGS )
 " =======================================
-	let $USERPLUGINS = $VIM . '/_plugins_user'
-	
 	function! CheckPathExists( sPath )
 		if filereadable( a:sPath )
 			echo "exists!"
@@ -10,15 +10,24 @@
 			echo "not exists!"
 		endif
 	endfunction
-	"<usage>
-	"  call CheckPathExists( $CTAGS )
 
 " =======================================
-" ユーザー定義フォルダを runtimepath に追加
+" ユーザー定義プラグインフォルダを runtimepath に追加
 " =======================================
+	let $USERPLUGINS = $VIM . '/_plugins_user'
 	for s:path in split(glob( $USERPLUGINS . '/*'), '\n')
 		if s:path !~# '\~$' && isdirectory(s:path)
 			let &runtimepath = &runtimepath.','.s:path
+		endif
+	endfor
+
+" =======================================
+" ユーザー定義エクステンションを path に追加
+" =======================================
+	let $EXTENTION = $VIM . '/_extention'
+	for s:path in split(glob( $EXTENTION . '/*'), '\n')
+		if s:path !~# '\~$' && isdirectory(s:path)
+			let $PATH .= ';' . s:path
 		endif
 	endfor
 

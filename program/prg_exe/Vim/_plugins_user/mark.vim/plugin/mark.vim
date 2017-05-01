@@ -121,24 +121,26 @@ set cpo&vim
 
 " Default bindings
 
+"š custom mod <TOP>
 if !hasmapto('<Plug>MarkSet', 'n')
-  nmap <unique> <silent> <leader>m <Plug>MarkSet
+  nmap <unique> <silent> mm <Plug>MarkSet
 endif
 if !hasmapto('<Plug>MarkSet', 'v')
-  vmap <unique> <silent> <leader>m <Plug>MarkSet
+  vmap <unique> <silent> mm <Plug>MarkSet
 endif
 if !hasmapto('<Plug>MarkRegex', 'n')
-  nmap <unique> <silent> <leader>r <Plug>MarkRegex
+  nmap <unique> <silent> mr <Plug>MarkRegex
 endif
 if !hasmapto('<Plug>MarkRegex', 'v')
-  vmap <unique> <silent> <leader>r <Plug>MarkRegex
+  vmap <unique> <silent> mr <Plug>MarkRegex
 endif
 if !hasmapto('<Plug>MarkClear', 'n')
-  nmap <unique> <silent> <leader>n <Plug>MarkClear
+  nmap <unique> <silent> mn <Plug>MarkClear
 endif
-"š custom add <TOP>
+"š custom mod <END>
+"š custom add <END>
 if !hasmapto('<Plug>MarkAllClear', 'n')
-  nmap <unique> <silent> <leader>b <Plug>MarkAllClear
+  nmap <unique> <silent> mc <Plug>MarkAllClear
 endif
 "š custom add <END>
 

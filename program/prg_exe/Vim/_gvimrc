@@ -115,8 +115,8 @@
 	set guioptions+=M									" $VIMRUNTIME/menu.vim を読み込まない
 	set guioptions-=T									" ツールバーを非表示
 "	set guioptions+=a									" ビジュアルモードで選択している箇所をクリップボードにコピー
-	set guioptions+=rl									" 縦スクロールバー表示
-"	set guioptions+=b									" 横スクロールバー表示
+	set guioptions+=r									" 縦スクロールバー表示
+	set guioptions+=b									" 横スクロールバー表示
 	set guioptions-=e									" gVimでもテキストベースのタブページを使う
 	set number											" 行番号表示
 	set foldcolumn=3									" 折り畳み行のネスト表示
@@ -410,7 +410,7 @@ endif
 " Grep の設定
 " ==============================================================================
 	" :Gc <file_type> ... <word>
-	nnoremap <expr> gcr ":Gc " . expand('<cword>')
+	nnoremap <expr> gr ":Gc " . expand('<cword>')
 	command! -nargs=+ Gc call s:Grep_Code(<f-args>)
 	function! s:Grep_Code(...)
 		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
@@ -423,16 +423,6 @@ endif
 			execute "Grep -r ". a:000[(a:0 - 1)] . " " . l:sRootDirPath . "/**"
 		endif
 	endfunction
-	
-	let QFixWin_EnableMode = 1		" QuickFixウィンドウでもプレビューや絞り込みを有効化
-	let QFix_UseLocationList = 0	" QFixHowm/QFixGrepの結果表示にロケーションリストを使用する/しない
-	let QFix_PreviewHeight = 12
-"	set shellslash					" Windowsの場合は、shellslash を設定してやると、パスの表記が簡単になります。ex) let MyGrep_ExcludeReg = '/CVS/'
-	let MyGrep_ExcludeReg = '[~#]$\|\.bak$\|\.o$\|\.obj$\|\.exe$\|[/\\]tags$\|^tags$'
-"	let MyGrep_Encoding = 'cp932'	"cp932を扱えないGNU grepの場合
-									"Windowsでcp932を扱えないGNU grepを使用する場合、以下の様に設定します。
-	let QFix_CopenCmd = 'botright'	" Quickfixウィンドウを最も下側に表示
-	set winwidth=60					" アクティブウィンドウの横幅指定
 
 " ==============================================================================
 " HNXGrep で Grep する
@@ -689,6 +679,29 @@ endif
 " ==============================================================================
 	au GUIEnter * simalt ~x
 
+" ==============================================================================
+" 改行コード自動置換
+" ==============================================================================
+	let g:AutoRepNewLineCodeEnable = 0
+	let g:AutoRepNewLineCodeType = 2 "0:Lf(unix)、1:Cr(mac)、Other:CrLf(dos)
+	let g:AutoRepNewLineCodeExt = '*.c,*.h'
+	
+	if g:AutoRepNewLineCodeEnable == 1
+		autocmd BufWinLeave *.c,*.h call AutoRepNewLineCode()
+	"	execute 'autocmd savewindowparam vimleave * call s:savewindowparam("'.s:infofile.'")'
+	"	execute 'autocmd! BufWinLeave ' . g:AutoRepNewLineCodeExt ' call AutoRepNewLineCode()'
+	endif
+	function! AutoRepNewLineCode()
+		if g:AutoRepNewLineCodeType == 0
+			set fileformat=unix
+		elseif g:AutoRepNewLineCodeType == 1
+			set fileformat=mac
+		else
+			set fileformat=dos
+		endif
+		execute 'w'
+	endfunction
+
 " **************************************************************************************************
 " *****										プラグイン設定									   *****
 " **************************************************************************************************
@@ -738,4 +751,18 @@ endif
 " [参照] http://nanasi.jp/articles/vim/mark_vim.html
 " ==============================================================================
 	execute 'source ' . $MARKVIM
+
+" ==============================================================================
+" qfixgrep 設定
+" [参照] http://vim-users.jp/2009/09/hack77/
+" ==============================================================================
+	let mygrepprg = 'grep'
+	let QFixWin_EnableMode = 1		" QuickFixウィンドウでもプレビューや絞り込みを有効化
+	let QFix_UseLocationList = 0	" QFixHowm/QFixGrepの結果表示にロケーションリストを使用する/しない
+	let QFix_PreviewHeight = 12
+"	set shellslash					" Windowsの場合は、shellslash を設定してやると、パスの表記が簡単になります。ex) let MyGrep_ExcludeReg = '/CVS/'
+	let MyGrep_ExcludeReg = '[~#]$\|\.bak$\|\.o$\|\.obj$\|\.exe$\|[/\\]tags$\|^tags$'
+"	let MyGrep_Encoding = 'cp932'	"cp932を扱えないGNU grepの場合
+									"Windowsでcp932を扱えないGNU grepを使用する場合、以下の様に設定します。
+	let QFix_CopenCmd = 'botright'	" Quickfixウィンドウを最も下側に表示
 
