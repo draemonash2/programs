@@ -138,7 +138,7 @@ if !hasmapto('<Plug>MarkClear', 'n')
   nmap <unique> <silent> mn <Plug>MarkClear
 endif
 "š custom mod <END>
-"š custom add <END>
+"š custom add <TOP>
 if !hasmapto('<Plug>MarkAllClear', 'n')
   nmap <unique> <silent> mc <Plug>MarkAllClear
 endif
