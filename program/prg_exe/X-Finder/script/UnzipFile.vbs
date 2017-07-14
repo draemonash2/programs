@@ -3,12 +3,113 @@
 '<<7-Zip usage>>
 '  7z x -o<target_dir_path> <archive_file_path>
 
-'特記事項：解凍対象とする拡張子を増やしたい場合、
-'          「対象ファイル選定」内の「Select Case sFileExt」の
-'          Case 分岐を増やしてください。
+'★TODO★：ZIP ファイル以外の解凍動作確認
 
-'★TODO★：ZIP 以外も解凍できるようにする。
+'####################################################################
+'### 設定
+'####################################################################
+Dim cAcceptFileFormats
+Set cAcceptFileFormats = CreateObject("System.Collections.ArrayList")
 
+'7-Zip 16.04 解凍(展開)可能形式（/7-ZipPortable/App/7-Zip/7-zip.chm より引用）
+'                      [FileExt]    [Format]
+cAcceptFileFormats.Add "7z"       ' 7z
+cAcceptFileFormats.Add "bz2"      ' BZIP2
+cAcceptFileFormats.Add "bzip2"    ' BZIP2
+cAcceptFileFormats.Add "tbz2"     ' BZIP2
+cAcceptFileFormats.Add "tbz"      ' BZIP2
+cAcceptFileFormats.Add "gz"       ' GZIP
+cAcceptFileFormats.Add "gzip"     ' GZIP
+cAcceptFileFormats.Add "tgz"      ' GZIP
+cAcceptFileFormats.Add "tar"      ' TAR
+cAcceptFileFormats.Add "wim"      ' WIM
+cAcceptFileFormats.Add "swm"      ' WIM
+cAcceptFileFormats.Add "xz"       ' XZ
+cAcceptFileFormats.Add "txz"      ' XZ
+cAcceptFileFormats.Add "zip"      ' ZIP
+cAcceptFileFormats.Add "zipx"     ' ZIP
+cAcceptFileFormats.Add "jar"      ' ZIP
+cAcceptFileFormats.Add "xpi"      ' ZIP
+cAcceptFileFormats.Add "odt"      ' ZIP
+cAcceptFileFormats.Add "ods"      ' ZIP
+cAcceptFileFormats.Add "docx"     ' ZIP
+cAcceptFileFormats.Add "xlsx"     ' ZIP
+cAcceptFileFormats.Add "epub"     ' ZIP
+cAcceptFileFormats.Add "apm"      ' APM
+cAcceptFileFormats.Add "ar"       ' AR
+cAcceptFileFormats.Add "a"        ' AR
+cAcceptFileFormats.Add "deb"      ' AR
+cAcceptFileFormats.Add "lib"      ' AR
+cAcceptFileFormats.Add "arj"      ' ARJ
+cAcceptFileFormats.Add "cab"      ' CAB
+cAcceptFileFormats.Add "chm"      ' CHM
+cAcceptFileFormats.Add "chw"      ' CHM
+cAcceptFileFormats.Add "chi"      ' CHM
+cAcceptFileFormats.Add "chq"      ' CHM
+cAcceptFileFormats.Add "msi"      ' COMPOUND
+cAcceptFileFormats.Add "msp"      ' COMPOUND
+cAcceptFileFormats.Add "doc"      ' COMPOUND
+cAcceptFileFormats.Add "xls"      ' COMPOUND
+cAcceptFileFormats.Add "ppt"      ' COMPOUND
+cAcceptFileFormats.Add "cpio"     ' CPIO
+cAcceptFileFormats.Add "cramfs"   ' CramFS
+cAcceptFileFormats.Add "dmg"      ' DMG
+cAcceptFileFormats.Add "ext"      ' Ext
+cAcceptFileFormats.Add "ext2"     ' Ext
+cAcceptFileFormats.Add "ext3"     ' Ext
+cAcceptFileFormats.Add "ext4"     ' Ext
+cAcceptFileFormats.Add "img"      ' Ext
+cAcceptFileFormats.Add "fat"      ' FAT
+cAcceptFileFormats.Add "img"      ' FAT
+cAcceptFileFormats.Add "hfs"      ' HFS
+cAcceptFileFormats.Add "hfsx"     ' HFS
+cAcceptFileFormats.Add "hxs"      ' HXS
+cAcceptFileFormats.Add "hxi"      ' HXS
+cAcceptFileFormats.Add "hxr"      ' HXS
+cAcceptFileFormats.Add "hxq"      ' HXS
+cAcceptFileFormats.Add "hxw"      ' HXS
+cAcceptFileFormats.Add "lit"      ' HXS
+cAcceptFileFormats.Add "ihex"     ' iHEX
+cAcceptFileFormats.Add "iso"      ' ISO
+cAcceptFileFormats.Add "img"      ' ISO
+cAcceptFileFormats.Add "lzh"      ' LZH
+cAcceptFileFormats.Add "lha"      ' LZH
+cAcceptFileFormats.Add "lzma"     ' LZMA
+cAcceptFileFormats.Add "mbr"      ' MBR
+cAcceptFileFormats.Add "mslz"     ' MsLZ
+cAcceptFileFormats.Add "mub"      ' Mub
+cAcceptFileFormats.Add "nsis"     ' NSIS
+cAcceptFileFormats.Add "ntfs"     ' NTFS
+cAcceptFileFormats.Add "img"      ' NTFS
+cAcceptFileFormats.Add "mbr"      ' MBR
+cAcceptFileFormats.Add "rar"      ' RAR
+cAcceptFileFormats.Add "r00"      ' RAR
+cAcceptFileFormats.Add "rpm"      ' RPM
+cAcceptFileFormats.Add "ppmd"     ' PPMD
+cAcceptFileFormats.Add "qcow"     ' QCOW2
+cAcceptFileFormats.Add "qcow2"    ' QCOW2
+cAcceptFileFormats.Add "qcow2c"   ' QCOW2
+cAcceptFileFormats.Add "001"      ' SPLIT
+cAcceptFileFormats.Add "002"      ' SPLIT
+cAcceptFileFormats.Add "squashfs" ' SquashFS
+cAcceptFileFormats.Add "udf"      ' UDF
+cAcceptFileFormats.Add "iso"      ' UDF
+cAcceptFileFormats.Add "img"      ' UDF
+cAcceptFileFormats.Add "scap"     ' UEFIc
+cAcceptFileFormats.Add "uefif"    ' UEFIs
+cAcceptFileFormats.Add "vdi"      ' VDI
+cAcceptFileFormats.Add "vhd"      ' VHD
+cAcceptFileFormats.Add "vmdk"     ' VMDK
+cAcceptFileFormats.Add "wim"      ' WIM
+cAcceptFileFormats.Add "esd"      ' WIM
+cAcceptFileFormats.Add "xar"      ' XAR
+cAcceptFileFormats.Add "pkg"      ' XAR
+cAcceptFileFormats.Add "z"        ' Z
+cAcceptFileFormats.Add "taz"      ' Z
+
+'####################################################################
+'### 本処理
+'####################################################################
 Const PROG_NAME = "7-Zip で解凍"
 
 Dim sExePath
@@ -17,6 +118,7 @@ Dim cSelectedPaths
 Dim bIsContinue
 bIsContinue = True
 
+'*** 選択ファイル取得 ***
 If bIsContinue = True Then
     If PRODUCTION_ENVIRONMENT = 0 Then
         MsgBox "デバッグモードです。"
@@ -67,10 +169,16 @@ If bIsContinue = True Then
             sFileExt = objFSO.GetExtensionName( sSelectedPath )
             
             Dim bIsTrgtFile
-            Select Case sFileExt
-                Case "zip": bIsTrgtFile = True
-                Case Else: bIsTrgtFile = False
-            End Select
+            bIsTrgtFile = False
+            Dim sAcceptFileFormat
+            For Each sAcceptFileFormat In cAcceptFileFormats
+                If sAcceptFileFormat = sFileExt Then
+                    bIsTrgtFile = True
+                    Exit For
+                Else
+                    'Do Nothing
+                End If
+            Next
             If bIsTrgtFile = True Then
                 cTrgtPaths.Add sSelectedPath
             Else
@@ -109,11 +217,18 @@ If bIsContinue = True Then
     Dim sTrgtPathsStr
     sTrgtPathsStr = ""
     For Each sTrgtPath In cTrgtPaths
-        sTrgtPathsStr = sTrgtPathsStr & vbNewLine & sTrgtPath
+        If sTrgtPathsStr = "" Then
+            sTrgtPathsStr = sTrgtPath
+        Else
+            sTrgtPathsStr = sTrgtPathsStr & vbNewLine & sTrgtPath
+        End If
     Next
     Dim lAnswer
     lAnswer = MsgBox ( _
-                    "以下を【解凍】して、選択ファイルと同じフォルダに格納します。よろしいですか？" & vbNewLine & _
+                    "以下を【解凍】して、選択ファイルと同じフォルダに格納します。" & vbNewLine & _
+                    "よろしいですか？" & vbNewLine & _
+                    vbNewLine & _
+                    "<<対象ファイルパス>>" & vbNewLine & _
                     sTrgtPathsStr, _
                     vbYesNo, _
                     PROG_NAME _

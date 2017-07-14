@@ -3,9 +3,46 @@
 '<<7-Zip usage>>
 '  7z a <zip_file_path> <target_dir_path> -p<password>
 
-'★TODO★：ZIP 以外も圧縮できるようにする。
+'★TODO★：ZIP ファイル以外の圧縮動作確認
 
-Const PROG_NAME = "7-Zip でパスワード圧縮 (zip)"
+'####################################################################
+'### 設定
+'####################################################################
+Dim cAcceptFileFormats
+Set cAcceptFileFormats = CreateObject("System.Collections.ArrayList")
+
+'7-Zip 16.04 圧縮可能形式（/7-ZipPortable/App/7-Zip/7-zip.chm より引用）
+'                      [FileExt]    [Format]
+cAcceptFileFormats.Add "7z"       ' 7z
+cAcceptFileFormats.Add "bz2"      ' BZIP2
+cAcceptFileFormats.Add "bzip2"    ' BZIP2
+cAcceptFileFormats.Add "tbz2"     ' BZIP2
+cAcceptFileFormats.Add "tbz"      ' BZIP2
+cAcceptFileFormats.Add "gz"       ' GZIP
+cAcceptFileFormats.Add "gzip"     ' GZIP
+cAcceptFileFormats.Add "tgz"      ' GZIP
+cAcceptFileFormats.Add "tar"      ' TAR
+cAcceptFileFormats.Add "wim"      ' WIM
+cAcceptFileFormats.Add "swm"      ' WIM
+cAcceptFileFormats.Add "xz"       ' XZ
+cAcceptFileFormats.Add "txz"      ' XZ
+cAcceptFileFormats.Add "zip"      ' ZIP
+cAcceptFileFormats.Add "zipx"     ' ZIP
+cAcceptFileFormats.Add "jar"      ' ZIP
+cAcceptFileFormats.Add "xpi"      ' ZIP
+cAcceptFileFormats.Add "odt"      ' ZIP
+cAcceptFileFormats.Add "ods"      ' ZIP
+cAcceptFileFormats.Add "docx"     ' ZIP
+cAcceptFileFormats.Add "xlsx"     ' ZIP
+cAcceptFileFormats.Add "epub"     ' ZIP
+Const INITIAL_FILE_EXT = "zip"
+
+Const HIDE_PASSWORD = True
+
+'####################################################################
+'### 本処理
+'####################################################################
+Const PROG_NAME = "7-Zip でパスワード圧縮"
 
 Dim sExePath
 Dim cSelectedPaths
@@ -13,6 +50,7 @@ Dim cSelectedPaths
 Dim bIsContinue
 bIsContinue = True
 
+'*** 選択ファイル取得 ***
 If bIsContinue = True Then
     If PRODUCTION_ENVIRONMENT = 0 Then
         MsgBox "デバッグモードです。"
@@ -38,6 +76,54 @@ If bIsContinue = True Then
     Else
         'Do Nothing
     End If
+Else
+    'Do Nothing
+End If
+
+'********************
+'*** 圧縮形式選択 ***
+'********************
+If bIsContinue = True Then
+    Dim bIsReEnter
+    bIsReEnter = False
+    Dim sAcceptFileFormatsStr
+    Dim sAcceptFileFormat
+    sAcceptFileFormatsStr = ""
+    For Each sAcceptFileFormat In cAcceptFileFormats
+        sAcceptFileFormatsStr = sAcceptFileFormatsStr & vbNewLine & sAcceptFileFormat
+    Next
+    Do
+        Dim sArchiveFileExt
+        sArchiveFileExt = InputBox( _
+                            "以下の中から圧縮形式を選択して入力してください。" & vbNewLine & _
+                            sAcceptFileFormatsStr & vbNewLine, _
+                            PROG_NAME, _
+                            INITIAL_FILE_EXT _
+                        )
+        If sArchiveFileExt = "" Then
+            MsgBox "実行をキャンセルしました。", vbOKOnly, PROG_NAME
+            MsgBox "処理を中断します。", vbYes, PROG_NAME
+            bIsReEnter = False
+            bIsContinue = False
+        Else
+            Dim bIsExist
+            bIsExist = False
+            For Each sAcceptFileFormat In cAcceptFileFormats
+                If sAcceptFileFormat = sArchiveFileExt Then
+                    bIsExist = True
+                Else
+                    'Do Nothing
+                End If
+            Next
+            If bIsExist = True Then
+                bIsReEnter = False
+            Else
+                MsgBox "対応する圧縮形式ではありません。" & vbNewLine & vbNewLine & sArchiveFileExt, vbOKOnly, PROG_NAME
+                bIsReEnter = True
+            End If
+            bIsContinue = True
+        End If
+    Loop While bIsReEnter = True
 Else
     'Do Nothing
 End If
@@ -84,6 +170,47 @@ Else
     'Do Nothing
 End If
 
+'**********************
+'*** パスワード設定 ***
+'**********************
+If bIsContinue = True Then
+    Dim sPassword
+    Dim sPasswordCheck
+    bIsReEnter = False
+    Do
+        sPassword = InputBox( _
+                        "圧縮ファイルの解凍パスワードを設定します。" & _
+                        "パスワードを入力してください。" & vbNewLine & _
+                        vbNewLine & _
+                        "(※) 選択されたファイル/フォルダが全て同じパスワードで圧縮されます。", _
+                         PROG_NAME, "" )
+        If sPassword = "" Then
+            MsgBox "実行をキャンセルしました。", vbOKOnly, PROG_NAME
+            MsgBox "処理を中断します。", vbYes, PROG_NAME
+            bIsReEnter = False
+            bIsContinue = False
+        Else
+            sPasswordCheck = InputBox( "確認のため、もう一度パスワードを入力してください。", PROG_NAME )
+            If sPasswordCheck = "" Then
+                MsgBox "実行をキャンセルしました。", vbOKOnly, PROG_NAME
+                MsgBox "処理を中断します。", vbYes, PROG_NAME
+                bIsReEnter = False
+                bIsContinue = False
+            Else
+                If sPassword = sPasswordCheck Then
+                    bIsReEnter = False
+                Else
+                    MsgBox "パスワードが一致していません。", vbOKOnly, PROG_NAME
+                    bIsReEnter = True
+                End If
+                bIsContinue = True
+            End If
+        End If
+    Loop While bIsReEnter = True
+Else
+    'Do Nothing
+End If
+
 '****************
 '*** 実行確認 ***
 '****************
@@ -92,11 +219,30 @@ If bIsContinue = True Then
     Dim sTrgtPathsStr
     sTrgtPathsStr = ""
     For Each sTrgtPath In cTrgtPaths
-        sTrgtPathsStr = sTrgtPathsStr & vbNewLine & sTrgtPath
+        If sTrgtPathsStr = "" Then
+            sTrgtPathsStr = sTrgtPath
+        Else
+            sTrgtPathsStr = sTrgtPathsStr & vbNewLine & sTrgtPath
+        End If
     Next
+    Dim sOutputPassword
+    If HIDE_PASSWORD = True Then
+        sOutputPassword = String( Len( sPassword ), "*" )
+    Else
+        sOutputPassword = sPassword
+    End If
     Dim lAnswer
     lAnswer = MsgBox ( _
-                    "以下を【パスワード付き圧縮】して、選択ファイルと同じフォルダに格納します。よろしいですか？" & vbNewLine & _
+                    "以下を【パスワード付き圧縮】して、選択ファイルと同じフォルダに格納します。" & vbNewLine & _
+                    "よろしいですか？" & vbNewLine & _
+                    vbNewLine & _
+                    "<<圧縮形式>>" & vbNewLine & _
+                    sArchiveFileExt & vbNewLine & _
+                    vbNewLine & _
+                    "<<圧縮パスワード>>" & vbNewLine & _
+                    sOutputPassword & vbNewLine & _
+                    vbNewLine & _
+                    "<<対象ファイル/フォルダパス(※)>>" & vbNewLine & _
                     sTrgtPathsStr & vbNewLine & _
                     vbNewLine & _
                     "(※) それぞれのファイル/フォルダが圧縮されます！" & vbNewLine & _
@@ -115,52 +261,6 @@ Else
     'Do Nothing
 End If
 
-'**********************
-'*** パスワード設定 ***
-'**********************
-If bIsContinue = True Then
-    MsgBox _
-        "圧縮ファイルの解凍パスワードを設定します。" & vbNewLine & _
-        vbNewLine & _
-        "(※) 選択されたファイル/フォルダが全て同じパスワードで圧縮されます。", _
-        vbOKOnly, PROG_NAME
-    
-    Dim sPassword
-    Dim sPasswordCheck
-    Dim bIsReEnter
-    bIsReEnter = False
-    Do
-        If bIsReEnter = True Then
-            sPassword = InputBox( "再度、パスワードを入力してください。", PROG_NAME )
-        Else
-            sPassword = InputBox( "パスワードを入力してください。", PROG_NAME )
-        End If
-        If sPassword = "" Then
-            MsgBox "実行をキャンセルしました。", vbOKOnly, PROG_NAME
-            MsgBox "処理を中断します。", vbYes, PROG_NAME
-            bIsContinue = False
-            bIsReEnter = False
-        Else
-            sPasswordCheck = InputBox( "確認のため、もう一度パスワードを入力してください。", PROG_NAME )
-            If sPasswordCheck = "" Then
-                MsgBox "実行をキャンセルしました。", vbOKOnly, PROG_NAME
-                MsgBox "処理を中断します。", vbYes, PROG_NAME
-                bIsContinue = False
-                bIsReEnter = False
-            Else
-                If sPassword = sPasswordCheck Then
-                    bIsReEnter = False
-                Else
-                    MsgBox "パスワードが一致していません。", vbOKOnly, PROG_NAME
-                    bIsReEnter = True
-                End If
-            End If
-        End If
-    Loop While bIsReEnter = True
-Else
-    'Do Nothing
-End If
-
 '****************
 '*** 圧縮実行 ***
 '****************
@@ -169,7 +269,7 @@ Set objWshShell = WScript.CreateObject("WScript.Shell")
 If bIsContinue = True Then
     For Each sTrgtPath In cTrgtPaths
         Dim sArchiveFilePath
-        sArchiveFilePath = sTrgtPath & ".zip"
+        sArchiveFilePath = sTrgtPath & "." & sArchiveFileExt
         Dim sExecCmd
         sExecCmd = """" & sExePath & """ a """ & sArchiveFilePath & """ """ & sTrgtPath & """ -p" & sPassword
         objWshShell.Run sExecCmd, 1, True
