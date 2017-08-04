@@ -25,7 +25,7 @@
 		StartProgramAndActivate( sExePath, sFilePath )
 		return
 	#2::
-		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\141_【生活】＜衣食住＞家計\100_家計簿.xlsm"
+		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\141_【生活】＜衣食住＞家計\100_予算管理.xlsm"
 		StartProgramAndActivate( "", sFilePath )
 		return
 	#3::
@@ -55,7 +55,7 @@
 		return
 	#F5::Run "C:\prg_exe\Rapture\rapture.exe"
 	#F6::RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
-	Pause::
+	#F7::
 		WinSet, AlwaysOnTop, TOGGLE, A
 		MsgBox, 0x43000, ウィンドウ最前面切り替え, アクティブウィンドウ最前面化の有効/無効を切り替えます, 5
 		Return
