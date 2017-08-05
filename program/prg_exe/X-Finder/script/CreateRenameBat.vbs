@@ -58,7 +58,7 @@ If bIsContinue = True Then
     Dim oFileName
     For Each oFileName In cFileNames
         Dim lTrgtFileNameLen
-        lTrgtFileNameLen = Len( oFileName )
+        lTrgtFileNameLen = LenByte( oFileName )
         If lTrgtFileNameLen > lFileNameLenMax Then
             lFileNameLenMax = lTrgtFileNameLen
         Else
@@ -95,7 +95,7 @@ If bIsContinue = True Then
         objTxtFile.WriteLine _
             "rename " & _
             """" & oFileName & """" & _
-            String(lFileNameLenMax - Len( oFileName ) + 1, " ") & _
+            String(lFileNameLenMax - LenByte( oFileName ) + 1, " ") & _
             """" & oFileName & """"
     Next
     objTxtFile.WriteLine "pause"
@@ -107,3 +107,43 @@ Else
     'Do Nothing
 End If
 
+' ==================================================================
+' = 概要    指定された文字列の文字列長（バイト数）を返却する
+' = 引数    sInStr      String  [in]  文字列
+' = 戻値                Long          文字列長（バイト数）
+' = 覚書    標準で用意されている LenB() 関数は、Unicode における
+' =         バイト数を返却するため半角文字も２文字としてカウントする。
+' =           （例：LenB("ファイルサイズ ") ⇒ 16）
+' =         そのため、半角文字を１文字としてカウントする本関数を用意。
+' ==================================================================
+Public Function LenByte( _
+    ByVal sInStr _
+)
+    Dim lIdx, sChar
+    LenByte = 0
+    If Trim(sInStr) <> "" Then
+        For lIdx = 1 To Len(sInStr)
+            sChar = Mid(sInStr, lIdx, 1)
+            '２バイト文字は＋２
+            If (Asc(sChar) And &HFF00) <> 0 Then
+                LenByte = LenByte + 2
+            Else
+                LenByte = LenByte + 1
+            End If
+        Next
+    End If
+End Function
+'   Call Test_LenByte()
+    Private Sub Test_LenByte()
+        Dim Result
+        Result = "[Result]"
+        Result = Result & vbNewLine & LenByte( "aaa" )      ' 3
+        Result = Result & vbNewLine & LenByte( "aaa " )     ' 4
+        Result = Result & vbNewLine & LenByte( "" )         ' 0
+        Result = Result & vbNewLine & LenByte( "あああ" )   ' 6
+        Result = Result & vbNewLine & LenByte( "あああ " )  ' 7
+        Result = Result & vbNewLine & LenByte( "ああ あ" )  ' 7
+        Result = Result & vbNewLine & LenByte( Chr(9) )     ' 1
+        Result = Result & vbNewLine & LenByte( Chr(10) )    ' 1
+        MsgBox Result
+    End Sub
