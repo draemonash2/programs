@@ -1,4 +1,5 @@
 'Option Explicit
+'Const PRODUCTION_ENVIRONMENT = 0
 
 '<<7-Zip usage>>
 '  7z x -o<target_dir_path> <archive_file_path>

@@ -1,4 +1,5 @@
 'Option Explicit
+'Const PRODUCTION_ENVIRONMENT = 0
 
 Const PROG_NAME = "リネーム用バッチファイル出力"
 Const OUTPUT_BAT_FILE_BASE_NAME = "rename"

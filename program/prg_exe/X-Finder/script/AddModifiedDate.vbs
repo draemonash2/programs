@@ -1,4 +1,5 @@
 'Option Explicit
+'Const PRODUCTION_ENVIRONMENT = 0
 
 Const PROG_NAME = "文字列追加（更新日時）"
 

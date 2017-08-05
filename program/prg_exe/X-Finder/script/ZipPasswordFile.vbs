@@ -1,4 +1,5 @@
 'Option Explicit
+'Const PRODUCTION_ENVIRONMENT = 0
 
 '<<7-Zip usage>>
 '  7z a <zip_file_path> <target_dir_path> -p<password>

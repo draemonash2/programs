@@ -1,4 +1,5 @@
 'Option Explicit
+'Const PRODUCTION_ENVIRONMENT = 0
 
 Const PROG_NAME = "隠しファイル表示切り替え"
 

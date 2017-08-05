@@ -1,4 +1,5 @@
 'Option Explicit
+'Const PRODUCTION_ENVIRONMENT = 0
 
 Const PROG_NAME = "WinMerge‚Å”äŠr"
 

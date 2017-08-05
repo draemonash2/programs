@@ -1,4 +1,5 @@
 'Option Explicit
+'Const PRODUCTION_ENVIRONMENT = 0
 
 'ファイルパスコピーは Clippath:18 で実行できるが、
 '先頭に改行が含まれてしまうため使わない。
