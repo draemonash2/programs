@@ -1,13 +1,13 @@
 'Option Explicit
 
-Const PROG_NAME = "ファイル/フォルダ名末尾文字列付与"
+Const PROG_NAME = "文字列追加（現在日時）"
 
 Dim bIsContinue
 bIsContinue = True
 
 Dim lAnswer
 lAnswer = MsgBox ( _
-                "ファイル/フォルダ名の末尾に文字列を付与します。よろしいですか？", _
+                "ファイル/フォルダ名の末尾に現在日時を付与します。よろしいですか？", _
                 vbYesNo, _
                 PROG_NAME _
             )
@@ -52,33 +52,12 @@ End If
 '* 追加文字列取得
 '*******************************************************
 If bIsContinue = True Then
-    Dim sSearchPattern
-    Dim sTargetStr
-    sSearchPattern = "(\w{4})/(\w{1,2})/(\w{1,2}) (\w{1,2}):(\w{1,2}):(\w{1,2})"
-    sTargetStr = Now()
-    
-    Dim oRegExp
-    Set oRegExp = CreateObject("VBScript.RegExp")
-    oRegExp.Pattern = sSearchPattern                '検索パターンを設定
-    oRegExp.IgnoreCase = True                       '大文字と小文字を区別しない
-    oRegExp.Global = True                           '文字列全体を検索
-    Dim oMatchResult
-    Set oMatchResult = oRegExp.Execute(sTargetStr)  'パターンマッチ実行
-    Dim sNowStr
-    With oMatchResult(0)
-        sNowStr = String( 4 - Len( .SubMatches(0) ), "0" ) & .SubMatches(0) & _
-                  String( 2 - Len( .SubMatches(1) ), "0" ) & .SubMatches(1) & _
-                  String( 2 - Len( .SubMatches(2) ), "0" ) & .SubMatches(2) & _
-                  "_" & _
-                  String( 2 - Len( .SubMatches(3) ), "0" ) & .SubMatches(3) & _
-                  String( 2 - Len( .SubMatches(4) ), "0" ) & .SubMatches(4) & _
-                  String( 2 - Len( .SubMatches(5) ), "0" ) & .SubMatches(5)
-    End With
-    Set oMatchResult = Nothing
-    Set oRegExp = Nothing
-    
+    Dim sDateRaw
+    Dim sDateStr
     Dim sAddStr
-    sAddStr = InputBox( "末尾に付与する文字列を入力してください", PROG_NAME, "_" & sNowStr )
+    sDateRaw = Now()
+    sDateStr = ConvDate2String( sDateRaw )
+    sAddStr = "_" & sDateStr
     
     Dim objFSO
     Set objFSO = CreateObject("Scripting.FileSystemObject")
@@ -88,7 +67,6 @@ If bIsContinue = True Then
         '*******************************************************
         '* ファイル/フォルダ名判別
         '*******************************************************
-        
         Dim lFileOrFolder '1:ファイル、2:フォルダ、0:エラー（存在しないパス）
         Dim bFolderExists
         Dim bFileExists
@@ -148,4 +126,40 @@ If bIsContinue = True Then
 Else
     'Do Nothing
 End If
+
+' ==================================================================
+' = 概要    日時文字列をファイル/フォルダ名に適用できる形式に変換する
+' = 引数    sDateRaw    String  [in]    日時（例：2017/8/5 12:59:58）
+' = 戻値                String          日時（例：20170805_125958）
+' = 覚書    なし
+' ==================================================================
+Public Function ConvDate2String( _
+    ByVal sDateRaw _
+)
+    Dim sSearchPattern
+    Dim sTargetStr
+    sSearchPattern = "(\w{4})/(\w{1,2})/(\w{1,2}) (\w{1,2}):(\w{1,2}):(\w{1,2})"
+    sTargetStr = sDateRaw
+    
+    Dim oRegExp
+    Set oRegExp = CreateObject("VBScript.RegExp")
+    oRegExp.Pattern = sSearchPattern                '検索パターンを設定
+    oRegExp.IgnoreCase = True                       '大文字と小文字を区別しない
+    oRegExp.Global = True                           '文字列全体を検索
+    Dim oMatchResult
+    Set oMatchResult = oRegExp.Execute(sTargetStr)  'パターンマッチ実行
+    Dim sDateStr
+    With oMatchResult(0)
+        sDateStr = String( 4 - Len( .SubMatches(0) ), "0" ) & .SubMatches(0) & _
+                   String( 2 - Len( .SubMatches(1) ), "0" ) & .SubMatches(1) & _
+                   String( 2 - Len( .SubMatches(2) ), "0" ) & .SubMatches(2) & _
+                   "-" & _
+                   String( 2 - Len( .SubMatches(3) ), "0" ) & .SubMatches(3) & _
+                   String( 2 - Len( .SubMatches(4) ), "0" ) & .SubMatches(4) & _
+                   String( 2 - Len( .SubMatches(5) ), "0" ) & .SubMatches(5)
+    End With
+    Set oMatchResult = Nothing
+    Set oRegExp = Nothing
+    ConvDate2String = sDateStr
+End Function
 
