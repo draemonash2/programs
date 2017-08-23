@@ -137,7 +137,7 @@ If bIsContinue = True Then
         cSelectedPaths.Add "C:\Users\draem_000\Desktop\test\cc"
         cSelectedPaths.Add "C:\Users\draem_000\Desktop\test\d.txt"
     Else
-        sExePath = WScript.Env("X-Finder") & "..\" & WScript.Env("7-Zip")
+        sExePath = WScript.Env("7-Zip")
         Set cSelectedPaths = WScript.Col( WScript.Env("Selected") )
     End If
 Else

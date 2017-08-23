@@ -20,7 +20,7 @@ If bIsContinue = True Then
         cFilePaths.Add "C:\Users\draem_000\Desktop\test\b b"
     Else
         sOutputBatDirPath = WScript.Env("Current")
-        sExePath = WScript.Env("X-Finder") & "..\" & WScript.Env("Vim")
+        sExePath = WScript.Env("Vim")
         Set cFilePaths = WScript.Col( WScript.Env("Selected") )
     End If
 Else

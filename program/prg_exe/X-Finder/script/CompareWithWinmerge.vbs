@@ -20,7 +20,7 @@ If bIsContinue = True Then
         cSelected.Add "C:\prg_exe\X-Finder\script\FilePathCopy.vbs"
     Else
         sTmpPath = WScript.Env("X-Finder") & "diff_target_path.tmp"
-        sExePath = WScript.Env("X-Finder") & "..\" & WScript.Env("WinMerge")
+        sExePath = WScript.Env("WinMerge")
         Set cSelected = WScript.Col(WScript.Env("Selected"))
     End If
 Else
