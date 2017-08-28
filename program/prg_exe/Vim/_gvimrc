@@ -14,76 +14,128 @@
 "		https://github.com/vim-jp/issues/issues/756
 
 "=== モード共通 ===
-	noremap		<silent>			n			nzz											" 検索結果を画面中央に
-	noremap		<silent>			N			Nzz											" 検索結果を画面中央に
-	noremap		<silent>			*			*Nzz										" 検索結果を画面中央に
-	noremap		<silent>			#			#nzz										" 検索結果を画面中央に
-	noremap		<silent>			K			g*zz										" 検索結果を画面中央に
-	noremap		<silent>			g#			g#zz										" 検索結果を画面中央に
-	noremap		<silent>			x			"_x											" 削除（切り取りなし）
-	noremap		<silent>			H			0											" カーソルを先頭に移動
-	noremap		<silent>			L			$											" カーソルを末尾に移動
-	map			<silent>			<c-m>		oa<esc>x									" インデントを維持して改行
+																							" ↓ 検索結果を画面中央に
+	noremap		<silent>			n			nzz
+																							" ↓ 検索結果を画面中央に
+	noremap		<silent>			N			Nzz
+																							" ↓ 検索結果を画面中央に
+	noremap		<silent>			*			*Nzz
+																							" ↓ 検索結果を画面中央に
+	noremap		<silent>			#			#nzz
+																							" ↓ 検索結果を画面中央に
+	noremap		<silent>			K			g*zz
+																							" ↓ 検索結果を画面中央に
+	noremap		<silent>			g#			g#zz
+																							" ↓ 削除（切り取りなし）
+	noremap		<silent>			x			"_x
+																							" ↓ カーソルを先頭に移動
+	noremap		<silent>			H			0
+																							" ↓ カーソルを末尾に移動
+	noremap		<silent>			L			$
+																							" ↓ インデントを維持して改行
+	map			<silent>			<c-m>		oa<esc>x
+																							" ↓ very magic で検索
 	noremap							/			/\v
-																							" very magic で検索
+																							" ↓ very nomagic で検索
 "	noremap							/			/\V
-																							" very nomagic で検索
-	noremap							ciy			ciw<c-r>0<esc>b								" 単語コピー
-	noremap		<silent>			<tab>		a<tab><esc>									" タブ挿入
-	noremap		<silent>			<space>		<nop>										" スペースキー無効
-	noremap		<silent>			<c-j>		5jzz										" カーソル移動＋画面移動（下）
-	noremap		<silent>			<c-k>		5kzz										" カーソル移動＋画面移動（上）
-	noremap		<silent>			<c-h>		10zh10h										" カーソル移動＋画面移動（左）
-	noremap		<silent>			<c-l>		10zl10l										" カーソル移動＋画面移動（右）
-	noremap		<silent>			<c-tab>		<c-w>w										" ウィンドウ切替（次へ）
-	noremap		<silent>			<c-s-tab>	<c-w>W										" ウィンドウ切替（前へ）
-	noremap		<silent>			<c-s-right>	<c-w>w										" ウィンドウ切替（次へ）
-	noremap		<silent>			<c-s-left>	<c-w>W										" ウィンドウ切替（前へ）
-"	noremap		<silent>			<c-tab>		gt											" タブ切替（次へ）
-"	noremap		<silent>			<c-s-tab>	gT											" タブ切替（前へ）
-	noremap		<silent>			<c-s-down>	gt											" タブ切替（次へ）
-	noremap		<silent>			<c-s-up>	gT											" タブ切替（前へ）
-"	noremap		<silent>			<c-w>		:tabclose<cr>								" タブを閉じる
-"	noremap		<silent>			<c-n>		:tabnew<cr>									" 新規タブを開く
-	noremap		<silent>			<c-g>		:call ExecuteHNXgrep()<cr>					" HNXGrep を実行
-	noremap		<silent>			<esc><esc>	:nohlsearch<cr>								" ハイライト解除
+																							" ↓ 単語コピー
+	noremap							ciy			ciw<c-r>0<esc>b
+																							" ↓ タブ挿入
+	noremap		<silent>			<tab>		a<tab><esc>
+																							" ↓ スペースキー無効
+	noremap		<silent>			<space>		<nop>
+																							" ↓ カーソル移動＋画面移動（下）
+	noremap		<silent>			<c-j>		5jzz
+																							" ↓ カーソル移動＋画面移動（上）
+	noremap		<silent>			<c-k>		5kzz
+																							" ↓ カーソル移動＋画面移動（左）
+	noremap		<silent>			<c-h>		10zh10h
+																							" ↓ カーソル移動＋画面移動（右）
+	noremap		<silent>			<c-l>		10zl10l
+																							" ↓ ウィンドウ切替（次へ）
+	noremap		<silent>			<c-tab>		<c-w>w
+																							" ↓ ウィンドウ切替（前へ）
+	noremap		<silent>			<c-s-tab>	<c-w>W
+																							" ↓ ウィンドウ切替（次へ）
+	noremap		<silent>			<c-s-right>	<c-w>w
+																							" ↓ ウィンドウ切替（前へ）
+	noremap		<silent>			<c-s-left>	<c-w>W
+																							" ↓ タブ切替（次へ）
+"	noremap		<silent>			<c-tab>		gt
+																							" ↓ タブ切替（前へ）
+"	noremap		<silent>			<c-s-tab>	gT
+																							" ↓ タブ切替（次へ）
+	noremap		<silent>			<c-s-down>	gt
+																							" ↓ タブ切替（前へ）
+	noremap		<silent>			<c-s-up>	gT
+																							" ↓ タブを閉じる
+"	noremap		<silent>			<c-w>		:tabclose<cr>
+																							" ↓ 新規タブを開く
+"	noremap		<silent>			<c-n>		:tabnew<cr>
+																							" ↓ HNXGrep を実行
+	noremap		<silent>			<c-g>		:call ExecuteHNXgrep()<cr>
+																							" ↓ ハイライト解除
+	noremap		<silent>			<esc><esc>	:nohlsearch<cr>
 	
-	noremap		<silent>			<F1>		:call BufferList()<cr>						" バッファリスト作成
-	noremap		<silent>			<F2>		:Tlist<cr>									" タグリスト作成
-	noremap		<silent>			<F3>		a<C-R>=strftime("%Y/%m/%d (%a)")<cr><esc>	" 現在日時出力
-	noremap		<silent>			<F4>		a<C-R>=strftime("%H:%M:%S")<cr><esc>		" 現在時刻出力
-	noremap		<silent>			<F5>		:execute ExecCurrentScript()<cr>			" 現在のプログラムを実行
-	noremap		<silent>			<F6>		:vs<cr><c-w>wggVGy:q<cr><c-w>W				" 全体をコピー
-"	noremap		<silent>			<F7>		:Vexplore<cr>								" Explorerを起動
-	noremap		<silent>			<F7>		:NERDTreeToggle<CR>							" NERDtreeを起動
-	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>					" フォントサイズをトグル
+																							" ↓ バッファリスト作成
+	noremap		<silent>			<F1>		:call BufferList()<cr>
+																							" ↓ タグリスト作成
+	noremap		<silent>			<F2>		:Tlist<cr>
+																							" ↓ 現在日時出力
+	noremap		<silent>			<F3>		a<C-R>=strftime("%Y/%m/%d (%a)")<cr><esc>
+																							" ↓ 現在時刻出力
+	noremap		<silent>			<F4>		a<C-R>=strftime("%H:%M:%S")<cr><esc>
+																							" ↓ 現在のプログラムを実行
+	noremap		<silent>			<F5>		:execute ExecCurrentScript()<cr>
+																							" ↓ 全体をコピー
+	noremap		<silent>			<F6>		:vs<cr><c-w>wggVGy:q<cr><c-w>W
+																							" ↓ Explorerを起動
+"	noremap		<silent>			<F7>		:Vexplore<cr>
+																							" ↓ NERDtreeを起動
+	noremap		<silent>			<F7>		:NERDTreeToggle<CR>
+																							" ↓ フォントサイズをトグル
+	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>
+																							" ↓ ↑前行の単語をコピーしてインクリメント
 	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
-																							" ↑前行の単語をコピーしてインクリメント
 "	noremap		<silent>			<F10>		<nop>
-	noremap		<silent>			<F11>		:set expandtab<cr>:retab!<cr>				" タブ⇒空白 変換
-	noremap		<silent>			<F12>		:set noexpandtab<cr>:retab!<cr>				" 空白⇒タブ 変換
+																							" ↓ タブ⇒空白 変換
+	noremap		<silent>			<F11>		:set expandtab<cr>:retab!<cr>
+																							" ↓ 空白⇒タブ 変換
+	noremap		<silent>			<F12>		:set noexpandtab<cr>:retab!<cr>
 	
-	noremap		<silent>			<c-F1>		:call CopyCurFilePath()<cr>					" 現在ファイルパスコピー
-	noremap		<silent>			<c-F2>		:call CopyCurDirPath()<cr>					" 現在フォルダパスコピー
-	noremap		<silent>			<c-F3>		:call CopyCurFileName()<cr>					" 現在ファイル名コピー
+																							" ↓ 現在ファイルパスコピー
+	noremap		<silent>			<c-F1>		:call CopyCurFilePath()<cr>
+																							" ↓ 現在フォルダパスコピー
+	noremap		<silent>			<c-F2>		:call CopyCurDirPath()<cr>
+																							" ↓ 現在ファイル名コピー
+	noremap		<silent>			<c-F3>		:call CopyCurFileName()<cr>
+																							" ↓ タグファイル更新
+	noremap		<silent>			<c-F5>		:call UpdateTagFile()<cr>
 "	noremap		<silent>			<c-F4>		<nop>
-	noremap		<silent>			<c-F5>		:call UpdateTagFile()<cr>					" タグファイル更新
 	
-"	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'	" ペーストしたテキストを再選択できるようにする
+																							" ↓ ペーストしたテキストを再選択できるようにする
+"	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'
 	
 "=== ノーマルモード ===
 "	nnoremap	<silent>			<cr>		<nop>
 	
 "=== 挿入モード ===
-	inoremap	<silent>			<c-j>		<esc>										" Ctrl+J でノーマルモードに移行
+																							" ↓ Ctrl+J でノーマルモードに移行
+	inoremap	<silent>			<c-j>		<esc>
 	
 "=== ヴィジュアルモード ===
-	vnoremap	<silent>			<			<gv											" インデント左シフト
-	vnoremap	<silent>			>			>gv											" インデント右シフト
-	vnoremap	<silent>			<F3>		:s/\s*$//<cr>:nohlsearch<cr>				" 末尾の空白を削除
-	vnoremap	<silent>			<F4>		:s/\\/\//g<cr>								" ファイルパス区切り変換（\→/）
-	vnoremap	<silent>			<F5>		:s/\v_(.)/\u\1/g<cr>						" スネークケース⇒キャメルケース変換
-	vnoremap	<silent>			<F6>		:s/\v([A-Z])/_\L\1/g<cr>					" キャメルケース⇒スネークケース変換
+																							" ↓ インデント左シフト
+	vnoremap	<silent>			<			<gv
+																							" ↓ インデント右シフト
+	vnoremap	<silent>			>			>gv
+																							" ↓ 末尾の空白を削除
+	vnoremap	<silent>			<F3>		:s/\s*$//<cr>:nohlsearch<cr>
+																							" ↓ ファイルパス区切り変換（\→/）
+	vnoremap	<silent>			<F4>		:s/\\/\//g<cr>
+																							" ↓ スネークケース⇒キャメルケース変換
+	vnoremap	<silent>			<F5>		:s/\v_(.)/\u\1/g<cr>
+																							" ↓ キャメルケース⇒スネークケース変換
+	vnoremap	<silent>			<F6>		:s/\v([A-Z])/_\L\1/g<cr>
 
 " ==============================================================================
 " Gtags用キーバインド
