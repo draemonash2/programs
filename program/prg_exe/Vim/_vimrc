@@ -103,8 +103,8 @@
 	let g:lightline.active = {
 					\		'left': [
 					\			[ 'mode', 'paste' ],
-					\			[ 'bufnum', 'filename' ],
-					\			[ 'readonly', 'modified' ]
+					\			[ 'filename' ],
+					\			[ 'bufnum', 'readonly', 'modified' ]
 					\		],
 					\		'right': [
 					\			[ 'rangediff' ],
