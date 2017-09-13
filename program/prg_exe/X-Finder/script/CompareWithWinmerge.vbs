@@ -2,6 +2,7 @@
 'Const PRODUCTION_ENVIRONMENT = 0
 
 Const PROG_NAME = "WinMergeで比較"
+Const TEMP_FILE_NAME = "xf_diff_target_path.tmp"
 
 Dim bIsContinue
 bIsContinue = True
@@ -13,13 +14,13 @@ If bIsContinue = True Then
     Dim cSelected
     If PRODUCTION_ENVIRONMENT = 0 Then
         MsgBox "デバッグモードです。"
-        sTmpPath = "C:\prg_exe\X-Finder\diff_target_path.tmp"
+        sTmpPath = "C:\prg_exe\X-Finder\" & TEMP_FILE_NAME
         sExePath = "C:\prg_exe\WinMerge\WinMergeU.exe"
         Set cSelected = CreateObject("System.Collections.ArrayList")
         cSelected.Add "C:\prg_exe\X-Finder\script\FileNameCopy.vbs"
         cSelected.Add "C:\prg_exe\X-Finder\script\FilePathCopy.vbs"
     Else
-        sTmpPath = WScript.Env("X-Finder") & "diff_target_path.tmp"
+        sTmpPath = WScript.Env("Temp") & "\" & TEMP_FILE_NAME
         sExePath = WScript.Env("WinMerge")
         Set cSelected = WScript.Col(WScript.Env("Selected"))
     End If
