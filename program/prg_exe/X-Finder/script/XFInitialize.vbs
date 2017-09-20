@@ -4,7 +4,7 @@
 '####################################################################
 '### ê›íË
 '####################################################################
-Const DIFF_TRGT_PATH_FILE_NAME = "diff_target_path.tmp"
+Const TEMP_FILE_NAME = "xf_diff_target_path.tmp"
 
 '####################################################################
 '### ñ{èàóù
@@ -18,9 +18,9 @@ bIsContinue = True
 If bIsContinue = True Then
     Dim sTmpPath
     If PRODUCTION_ENVIRONMENT = 0 Then
-        sTmpPath = "C:\prg_exe\X-Finder\" & DIFF_TRGT_PATH_FILE_NAME
+        sTmpPath = "C:\prg_exe\X-Finder\" & TEMP_FILE_NAME
     Else
-        sTmpPath = WScript.Env("X-Finder") & DIFF_TRGT_PATH_FILE_NAME
+        sTmpPath = WScript.Env("Temp") & "\" & TEMP_FILE_NAME
     End If
 Else
     'Do Nothing

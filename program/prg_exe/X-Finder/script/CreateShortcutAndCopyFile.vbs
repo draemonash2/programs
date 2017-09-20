@@ -5,15 +5,14 @@
 '### 設定
 '####################################################################
 Const ADD_DATE_TYPE = 1 '付与する日時の種別（1:現在日時、2:ファイル/フォルダ更新日時）
+Const SHORTCUT_FILE_SUFFIX = "#Src#"
+Const ORIGINAL_FILE_PREFIX = "#Org#"
+Const COPY_FILE_PREFIX     = "#Cpy#"
 
 '####################################################################
 '### 本処理
 '####################################################################
 Const PROG_NAME = "ショートカット＆コピーファイル作成"
-
-Const SHORTCUT_FILE_SUFFIX = "#Src#"
-Const ORIGINAL_FILE_PREFIX = "#Org#"
-Const COPY_FILE_PREFIX     = "#Cpy#"
 
 Dim bIsContinue
 bIsContinue = True
