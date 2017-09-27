@@ -35,7 +35,7 @@ If bIsContinue = True Then
     Dim sExtNames
     sExtNames = InputBox( _
         "拡張子を選択してください。" & vbNewLine & _
-        "複数の拡張子を指定する時はスペースで区切ってください。" & vbNewLine & _
+        "複数の拡張子を指定する時はスペースで区切ります。" & vbNewLine & _
         "  例１）*.txt *.c" & vbNewLine & _
         "  例２）*.*" & vbNewLine & _
         "" , _
