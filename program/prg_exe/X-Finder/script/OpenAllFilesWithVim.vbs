@@ -65,7 +65,7 @@ If bIsContinue = True Then
     'MsgBox sTmpFilePath '★DEBUG★
     sExecCmd = "cd """ & sCurDirPath & """ & dir " & sExtNames & " /b /s /a:a-d > """ & sTmpFilePath & """"
     'MsgBox sExecCmd '★DEBUG★
-    objWshShell.Run "cmd /c" & sExecCmd, 7, True
+    objWshShell.Run "cmd /c" & sExecCmd, 0, True
     
     '出力したファイルリスト取り込み
     Dim objFile
@@ -117,7 +117,7 @@ If bIsContinue = True Then
     Next
     'MsgBox sFilePathList '★DEBUG★
     
-    objWshShell.Run "cmd /c " & sExePath & " " & sFilePathList, 7, True
+    objWshShell.Run "cmd /c " & sExePath & " " & sFilePathList, 0, True
 Else
     'Do Nothing
 End If
