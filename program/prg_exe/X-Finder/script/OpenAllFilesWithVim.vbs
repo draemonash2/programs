@@ -117,7 +117,7 @@ If bIsContinue = True Then
     Next
     'MsgBox sFilePathList 'ÅöDEBUGÅö
     
-    objWshShell.Run "cmd /c " & sExePath & " " & sFilePathList, 0, True
+    objWshShell.Run "cmd /c " & sExePath & " " & sFilePathList, 0, False
 Else
     'Do Nothing
 End If
