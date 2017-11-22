@@ -37,8 +37,8 @@ If bIsContinue = True Then
     MsgBox "「ctags」と「gtags」にパスが通っていない場合は、パスを通してから実行してください。", vbOk, PROG_NAME
     Dim objWshShell
     Set objWshShell = WScript.CreateObject("WScript.Shell")
-    objWshShell.Run "cmd /c cd """ & sTrgtDirPath & """ & ctags -R", 0, True
-    objWshShell.Run "cmd /c cd """ & sTrgtDirPath & """ & gtags -v", 0, True
+    objWshShell.Run "cmd /c pushd """ & sTrgtDirPath & """ & ctags -R", 0, True
+    objWshShell.Run "cmd /c pushd """ & sTrgtDirPath & """ & gtags -v", 0, True
     MsgBox "タグファイルの作成が完了しました。", vbOk, PROG_NAME
 Else
     'Do Nothing
