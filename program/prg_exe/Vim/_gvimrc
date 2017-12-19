@@ -109,9 +109,10 @@
 	noremap		<silent>			<c-F2>		:call CopyCurDirPath()<cr>
 																							" ↓ 現在ファイル名コピー
 	noremap		<silent>			<c-F3>		:call CopyCurFileName()<cr>
+																							" ↓ プログラムNo.コピー
+	noremap		<silent>			<c-F4>		:call CopyProgramNo()<cr>
 																							" ↓ タグファイル更新
 	noremap		<silent>			<c-F5>		:call UpdateTagFile()<cr>
-"	noremap		<silent>			<c-F4>		<nop>
 	
 																							" ↓ ペーストしたテキストを再選択できるようにする
 "	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'
@@ -616,6 +617,22 @@ endif
 		endif
 		echo "copy file name      : " . l:sCurFileName
 	endfunction
+	
+	function! CopyProgramNo()
+		let l:sGetLine = getline(1)
+		let l:sPrgNoTmp = l:sGetLine
+		let l:sPrgNoTmp = substitute( l:sPrgNoTmp, "^\/\\* ", "", "g" )
+		let l:sPrgNoTmp = substitute( l:sPrgNoTmp, " \\*\/$", "", "g" )
+		let l:sPrgNo = l:sPrgNoTmp
+		if g:lCopy2UnnamedRegister == 1
+			let @* = l:sPrgNo " * register.
+			let @" = l:sPrgNo " unnamed register.
+		else
+			let @* = l:sPrgNo " * register.
+		endif
+		echo "copy program no : " . l:sPrgNo
+	endfunction
+	
 
 " ==============================================================================
 " 現在のスクリプトを実行する
