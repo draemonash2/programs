@@ -142,39 +142,30 @@ Else
 End If
 
 ' ==================================================================
-' = 概要    日時文字列をファイル/フォルダ名に適用できる形式に変換する
-' = 引数    sDateRaw    String  [in]    日時（例：2017/8/5 12:59:58）
-' = 戻値                String          日時（例：20170805_125958）
-' = 覚書    なし
+' = 概要    日時形式を変換する。（例：2017/03/22 18:20:14 ⇒ 20170322-182014）
+' = 引数    sDateTime   String  [in]  日時（YYYY/MM/DD HH:MM:SS）
+' = 戻値                String        日時（YYYYMMDD-HHMMSS）
+' = 覚書    主に日時をファイル名やフォルダ名に使用する際に使用する。
 ' ==================================================================
 Public Function ConvDate2String( _
-    ByVal sDateRaw _
+    ByVal sDateTime _
 )
-    Dim sSearchPattern
-    Dim sTargetStr
-    sSearchPattern = "(\w{4})/(\w{1,2})/(\w{1,2}) (\w{1,2}):(\w{1,2}):(\w{1,2})"
-    sTargetStr = sDateRaw
-    
-    Dim oRegExp
-    Set oRegExp = CreateObject("VBScript.RegExp")
-    oRegExp.Pattern = sSearchPattern                '検索パターンを設定
-    oRegExp.IgnoreCase = True                       '大文字と小文字を区別しない
-    oRegExp.Global = True                           '文字列全体を検索
-    Dim oMatchResult
-    Set oMatchResult = oRegExp.Execute(sTargetStr)  'パターンマッチ実行
+    On Error Resume Next
     Dim sDateStr
-    With oMatchResult(0)
-        sDateStr = String( 4 - Len( .SubMatches(0) ), "0" ) & .SubMatches(0) & _
-                   String( 2 - Len( .SubMatches(1) ), "0" ) & .SubMatches(1) & _
-                   String( 2 - Len( .SubMatches(2) ), "0" ) & .SubMatches(2) & _
-                   "-" & _
-                   String( 2 - Len( .SubMatches(3) ), "0" ) & .SubMatches(3) & _
-                   String( 2 - Len( .SubMatches(4) ), "0" ) & .SubMatches(4) & _
-                   String( 2 - Len( .SubMatches(5) ), "0" ) & .SubMatches(5)
-    End With
-    Set oMatchResult = Nothing
-    Set oRegExp = Nothing
-    ConvDate2String = sDateStr
+    sDateStr = _
+        String(4 - Len(Year(sDateTime)),   "0") & Year(sDateTime)   & _
+        String(2 - Len(Month(sDateTime)),  "0") & Month(sDateTime)  & _
+        String(2 - Len(Day(sDateTime)),    "0") & Day(sDateTime)    & _
+        "-" & _
+        String(2 - Len(Hour(sDateTime)),   "0") & Hour(sDateTime)   & _
+        String(2 - Len(Minute(sDateTime)), "0") & Minute(sDateTime) & _
+        String(2 - Len(Second(sDateTime)), "0") & Second(sDateTime)
+    If Err.Number = 0 Then
+        ConvDate2String = sDateStr
+    Else
+        ConvDate2String = ""
+    End If
+    On Error Goto 0
 End Function
 
 ' ==================================================================
