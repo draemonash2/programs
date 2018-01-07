@@ -120,7 +120,7 @@ If bIsContinue = True Then
             sOrgFileExt = objFSO.GetExtensionName( sSelectedPath )
             sDstOrgFilePath    = sDstParDirPath & "\" & sOrgFileName & "_" & ORIGINAL_FILE_PREFIX & "_" & sAddDate & "." & sOrgFileExt
             sDstCpyFilePath    = sDstParDirPath & "\" & sOrgFileName & "_" & COPY_FILE_PREFIX     & "_" & sAddDate & "." & sOrgFileExt
-            sDstShrtctFilePath = sDstParDirPath & "\" & sOrgFileName & "_" & SHORTCUT_FILE_SUFFIX & ".lnk"
+            sDstShrtctFilePath = sDstParDirPath & "\" & sOrgFileName & "_" & SHORTCUT_FILE_SUFFIX & "_" & sAddDate & ".lnk"
             
             'ファイルコピー
             objFSO.CopyFile sSelectedPath, sDstOrgFilePath, True
@@ -152,7 +152,7 @@ If bIsContinue = True Then
             sOrgDirName = objFSO.GetFileName( sSelectedPath )
             sDstOrgFilePath    = sDstParDirPath & "\" & sOrgDirName & "_" & ORIGINAL_FILE_PREFIX & "_" & sAddDate
             sDstCpyFilePath    = sDstParDirPath & "\" & sOrgDirName & "_" & COPY_FILE_PREFIX     & "_" & sAddDate
-            sDstShrtctFilePath = sDstParDirPath & "\" & sOrgDirName & "_" & SHORTCUT_FILE_SUFFIX & ".lnk"
+            sDstShrtctFilePath = sDstParDirPath & "\" & sOrgDirName & "_" & SHORTCUT_FILE_SUFFIX & "_" & sAddDate & ".lnk"
             
             'フォルダコピー
             objFSO.CopyFolder sSelectedPath, sDstOrgFilePath, True
