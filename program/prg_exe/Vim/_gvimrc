@@ -111,8 +111,11 @@
 	noremap		<silent>			<c-F3>		:call CopyCurFileName()<cr>
 																							" ↓ プログラムNo.コピー
 	noremap		<silent>			<c-F4>		:call CopyProgramNo()<cr>
+																							" ↓ ファイル種別と行番号コピー
+	noremap		<silent>			<c-F5>		:call CopyFileLineNo()<cr>
+	
 																							" ↓ タグファイル更新
-	noremap		<silent>			<c-F5>		:call UpdateTagFile()<cr>
+	noremap		<silent>			<c-s-F5>	:call UpdateTagFile()<cr>
 	
 																							" ↓ ペーストしたテキストを再選択できるようにする
 "	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'
@@ -137,6 +140,8 @@
 	vnoremap	<silent>			<F5>		:s/\v_(.)/\u\1/g<cr>
 																							" ↓ キャメルケース⇒スネークケース変換
 	vnoremap	<silent>			<F6>		:s/\v([A-Z])/_\L\1/g<cr>
+																							" ↓ ファイル種別と行番号コピー
+	vnoremap	<silent>			<c-F5>		:<bs><bs><bs><bs><bs>call CopyFileLineNo()<cr>
 
 " ==============================================================================
 " Gtags用キーバインド
@@ -282,6 +287,22 @@ endif
 	endfunction
 	function! GetCurFileExt()
 		return expand("%:e")
+	endfunction
+	function! GetCurFileType()
+		let l:sFileName = expand( '%:t' )
+		let l:asFileTypes = ["if_l_mat\.c","if_c_mat\.c","if_c\.h","if\.h","_l_mat\.c","_c_mat\.c","_c\.h","\.h","\.c"]
+		let l:sRetFileType = l:sFileName
+		for l:sFileType in l:asFileTypes
+			if l:sFileName =~ l:sFileType . "$"
+				if l:sFileType[0] == "_"
+					let l:sRetFileType = l:sFileType[1:]
+				else
+					let l:sRetFileType = l:sFileType
+				endif
+				break
+			endif
+		endfor
+		return l:sRetFileType
 	endfunction
 	
 	" === ファイルパス検索（＋存在確認） ====
@@ -633,6 +654,19 @@ endif
 		echo "copy program no : " . l:sPrgNo
 	endfunction
 	
+	function! CopyFileLineNo()
+		let l:sCurFileName = GetCurFileType()
+		"let l:sLineNo = line(".")
+		let l:sLineNo = g:sSelRowsRng
+		let l:sFileLineNo = l:sCurFileName . "/" . l:sLineNo
+		if g:lCopy2UnnamedRegister == 1
+			let @* = l:sFileLineNo " * register.
+			let @" = l:sFileLineNo " unnamed register.
+		else
+			let @* = l:sFileLineNo " * register.
+		endif
+		echo "copy line no    : " . l:sFileLineNo
+	endfunction
 
 " ==============================================================================
 " 現在のスクリプトを実行する

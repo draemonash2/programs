@@ -124,38 +124,45 @@
 " ==============================================================================
 	set updatetime=100 "CursorHold の閾値[ms]
 	autocmd CursorMoved,CursorHold * call s:CalcSelRngStrNum()
-	let s:sStrtClm = 0
-	let s:sStrtRow = 0
-	let s:sDiffClm = 0
-	let s:sDiffRow = 0
+	let s:lStrtClm = 0
+	let s:lStrtRow = 0
+	let s:lDiffClm = 0
+	let s:lDiffRow = 0
+	let g:sSelRowsRng = ""
 	
 	function! s:CalcSelRngStrNum()
 		let l:sCurMode = mode()
-		let l:sCurRow = line('.')
+		let l:lCurRow = line('.')
 		if l:sCurMode ==# "v" || l:sCurMode ==# "V" || l:sCurMode ==# "\<C-v>"
-			let l:sCurClm = virtcol('.')
-			let s:sDiffClm = abs( l:sCurClm - s:sStrtClm ) + 1
-			let s:sDiffRow = abs( l:sCurRow - s:sStrtRow ) + 1
+			let l:lCurClm = virtcol('.')
+			let s:lDiffClm = abs( l:lCurClm - s:lStrtClm ) + 1
+			let s:lDiffRow = abs( l:lCurRow - s:lStrtRow ) + 1
+			if s:lStrtRow > l:lCurRow
+				let g:sSelRowsRng = l:lCurRow . "-" . s:lStrtRow
+			else
+				let g:sSelRowsRng = s:lStrtRow . "-" . l:lCurRow
+			endif
 		elseif l:sCurMode ==# "n"
-			let l:sCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
-			let s:sStrtClm = l:sCurClm
-			let s:sStrtRow = l:sCurRow
-			let s:sDiffClm = 0
-			let s:sDiffRow = 0
+			let l:lCurClm = virtcol( [line('.'), col('.') - 1, 0] ) + 1
+			let s:lStrtClm = l:lCurClm
+			let s:lStrtRow = l:lCurRow
+			let s:lDiffClm = 0
+			let s:lDiffRow = 0
+			let g:sSelRowsRng = l:lCurRow
 		else
 			"Do Nothing
 		endif
 	endfunction
 	
 	function! GetSelRngDiff()
-		if s:sDiffClm == 0 && s:sDiffRow == 0
+		if s:lDiffClm == 0 && s:lDiffRow == 0
 			return "-"
 		else
 			let l:sCurMode = mode()
 			if l:sCurMode ==# "v" || l:sCurMode ==# "\<C-v>"
-				return "h" . s:sDiffRow . " w" . s:sDiffClm
+				return "h" . s:lDiffRow . " w" . s:lDiffClm
 			elseif l:sCurMode ==# "V"
-				return "h" . s:sDiffRow
+				return "h" . s:lDiffRow
 			elseif l:sCurMode ==# "n"
 				return "-"
 			else

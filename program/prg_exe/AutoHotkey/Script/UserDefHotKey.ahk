@@ -45,13 +45,12 @@
 		return
 	#F1::
 		sExePath = "C:\prg_exe\Vim\gvim.exe"
-		sFilePath = "%A_Desktop%\temp.txt"
+		sFilePath = "%A_MyDocuments%\temp.txt"
 		StartProgramAndActivate( sExePath, sFilePath )
 		return
 	#F2::
-		sExePath = "C:\codes\vbs\500_CreateExcelFile.vbs"
-		sFilePath = "%A_Desktop%\temp.xlsm"
-		StartProgramAndActivate( sExePath, sFilePath )
+		sFilePath = "%A_MyDocuments%\temp.xlsm"
+		StartProgramAndActivate( "", sFilePath )
 		return
 	#F5::Run "C:\prg_exe\Rapture\rapture.exe"
 	#F6::RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
