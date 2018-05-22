@@ -651,7 +651,7 @@ endif
 		else
 			let @* = l:sPrgNo " * register.
 		endif
-		echo "copy program no : " . l:sPrgNo
+		echo "copy program no     : " . l:sPrgNo
 	endfunction
 	
 	function! CopyFileLineNo()
@@ -665,7 +665,7 @@ endif
 		else
 			let @* = l:sFileLineNo " * register.
 		endif
-		echo "copy line no    : " . l:sFileLineNo
+		echo "copy file & line no : " . l:sFileLineNo
 	endfunction
 
 " ==============================================================================
