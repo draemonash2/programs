@@ -483,18 +483,53 @@ endif
 " ==============================================================================
 " Grep の設定
 " ==============================================================================
-	" :Gc <file_type> ... <word>
-	nnoremap <expr> gr ":Gc " . expand('<cword>')
-	command! -nargs=+ Gc call s:Grep_Code(<f-args>)
-	function! s:Grep_Code(...)
-		let l:sRootDirPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
-		if l:sRootDirPath == ""
-			let l:sRootDirPath = GetCurDirPath("\\")
-		endif
+	let g:GrepOpt = "-i"
+	let g:GrepFileExt = "*.c,*.h"
+	
+	"------------------------------------------------------
+	"上位階層の「tags」格納ディレクトリをルートとして Grep
+	" :Gp <word>
+	"------------------------------------------------------
+	nnoremap <expr> gp ":Gp " . expand('<cword>')
+	command! -nargs=+ Gp call s:GrepAtTagsPrj(<f-args>)
+	function! s:GrepAtTagsPrj(...)
 		if a:0 < 1
-			echo "error!"
+			echo "grep argument error!"
 		else
-			execute "Grep -r ". a:000[(a:0 - 1)] . " " . l:sRootDirPath . "/**"
+			"### 対象パス 取得 ###
+			let l:sRootPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
+			if l:sRootPath == ""
+				let l:sRootPath = GetCurDirPath("\\")
+			endif
+			"### 拡張子 取得 ###
+			let l:asFileTypes = split( g:GrepFileExt, "," )
+			let l:sIncOpt = ""
+			for l:sFileType in l:asFileTypes
+				if l:sIncOpt == ""
+					let l:sIncOpt = "--include=" . l:sFileType
+				else
+					let l:sIncOpt = l:sIncOpt . " " . "--include=" . l:sFileType
+				endif
+			endfor
+			"### Grep 実行 ###
+			execute "Grep -r " . g:GrepOpt . " " . l:sIncOpt . " """. a:000[(a:0 - 1)] . """ " . l:sRootPath . "/**"
+		endif
+	endfunction
+	
+	"------------------------------------------------------
+	"現在のファイルに対して Grep
+	" :Gc <word>
+	"------------------------------------------------------
+	nnoremap <expr> gc ":Gc " . expand('<cword>')
+	command! -nargs=+ Gc call s:GrepAtCurFile(<f-args>)
+	function! s:GrepAtCurFile(...)
+		if a:0 < 1
+			echo "grep argument error!"
+		else
+			"### 対象パス 取得 ###
+			let l:sRootPath = GetCurFilePath("\\")
+			"### Grep 実行 ###
+			execute "Grep " . g:GrepOpt . " """ . a:000[(a:0 - 1)] . """ " . l:sRootPath
 		endif
 	endfunction
 
