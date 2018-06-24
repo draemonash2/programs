@@ -97,7 +97,8 @@
 	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>
 																							" ↓ ↑前行の単語をコピーしてインクリメント
 	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
-"	noremap		<silent>			<F10>		<nop>
+																							" ↓ ウィンドウサイズをトグル
+	noremap		<silent>			<F10>		:call ToggleWindowSize()<cr>
 																							" ↓ タブ⇒空白 変換
 	noremap		<silent>			<F11>		:set expandtab<cr>:retab!<cr>
 																							" ↓ 空白⇒タブ 変換
@@ -140,6 +141,8 @@
 	vnoremap	<silent>			<F5>		:s/\v_(.)/\u\1/g<cr>
 																							" ↓ キャメルケース⇒スネークケース変換
 	vnoremap	<silent>			<F6>		:s/\v([A-Z])/_\L\1/g<cr>
+																							" ↓ 相対パス取得
+	vnoremap	<silent>			<F9>		:call ReplaceRelativePath()<cr>
 																							" ↓ ファイル種別と行番号コピー
 	vnoremap	<silent>			<c-F5>		:<bs><bs><bs><bs><bs>call CopyFileLineNo()<cr>
 
@@ -482,9 +485,12 @@ endif
 
 " ==============================================================================
 " Grep の設定
+" [grep option]
+"   -i：大文字小文字を無視する
 " ==============================================================================
-	let g:GrepOpt = "-i"
-	let g:GrepFileExt = "*.c,*.h"
+	let g:sGrepOpt = "-i"
+	let g:sGrepFileExt = "*.c,*.h"
+	let g:sGrepPath = "" "パス区切りは'/'で指定すること！
 	
 	"------------------------------------------------------
 	"上位階層の「tags」格納ディレクトリをルートとして Grep
@@ -497,12 +503,17 @@ endif
 			echo "grep argument error!"
 		else
 			"### 対象パス 取得 ###
-			let l:sRootPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
-			if l:sRootPath == ""
-				let l:sRootPath = GetCurDirPath("\\")
+			if g:sGrepPath == ""
+				let l:sRootPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
+				if l:sRootPath == ""
+					let l:sRootPath = GetCurDirPath("\\")
+				endif
+			else
+				let l:sRootPath = substitute( g:sGrepPath, "/", "\\", "g" )
 			endif
+			echo l:sRootPath
 			"### 拡張子 取得 ###
-			let l:asFileTypes = split( g:GrepFileExt, "," )
+			let l:asFileTypes = split( g:sGrepFileExt, "," )
 			let l:sIncOpt = ""
 			for l:sFileType in l:asFileTypes
 				if l:sIncOpt == ""
@@ -512,7 +523,7 @@ endif
 				endif
 			endfor
 			"### Grep 実行 ###
-			execute "Grep -r " . g:GrepOpt . " " . l:sIncOpt . " """. a:000[(a:0 - 1)] . """ " . l:sRootPath . "/**"
+			execute "Grep -r " . g:sGrepOpt . " " . l:sIncOpt . " """. a:000[(a:0 - 1)] . """ " . l:sRootPath . "/**"
 		endif
 	endfunction
 	
@@ -529,7 +540,7 @@ endif
 			"### 対象パス 取得 ###
 			let l:sRootPath = GetCurFilePath("\\")
 			"### Grep 実行 ###
-			execute "Grep " . g:GrepOpt . " """ . a:000[(a:0 - 1)] . """ " . l:sRootPath
+			execute "Grep " . g:sGrepOpt . " """ . a:000[(a:0 - 1)] . """ " . l:sRootPath
 		endif
 	endfunction
 
@@ -703,6 +714,75 @@ endif
 		echo "copy file & line no : " . l:sFileLineNo
 	endfunction
 
+" ==============================================================================
+" 選択したファイルパスを、現在のファイルパスからの相対パスへ置き換える。
+" [注意事項]
+"   ・ヴィジュアルモードで実行すること！
+"      ex) vnoremap <silent> <F9> :call ReplaceRelativePath()<cr>
+" ==============================================================================
+	function! ReplaceRelativePath()
+		"選択文字列 取得
+		let tmp = @@
+		silent normal gvy
+		let l:sDstPath = @@
+		let l:sSrcPath = GetCurFilePath( '/' )
+		
+		"選択文字列 削除
+		silent normal gv
+		silent normal d
+		
+		"相対パス取得
+		let l:sRelativePath = ConvRelativePath( l:sSrcPath, l:sDstPath, '/' )
+		
+		"選択文字列 出力
+		let @* = l:sRelativePath
+		silent normal p
+		
+		echo "replace relative path : success!"
+	endfunction
+	
+	function! ConvRelativePath( sSrcPath, sDstPath, sDlmtr )
+		"パス置換("/"に統一)
+		let l:sSrcPath = substitute( a:sSrcPath, "\\", "/", "g" )
+		let l:sDstPath = substitute( a:sDstPath, "\\", "/", "g" )
+		"echom l:sSrcPath . "★" . l:sDstPath
+		
+		"一致パスを削除
+		let l:iChrIdx = 1
+		while l:iChrIdx <= len( l:sSrcPath )
+			if l:sSrcPath[l:iChrIdx] == '/'
+				"echom l:sSrcPath . "★" . l:sDstPath
+				if l:sSrcPath[:l:iChrIdx] == l:sDstPath[:l:iChrIdx]
+					let l:sSrcPath = l:sSrcPath[l:iChrIdx+1:]
+					let l:sDstPath = l:sDstPath[l:iChrIdx+1:]
+					let l:iChrIdx = 1
+				else
+					let l:iChrIdx = l:iChrIdx + 1
+				endif
+			else
+				let l:iChrIdx = l:iChrIdx + 1
+			endif
+		endwhile
+		"echom l:sSrcPath . "★" . l:sDstPath
+		
+		"さかのぼりパス取得
+		let l:iDlmNum = (len(l:sSrcPath) - len(substitute( l:sSrcPath, "/", "", "g" )))
+		"echom l:iDlmNum
+		let l:sRiseUpPath = ""
+		if l:iDlmNum == 0
+			let l:sRiseUpPath = "./"
+		else
+			for l:iIdx in range(1,l:iDlmNum)
+				let l:sRiseUpPath = l:sRiseUpPath . "../"
+			endfor
+		endif
+		
+		"パス置換("/"から指定された区切り文字へ)
+		let l:sRelativePath = l:sRiseUpPath . l:sDstPath
+		let l:sRelativePath = substitute( l:sRelativePath, '/', a:sDlmtr, "g" )
+		
+		return l:sRelativePath
+	endfunction
 " ==============================================================================
 " 現在のスクリプトを実行する
 "	<<デフォルト時>>
@@ -897,6 +977,22 @@ endif
 "		endif
 "		execute 'w'
 "	endfunction
+
+" ==============================================================================
+" ウィンドウサイズトグル
+" [参考] https://qiita.com/grohiro/items/e3dbcc93510bc8c4c812
+" ==============================================================================
+	let g:toggle_window_size = 0
+	function! ToggleWindowSize()
+		if g:toggle_window_size == 1
+			exec "normal \<C-w>="
+			let g:toggle_window_size = 0
+		else
+			:resize
+			:vertical resize
+			let g:toggle_window_size = 1
+		endif
+	endfunction
 
 " **************************************************************************************************
 " *****										プラグイン設定									   *****
