@@ -7,7 +7,7 @@
 Const ADD_DATE_TYPE = 1 '付与する日時の種別（1:現在日時、2:ファイル/フォルダ更新日時）
 Const SHORTCUT_FILE_SUFFIX = "#Src#"
 Const ORIGINAL_FILE_PREFIX = "#Org#"
-Const COPY_FILE_PREFIX     = "#Cpy#"
+Const COPY_FILE_PREFIX     = "#Edt#"
 
 '####################################################################
 '### 本処理
@@ -216,3 +216,16 @@ Public Function ConvDate2String( _
     ConvDate2String = sDateStr
 End Function
 
+Public Function SetFileAttributes( _
+    ByVal sFilePath, _
+    ByVal sDateRaw _
+)
+	Const SET_ATTR_READONLY	= 1		' 読み取り専用ファイル
+	Const SET_ATTR_HIDDEN	= 2		' 隠しファイル
+	Const SET_ATTR_SYSTEM	= 4		' システム・ファイル
+	Const SET_ATTR_ARCHIVE	= 32	' 前回のバックアップ以降に変更されていれば1
+	
+    Dim objFSO
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+	Set objFile = objFSO.GetFile("test.txt ")
+End Function

@@ -327,7 +327,10 @@ if version >= 700
   "★custom mod <end>
 
   " Auto-completion
-  call s:X("Pmenu","ffffff","606060","","White",s:termBlack)
+  "★custom mod <top>
+ "call s:X("Pmenu","ffffff","606060","","White",s:termBlack)
+  call s:X("Pmenu","ffffff","4f6228","","White",s:termBlack)
+  "★custom mod <end>
   call s:X("PmenuSel","101010","eeeeee","",s:termBlack,"White")
 endif
 

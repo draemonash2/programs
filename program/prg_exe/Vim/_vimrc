@@ -62,6 +62,15 @@
 	let g:neocomplete#enable_at_startup = 1 " 起動時に有効化
 	let g:neocomplete#enable_smart_case = 1 " Use smartcase.
 	let g:neocomplete#sources#syntax#min_keyword_length = 3
+	let g:neocomplete#max_list = 50 "キーワードの長さ、デフォルトで80
+	let g:neocomplete#max_keyword_width = 80
+	let g:neocomplete#enable_ignore_case = 1
+"	highlight Pmenu ctermbg=6
+"	highlight PmenuSel ctermbg=3
+"	highlight PMenuSbar ctermbg=0
+	highlight Pmenu ctermbg=71
+	highlight PmenuSel ctermbg=71
+	highlight PMenuSbar ctermbg=71
 
 " =======================================
 " editexisting-ext.vim 用設定

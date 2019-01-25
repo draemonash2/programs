@@ -1058,3 +1058,7 @@ endif
 									"Windowsでcp932を扱えないGNU grepを使用する場合、以下の様に設定します。
 	let QFix_CopenCmd = 'botright'	" Quickfixウィンドウを最も下側に表示
 
+" More scrollbar-ish behavior
+let g:nanomap_auto_realign = 1
+let g:nanomap_auto_open_close = 1
+let g:nanomap_highlight_delay = 100

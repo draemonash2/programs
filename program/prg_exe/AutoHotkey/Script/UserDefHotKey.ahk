@@ -20,8 +20,10 @@
 ;* ***************************************************************
 ;*** Global ***
 	#1::
-		sExePath = "C:\prg_exe\Vim\gvim.exe"
-		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\100_ToDo.txt"
+;		sExePath = "C:\prg_exe\Vim\gvim.exe"
+;		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\100_ToDo.txt"
+		sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
+		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\todo.itmz"
 		StartProgramAndActivate( sExePath, sFilePath )
 		return
 	#2::
@@ -33,9 +35,11 @@
 		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\132_【生活】＜趣味＞音楽\音楽ストック.txt"
 		StartProgramAndActivate( sExePath, sFilePath )
 		return
-	#4::
-		sExePath = "C:\prg_exe\Vim\gvim.exe"
-		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\999_その他.txt"
+	#9::
+	;	sExePath = "C:\prg_exe\Vim\gvim.exe"
+	;	sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\900_【その他】\その他.txt"
+		sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
+		sFilePath = "%A_MyDocuments%\Dropbox\100_Documents\other.itmz"
 		StartProgramAndActivate( sExePath, sFilePath )
 		return
 	#\::
@@ -65,6 +69,11 @@
 		F1::return
 	#IfWinActive
 	
+	#IfWinActive ahk_exe iThoughts.exe
+		;F1ヘルプ無効化
+		F1::return
+	#IfWinActive
+	
 	#IfWinActive AHK_Exe kinza.exe
 		;The Great Suspender 用
 		F8::^+s
@@ -83,6 +92,10 @@
 			Send, {Home}
 			Sleep 100
 			Send, ^{Right}
+			Sleep 100
+			Send, ^{Right}
+			Sleep 100
+			Send, {Left}
 			Sleep 100
 			Send, {Delete}
 			Send, {Delete}
