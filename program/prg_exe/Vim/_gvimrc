@@ -480,7 +480,8 @@ endif
 " 関数名の色付け設定
 " [参照] http://ogawa.s18.xrea.com/tdiary/20070523.html
 " ==============================================================================
-	autocmd FileType ruby,c,cpp syntax match CFunction /[a-zA-Z_]\w*\s*!*\(\(\[[^]]*\]\s*\)\?(\s*[^\*]\)\@=/
+"	autocmd FileType ruby,c,cpp syntax match CFunction /[a-zA-Z_]\w*\s*!*\(\(\[[^]]*\]\s*\)\?(\s*[^\*]\)\@=/
+	autocmd FileType ruby,c,cpp syntax match CFunction /\v[a-zA-Z_]\w*\s*!*((\[[^]]*\]\s*)\?(\s*[^\*])\@=/
 	autocmd FileType ruby,c,cpp hi CFunction guifg=orange
 
 " ==============================================================================
