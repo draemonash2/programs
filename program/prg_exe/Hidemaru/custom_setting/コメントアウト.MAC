@@ -1,0 +1,423 @@
+/*
+ * コメントアウトとその解除を行う秀丸マクロ
+ *
+ * Ver.2.9 (2015-10-03)
+ *
+ * 機能
+ * - 範囲選択中に実行された場合は、選択範囲の先頭行を基準に、行のコメントアウトまたは解除を行います。
+ * - BOX範囲選択中に実行された場合
+ *   - カーソル位置がブロックコメントの中にある場合はそれを解除します。
+ *   - そうでなければ、BOX選択の開始位置から終了位置までをブロックコメントにします。
+ * - 範囲選択中でない場合
+ *   - カーソル位置がブロックコメントの中にある場合はそれを解除します。
+ *   - そうでなければ、カーソル行のコメントアウトまたは解除を行います。
+ * - ファイルタイプごとにコメントアウトの方法を設定できます。
+ * - コメントアウトと解除の処理は、まとめてやり直すことが可能です。
+ * - 常に、処理された範囲が選択された状態でマクロが終了します。
+ *
+ * Yasunori Miyamoto
+ * http://tipszone.jp/20130206_comment_out_mac/
+ * mailto: nori@tipszone.jp
+ */
+
+// ファイルタイプごとのコメントアウト方法の設定
+// 設定内容は以下の通り
+//
+//   $c[0]: 行をコメントアウトするために行頭に挿入する文字列
+//   $c[1]: 行をコメントアウトするために行末に挿入する文字列
+//   $c[2]: ブロックコメントの先頭を表す文字列
+//   $c[3]: ブロックコメントの終端を表す文字列
+//
+if (filetype == ".bat") {
+	$c[0] = "rem ";
+} else if (filetype == ".coffee") {
+	$c[0] = "#";
+	$c[2] = "\n###\n";
+	$c[3] = "\n###\n";
+} else if (filetype == ".css" || filetype == ".scss") {
+	$c[0] = "/*";
+	$c[1] = "*/";
+	$c[2] = "/*";
+	$c[3] = "*/";
+} else if (filetype == ".erb") {
+	$c[0] = "<% if nil %>";
+	$c[1] = "<% end %>";
+} else if (filetype == ".conf" || filetype == ".gitignore" || filetype == ".htaccess") {
+	$c[0] = "#";
+} else if (filetype == ".hta" || filetype == ".html" || filetype == ".xaml" || filetype == ".xml") {
+	$c[0] = "<!--";
+	$c[1] = "-->";
+	$c[2] = "<!--\n";
+	$c[3] = "-->\n";
+} else if (filetype == ".ini") {
+	$c[0] = ";";
+} else if (filetype == ".pas") {
+	$c[0] = "//";
+//	$c[2] = "{";
+//	$c[3] = "}";
+	$c[2] = "(*";
+	$c[3] = "*)";
+} else if (filetype == ".pl") {
+	$c[0] = "#";
+	$c[2] = "\n=comment\n";
+	$c[3] = "\n=cut\n";
+} else if (filetype == ".py") {
+	$c[0] = "#";
+	$c[2] = "\n\"\"\"\n";
+	$c[3] = "\n\"\"\"\n";
+} else if (filetype == ".rb" || filetype == ".rbw" || filetype == ".rake" ||
+	basename == "gemfile" || basename == "rakefile") {
+	$c[0] = "#";
+	$c[2] = "\n=begin\n";
+	$c[3] = "\n=end\n";
+} else if (filetype == ".sql") {
+	$c[0] = "--";
+} else if (filetype == ".tex") {
+	$c[0] = "%";
+	$c[2] = "\\begin{comment}";   // \usepackage{comment}
+	$c[3] = "\n\\end{comment}\n";
+} else if (filetype == ".twig") {
+	$c[0] = "{# ";
+	$c[1] = " #}";
+	$c[2] = "{# ";
+	$c[3] = " #}";
+} else if (filetype == ".yaml" || filetype == ".yml") {
+	$c[0] = "#";
+} else {
+	// デフォルトの設定
+	$c[0] = "//";
+	$c[2] = "/*";
+	$c[3] = "*/";
+}
+
+
+// 0x00200 : 「検索での表示」の動作を範囲選択にする。
+// 0x20000 : マクロ終了後に検索条件をマクロ実行前と同じに戻す。
+setcompatiblemode 0x20200;
+
+begingroupundo;
+	disabledraw;
+		#freecursor = freecursor;
+		if (#freecursor) freecursorswitch;
+		call MAIN;
+		if (#freecursor) freecursorswitch;
+	enabledraw;
+endgroupundo;
+
+endmacro;
+
+
+// コメントアウトと解除の制御を行う。
+MAIN:
+	// ブロックコメントの解除
+	if ((!selecting) || rectselecting) {
+		call SELECT_BLOCK_COMMENT;
+		if (##return) {
+			call BLOCK_UNCOMMENT;
+			return;
+		}
+	}
+
+	// ブロックコメントによるコメントアウト
+	if (rectselecting) call BLOCK_COMMENT_OUT;
+
+	// 行のコメントアウト・解除
+	else call LINE_COMMENT;
+	return;
+
+
+// 行のコメントアウト・解除を行う。
+LINE_COMMENT:
+	if ($c[0] == "" && $c[1] == "") {
+		message "行コメントアウトの方法が設定されていません。";
+		return;
+	}
+
+	// 処理対象行を取得
+	if (selecting) {
+		##topline = seltoplineno;
+		##endline = selendlineno;
+		if (selendcolumn == 0) ##endline = ##endline - 1;
+	} else {
+		##topline = lineno;
+		##endline = lineno;
+	}
+
+	// 先頭行がコメントアウトされているか判定する。
+	// 行頭のチェック
+	##comment_out = $c[0] == "" || gettext2(0, ##topline, strlen($c[0]), ##topline, 1) == $c[0];
+	// 行末のチェック
+	if ($c[1] != "" && ##comment_out) {
+		call GET_LINE_LEN ##topline;
+		##comment_out =
+			gettext2(##return - strlen($c[1]), ##topline, ##return, ##topline, 1) == $c[1];
+	}
+
+	if (##comment_out) call LINE_UNCOMMENT;
+	else call LINE_COMMENT_OUT;
+
+	// 処理された行を選択状態にする。
+	moveto2 0, ##endline;
+	beginlinesel;
+		moveto2 0, ##topline;
+	endsel;
+	return;
+
+// 選択されている行をコメントアウトする。
+// 範囲選択中でない場合はカーソル行をコメントアウトする。
+LINE_COMMENT_OUT:
+	if (selecting == false) selectline;
+	replaceallfast "^(.*?)$", $c[0] + "\\1" + $c[1], regular, inselect;
+	return;
+
+// 選択されている行のコメントアウトを解除する。
+// 範囲選択中でない場合はカーソル行のコメントアウトを解除する。
+LINE_UNCOMMENT:
+	if (selecting == false) selectline;
+	call REGEX_ESCAPE $c[0];
+	$$head = $$return;
+	call REGEX_ESCAPE $c[1];
+	$$tail = $$return;
+	replaceallfast "^" + $$head + "(.*?)" + $$tail + "$", "\\1", regular, inselect;
+	return;
+
+
+// ブロックコメントによるコメントアウトを行う。
+BLOCK_COMMENT_OUT:
+	if ($c[2] == "" && $c[3] == "") {
+		message "ブロックコメントによるコメントアウトの方法が設定されていません。";
+		return;
+	}
+
+	call GET_SELECTING_POSITION_EX;
+
+	// コメントアウト対象範囲にブロックコメントの終端文字があるかどうか調べる。
+	##flag = false; // 判定結果
+	##endlineno = selendlineno;
+	call SAVE_CURSOR;
+		escape;
+		moveto2 #seltopcursorcolumn, seltoplineno;
+		searchdown2 $c[3], nohilight;
+		if (result) {
+			call COMPARE_CURSOR_POSITION selendcolumn, selendlineno, #selendcursorcolumn, ##endlineno;
+			##flag = (##return <= 0);
+		}
+	call RESTORE_CURSOR;
+
+	if (##flag) {
+		enabledraw;
+			question "コメントアウトの対象範囲に、ブロックコメントの" +
+				"終端を表す文字列があります。処理を続けますか？";
+		disabledraw;
+		if (result == no) return;
+	}
+
+	// ブロックコメントの終端文字を挿入
+	escape;
+	moveto2 #selendcursorcolumn, selendlineno;
+	insertfix $c[3];
+	##endcolumn = column;
+	##endlineno = lineno;
+
+	// ブロックコメントの開始文字を挿入
+	moveto2 #seltopcursorcolumn, seltoplineno;
+	insertfix $c[2];
+	##topcolumn = column;
+	##toplineno = lineno;
+
+	// ブロックコメントを範囲選択
+	call STRCOUNT $c[2], "\n";
+	##endlineno = ##endlineno + ##return;
+	if (seltoplineno == selendlineno) {
+		##i = strrstr($c[2], "\n");
+		##endcolumn = ##endcolumn + strlen($c[2]) - (##i + 1);
+		if (##i != -1) ##endcolumn = ##endcolumn - #seltopcursorcolumn;
+	}
+	moveto2 ##endcolumn, ##endlineno;
+	searchdown2 $c[3], nohilight
+	call SELECT ##topcolumn, ##toplineno, selendcolumn, selendlineno;
+	return;
+
+// カーソル位置のブロックコメントを解除し、処理した範囲を選択状態にする。
+BLOCK_UNCOMMENT:
+	replacedown $c[2], "";
+	##column = column;
+	##lineno = lineno;
+	replacedown $c[3], "", nohilight;
+	call SELECT ##column, ##lineno, column, lineno;
+	return;
+
+// カーソル位置を含むブロックコメントを選択状態にする。
+// カーソル位置がブロックコメントに含まれていなかった場合は、範囲選択の状態を変えない。
+// Return: boolean 範囲選択できた場合は true, そうでなければ false
+SELECT_BLOCK_COMMENT:
+	if ($c[2] == "" && $c[3] == "") return false;
+
+	call SAVE_CURSOR;
+
+	##orig_column = column;
+	##orig_lineno = lineno;
+
+	right;
+	call SEARCHUP_BLOCK_COMMENT_OPEN;
+	if (!##return) { call RESTORE_CURSOR; return false; }
+
+	##column = column;
+	##lineno = lineno;
+
+	right strlen($c[2]);
+	searchdown2 $c[3], nohilight;
+	if (!result) { call RESTORE_CURSOR; return false; }
+	call COMPARE_CURSOR_POSITION selendcolumn, selendlineno, ##orig_column, ##orig_lineno;
+	if (##return < 0) { call RESTORE_CURSOR; return false; }
+
+	call SELECT column + strlen($c[3]), lineno, ##column, ##lineno;
+	return true;
+
+// ブロックコメントの開始位置を上方向へ検索する。
+// Return: boolean 見つかった場合には true そうでなければ false
+//         見つかった場合には、見つかった場所にカーソルがある状態で return する。
+SEARCHUP_BLOCK_COMMENT_OPEN:
+	while (true) {
+		searchup $c[2], maskstring, nohilight;
+		if (!result) { return false; }
+
+		// 見つかった箇所が行コメントの中だった場合には、さらに上方向へ検索を続ける
+		if (column == 0 || $c[0] == "") break;
+		##lineno = lineno;
+		##column = column;
+
+		searchup $c[0], maskstring, nohilight;
+		##in_line_comment = (result && lineno == ##lineno);
+		if (!##in_line_comment) {
+			moveto2 ##column, ##lineno;
+			break;
+		}
+	}
+	return true;
+
+
+// カーソル位置と範囲選択の状態をグローバル変数 #_cursor_info に保存する。
+SAVE_CURSOR:
+	#_cursor_info[0] = selecting;
+	#_cursor_info[1] = rectselecting;
+	#_cursor_info[2] = selopenx;
+	#_cursor_info[3] = selopeny;
+	#_cursor_info[4] = x;
+	#_cursor_info[5] = y;
+	return;
+
+// #_cursor_info の値から、カーソル位置と範囲選択の状態を復元する。
+RESTORE_CURSOR:
+	##selecting = #_cursor_info[0];
+	##rectselecting = #_cursor_info[1];
+	##selopenx = #_cursor_info[2];
+	##selopeny = #_cursor_info[3];
+	##x = #_cursor_info[4];
+	##y = #_cursor_info[5];
+
+	escape;
+	if (##selecting) {
+		moveto ##selopenx, ##selopeny;
+		if (##rectselecting) beginrect; else beginsel;
+			moveto ##x, ##y;
+		endsel;
+	} else {
+		moveto ##x, ##y;
+	}
+	return;
+
+// 範囲選択開始位置のカラム位置と、エディタ的に計算した行番号をそれぞれ以下の
+// グローバル変数にセットして返す。
+// #selopencolumn  範囲選択を開始したカラム位置
+// #selopenlineno  範囲選択を開始した行番号
+// #seltopcursorcolumn 範囲選択を開始・終了した位置のうちファイルの先頭に近い方のカラム位置
+// #selendcursorcolumn 範囲選択を開始・終了した位置のうちファイルの最後に近い方のカラム位置
+GET_SELECTING_POSITION_EX:
+	if (selopenx < x) #selopencolumn = seltopcolumn;
+	else #selopencolumn = selendcolumn;
+	if (selopeny < y) #selopenlineno = seltoplineno;
+	else #selopenlineno = selendlineno;
+
+	if (selopeny < y || (selopeny == y && selopenx < x)) {
+		#seltopcursorcolumn = #selopencolumn;
+		#selendcursorcolumn = column;
+	} else {
+		#seltopcursorcolumn = column;
+		#selendcursorcolumn = #selopencolumn;
+	}
+	return;
+
+// 指定された行の文字数を返す。
+// Param: integer 行番号（ファイルの先頭が１）
+// Return: integer 指定された行の文字数（全角文字は２文字として数える）
+GET_LINE_LEN:
+	call SAVE_CURSOR;
+		moveto2 0, ##1;
+		##len = linelen2;
+	call RESTORE_CURSOR;
+	return ##len;
+
+// 引数で指定された範囲を選択状態にする。
+// Param: integer 選択開始位置の column
+// Param: integer 選択開始位置の lineno
+// Param: integer 選択終了位置の column
+// Param: integer 選択終了位置の lineno
+SELECT:
+	moveto2 ##1, ##2;
+	beginsel;
+		moveto2 ##3, ##4;
+	endsel;
+	return;
+
+// 引数で指定された二つのカーソル位置を比較する。
+// Param: integer 位置1の column
+// Param: integer 位置1の lineno
+// Param: integer 位置2の column
+// Param: integer 位置2の lineno
+// Return: integer 位置1の方がファイルの先頭に近い場合は 0 未満、
+//         等しい場合は 0、それ以外の場合は 1 以上
+COMPARE_CURSOR_POSITION:
+	##column1 = ##1;
+	##lineno1 = ##2;
+	##column2 = ##3;
+	##lineno2 = ##4;
+
+	if (##lineno1 < ##lineno2) return -1;
+	if (##lineno1 > ##lineno2) return 1;
+	return ##column1 - ##column2;
+
+// 文字列1から文字列2を検索し、見つかった数を返す。
+// Param: string 文字列1
+// Param: string 文字列2
+// Return: integer 見つかった数
+STRCOUNT:
+	if ($$2 == "") return -1;
+	##count = 0;
+	##i = 0;
+	##strlen1 = strlen($$1);
+	##strlen2 = strlen($$2);
+	while (##i < ##strlen1) {
+		##i = strstr($$1, $$2, ##i);
+		if (##i == -1) break;
+		##count = ##count + 1;
+		##i = ##i + ##strlen2;
+	}
+	return ##count;
+
+// 正規表現のメタ文字をエスケープする。
+// Param: string
+// Return: string エスケープ後の文字列
+REGEX_ESCAPE:
+	##strlen = strlen($$1);
+	##i = ##strlen - 1;
+	while (0 <= ##i) {
+		$$c = midstr($$1, ##i, 1);
+		if (-1 < strstr(".[?*+{()|^$\\", $$c)) {
+			$$1 = leftstr($$1, ##i) + "\\" + rightstr($$1, ##strlen - ##i);
+			##strlen = ##strlen + 1;
+		}
+
+		##i = ##i - 1;
+	}
+	return $$1;
