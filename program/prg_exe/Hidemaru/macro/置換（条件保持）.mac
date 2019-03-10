@@ -1,0 +1,14 @@
+// ŒŸõğŒ‚ğ•œŒ³
+$ini_file = settingdir + "\\previous_search_option.ini";
+#search_option = getininum($ini_file, getenv("UserName"), "search_option");
+if (#search_option != 0) {
+	setsearch "", #search_option;
+	writeininum $ini_file, getenv("UserName"), "search_option", 0;
+}
+
+begingroupundo;
+replace;
+#rslt = result;
+endgroupundo 1;
+
+if (0 < #rslt) message str(#rslt) + "ŒÂ‚Ì’uŠ·‚ğs‚¢‚Ü‚µ‚½B";

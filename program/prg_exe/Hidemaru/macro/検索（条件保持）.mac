@@ -1,0 +1,9 @@
+// ŒŸõğŒ‚ğ•œŒ³
+$ini_file = settingdir + "\\previous_search_option.ini";
+#search_option = getininum($ini_file, getenv("UserName"), "search_option");
+if (#search_option != 0) {
+	setsearch "", #search_option;
+	writeininum $ini_file, getenv("UserName"), "search_option", 0;
+}
+
+find;
