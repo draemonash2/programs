@@ -1,0 +1,2 @@
+setclipboard basename2;
+message "ファイル名をコピーしました";
