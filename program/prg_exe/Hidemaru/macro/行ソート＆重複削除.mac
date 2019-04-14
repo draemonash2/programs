@@ -1,0 +1,389 @@
+//-------- EraseSameLine.mac -----------------------------------------//
+
+//       重複行を削除する簡易マクロ  Ver.2.13
+
+//                                山紫水明      2013年9月16日
+
+$inifile = currentmacrodirectory + "\\MyMacro.ini";
+#sort = getininum($inifile, "EraseSameLine", "sort");
+#delete = getininum($inifile, "EraseSameLine", "delete");
+#delspc = getininum($inifile, "EraseSameLine", "delspc");
+#showdel = getininum($inifile, "EraseSameLine", "showdel");
+#endmessage = getininum($inifile, "EraseSameLine", "endmessage");
+#showtime = getininum($inifile, "EraseSameLine", "showtime");
+#showplace = getininum($inifile, "EraseSameLine", "showplace");
+$sort[1] = "する";
+$sort[0] = "しない";
+$delete[1] = "する";
+$delete[0] = "しない";
+$delspc[1] = "する";
+$delspc[0] = "しない";
+$showdel[1] = "する";
+$showdel[0] = "しない";
+#handle1 = hidemaruhandle(0);
+#line0 = lineno;    //最初のカーソル行
+if( existfile( macrodir + "\\Uniq.hmf") ) {
+    $UniqFilter = macrodir + "\\Uniq.hmf";
+}
+if( existfile( hidemarudir + "\\Uniq.hmf") ) {
+    $UniqFilter = hidemarudir + "\\Uniq.hmf";
+}
+if( $UniqFilter != "" ) #uniq = 1;
+if( existfile(macrodir + "\\DengakuDLL.dll") ) {
+    $dengaku = macrodir + "\\DengakuDLL.dll";
+}
+if( existfile(hidemarudir + "\\DengakuDLL.dll") ) {
+    $dengaku = hidemarudir + "\\DengakuDLL.dll";
+}
+
+Menu:
+if( $dengaku != "" ) {
+    call DengakuDialog;
+} else {
+    while( 1 ) {
+        menu "&E 実　行",
+             "&S ソート：" + $sort[#sort],
+             "&D 重複行の削除：" + $delete[#delete],
+             "&N 空白行の削除：" + $delspc[#delspc],
+             "&H 削除行の表示：" + $showdel[#showdel],
+             "&O オプション";
+        #r = result;
+        if( #r == 0 ) endmacro;
+        else if( #r == 1 ) break;
+        else if( #r == 2 ) #sort = !#sort;
+        else if( #r == 3 ) #delete = !#delete;
+        else if( #r == 4 ) #delspc = !#delspc;
+        else if( #r == 5 ) #showdel = !#showdel;
+        else if( #r == 6 ) call SetOption;
+    }
+}
+if( #sort + #delete + #delspc == 0 ) {
+    message "動作が指示されていません。";
+    goto Menu;
+}
+if( #delete == 0 ) #showdel = 0;
+begingroupundo;
+disabledraw;
+#starttime = tickcount;
+if( selecting ) {
+    cut;
+    openfile "/h";
+    paste;
+    #handle2 = hidemaruhandle(0);
+    #select = 1;
+}
+if( #delspc ) {
+    replaceallfast "^[ \t　]*\\n", "", regular;
+    #delspcnum = result;
+    if( #delspcnum ) $delspcnum = "空白行削除：" + str( #delspcnum ) + " 行\n";
+    #ex = #ex + #delspcnum;
+}
+if( #sort == 0 && #delete == 0 ) goto End;
+if( #sort ) call Sort;
+if( #delete == 0 ) goto End;
+if( #uniq && #showdel == 0 ) {   // Uniq.hmf があり削除行を表示しない場合
+    ##lines = linecount2;
+    call Uniq;
+    #count = ##lines - linecount2;
+} else if( #sort ) {
+    call SortDelete;
+} else {
+    call NoSortDelete;
+}
+if( #select ) {
+    selectall;
+    copy;
+    setactivehidemaru #handle1;
+    paste;
+    #ex = #ex + 2;
+}
+gofiletop;
+
+End:
+writeininum $inifile, "EraseSameLine", "sort", #sort;
+writeininum $inifile, "EraseSameLine", "delete", #delete;
+writeininum $inifile, "EraseSameLine", "delspc", #delspc;
+writeininum $inifile, "EraseSameLine", "showdel", #showdel;
+title 0;
+enabledraw;
+if( #endmessage == 0 ) {
+    endgroupundo;
+    goto Label_1;
+}
+if( #sort ) $sorted = "ソート済み\n";
+if( #sort && #delete == 0 && #delspc == 0 ) $sorted = "ソートしました。\n";
+if( #count > 0 ) $dellinenum = "重複行削除：" + str( #count ) + " 行\n";
+else $dellinenum = "削除行なし\n";
+#time = tickcount - #starttime;
+#minute = #time / 60000;
+#second =  #time / 1000 - #minute * 60;
+if( #minute > 0 ) $minute = str( #minute ) + "分";
+if( #showtime ) $time = "所 要 時 間：" + $minute + str(#second) + "秒" + rightstr( str( #time ), 3 );
+if( #showdel && #count > 0 ) {
+    if( #showplace == 1 ) $showplace = "\n\n（削除行は別ファイルに表示）";
+    else if( #showplace == 0 ) $showplace = "\n\n（削除行はアウトプット枠に表示）";
+}
+question $dellinenum + $delspcnum + $sorted + $time + $showplace + "\n\n確定しますか？";
+if( result == no ) {
+    endgroupundo;
+    undo;
+    if( #select ) closehidemaruforced #handle2;
+    endmacro;
+}
+if( #showdel == 0 ) {
+    endgroupundo;
+    if( #uniq ) closehidemaruforced #handle2;
+    endmacro;
+}
+if( #count == 0 ) {
+    endgroupundo;
+    if( #select ) closehidemaruforced #handle2;
+    gofiletop;
+    endmacro;
+}
+Label_1:
+if( #select ) setactivehidemaru #handle2;
+title "削除行一覧作成中・・・・・";
+disabledraw;
+gofileend;
+if( x > 0 ) insertreturn;
+#lasty = y;
+insert "━━━━━━━━━━━━ 削除した重複行 (" + str( #count ) + "行) ━━━━━━━━━━━━\n";
+##u = 0;
+#ex = #ex - #delspcnum;
+if( #sort ) {
+    if( #select ) #ex = #ex - 4;
+    else #ex = #ex - 2;
+}
+while( 1 ) {
+    undelete;
+    ##u = ##u + 1;
+    if( ##u >= #ex ) break;
+}
+if( #showplace == 0 || #showplace == 1 || #select ) {
+    moveto 0, #lasty;
+    beginsel;
+    gofileend;
+    if( #showplace == 0 ) {
+        $erased = gettext( seltopx, seltopy, selendx, selendy, 1 );
+        delete;
+        loaddll "HmOutputPane.dll";
+        #r = dllfunc( "Output", hidemaruhandle(0), $erased );
+        freedll;
+    } else {
+        cut;
+        newfile;
+        paste;
+        changename "重複行削除" + year + month + day + "_" + hour + minute + second + ".TXT";
+        clearupdated;
+        gofiletop;
+        setactivehidemaru #handle1;
+    }
+    if( #select ) closehidemaruforced #handle2;
+}
+endgroupundo;
+movetolineno 1, #line0;
+endmacro;
+
+//********** End of main routin **********************************
+
+SetOption:
+$endmessage[1] = "出す";
+$endmessage[0] = "出さない";
+$showtime[1] = "する";
+$showtime[0] = "しない";
+$showplace[0] = "アウトプット枠";
+$showplace[1] = "別ファイル";
+while( 1 ) {
+    menu "&E 終了メッセージ：\t" + $endmessage[#endmessage],
+         "&T 時間表示：\t" + $showtime[#showtime],
+         "&S 削除行表示位置：\t" + $showplace[#showplace],
+         "&R も　ど　る";
+    ##r = result;
+    if( ##r == 0 || ##r == 4 ) break;
+    else if( ##r == 1 ) #endmessage = !#endmessage;
+    else if( ##r == 2 ) #showtime = !#showtime;
+    else if( ##r == 3 ) #showplace = !#showplace;
+}
+call ReserveOption;
+return;
+
+/////////////////////////////////////////////////////
+ReserveOption:
+writeininum $inifile, "EraseSameLine", "endmessage", #endmessage;
+writeininum $inifile, "EraseSameLine", "showtime", #showtime;
+writeininum $inifile, "EraseSameLine", "showplace", #showplace;
+return;
+/////////////////////////////////////////////////////
+Sort:
+title "ソート中";
+selectall;
+filter "HmFilter.hmf", "Sort", "000000110001000\"00";//文字符号順にソート;
+#ex = #ex + 2;
+escape;
+return;
+
+/////////////////////////////////////////////////////
+SortDelete:
+gofiletop;
+while ( code == 0x0d ) down;
+while( code != eof ) {
+    $s1 = gettext2( 0, lineno, linelen2, lineno );
+    movetolineno 1, lineno + 1;
+    while( 1 ) {
+        $s2 = gettext2( 0, lineno, linelen2, lineno );
+        if( $s1 == $s2 ) {
+            selectline;
+            delete;
+            #lastline = #lastline - 1;
+            #count = #count + 1;
+        } else break;
+    }
+    #i = #i + 1;
+    if( #i % 20 == 0 ) title "削除中 " + str( #i );
+}
+#ex = #ex + #count;
+return;
+
+/////////////////////////////////////////////////////
+NoSortDelete:
+gofiletop;
+title "削除中";
+disabledraw;
+setcompatiblemode 0x20000;
+while( code != eof ) {
+    $s1 = gettext2( 0, lineno, linelen2, lineno );
+    if( $s1 == "" ) {    //空行の場合
+        movetolineno 1, lineno + 1;
+        continue;
+    }
+    movetolineno 1, lineno + 1;
+    #line = lineno;
+    while( 1 ) {
+        searchdown2 $s1;
+        if( !result ) break;
+            $s2 = gettext2( 0, lineno, linelen2, lineno );
+            if( $s1 != $s2 ) {
+                movetolineno 1, lineno + 1;
+                continue;
+        }
+        selectline;
+        delete;
+        #count = #count + 1;
+    }
+    movetolineno 1, #line;
+    #i = #i + 1;
+    if( #i % 20 == 0 ) title "削除中 " + str( #i );
+}
+#ex = #ex + #count;
+return;
+
+/////////////////////////////////////////////////////
+Uniq:
+selectall;
+filter $UniqFilter, "Uniq";
+escape;
+return;
+/////////////////////////////////////////////////////
+DengakuDialog:
+loaddll $dengaku;
+  // グループボックス(子ダイアログ)
+#n = dllfunc("NEWDLGPAGE", "page1", 20) ;
+
+#n = dllfunc("NEWCONTROL", "check", "endmessage", "終了メッセージを出す(&E)");
+#n = dllfunc("SETCTRLSTATE", "", str(#endmessage));
+#n = dllfunc("SETCTRLNOTIFY", "", "11");
+
+#n = dllfunc("NEWCONTROL", "check", "showtime", "時間表示をする(&T)");
+#n = dllfunc("SETCTRLSTATE", "", str(#showtime));
+
+#n = dllfunc("NEWCONTROL", "radio", "showplace", "削除行表示位置");
+#n = dllfunc("SETCTRLITEM", "", "アウトプット枠(&O)", "-1");
+#n = dllfunc("SETCTRLITEM", "", "別のファイル(&F)", "-1");
+#n = dllfunc("SETCTRLSTATE", "", str(#showplace + 1));
+if( #showdel == 0 ) #n = dllfunc("ENABLECTRL", 0, "showplace");
+if( #endmessage == 0 ) #n = dllfunc("ENABLECTRL", 0, "showtime");
+
+  //親ダイアログ
+#n = dllfunc("NEWDIALOG", "重複行を削除する簡易マクロ  Ver.2.13", 25);
+
+#n = dllfunc("NEWCONTROL", "check", "delete", "重複行を削除する(&D)");
+#n = dllfunc("SETCTRLSTATE", "", str(#delete));
+#n = dllfunc("SETCTRLNOTIFY", "", "12");
+
+#n = dllfunc("NEWCONTROL", "check", "sort", "ソートする(&S)");
+#n = dllfunc("SETCTRLSTATE", "", str(#sort));
+
+#n = dllfunc("NEWCONTROL", "check", "delspc", "空白行を削除する(&N)");
+#n = dllfunc("SETCTRLSTATE", "", str(#delspc));
+
+#n = dllfunc("NEWCONTROL", "check", "showdel", "削除行を表示する(&H)");
+#n = dllfunc("SETCTRLSTATE", "", str(#showdel));
+#n = dllfunc("SETCTRLNOTIFY", "", "10");
+if( #uniq == 1 ) {
+    #n = dllfunc("NEWCONTROL", "text", "rapid", "　　　（高速処理）");
+    if( #showdel == 1 ) #n = dllfunc("SETCTRLSTRING","rapid","");
+}
+if( #delete == 0 ) {
+    ##r = dllfunc("ENABLECTRL", 0, "showdel");
+    ##r = dllfunc("ENABLECTRL", 0, "showplace");
+}
+
+#n = dllfunc("NEWCONTROL", "text", "", "");
+
+#n = dllfunc("NEWCONTROL", "okcancel", "", "");
+
+#n = dllfunc("NEWCOLUMN", 22);
+
+#n = dllfunc("NEWCONTROL", "group", "group1", "");
+#n = dllfunc("SETCTRLITEM", "", "page1", "-1");
+
+#n = dllfunc("SHOWDIALOG", hidemaruhandle(0), 1);
+while (1) {
+    $$note = "";
+    while (strlen($$note) == 0) $$note = dllfuncstr("WAITCTRLNOTIFY", 10);
+    if ($$note == "0" || $$note == "1" ) break;
+    else if( $$note == "10" ) {
+        $$ret = dllfuncstr("GETCTRLSTATE", "showdel");
+        if( $$ret == "1" ) {
+            ##r = dllfunc("ENABLECTRL", 1, "showplace");
+            if( #uniq ) ##r = dllfunc("SETCTRLSTRING","rapid","");
+        } else {
+            ##r = dllfunc("ENABLECTRL", 0, "showplace");
+            if( #uniq ) ##r = dllfunc("SETCTRLSTRING","rapid","　　　（高速処理）");
+        }
+    } else if( $$note == "11" ) {
+        $$ret = dllfuncstr("GETCTRLSTATE", "endmessage");
+        if( $$ret == "1" ) {
+            ##r = dllfunc("ENABLECTRL", 1, "showtime");
+        } else {
+            ##r = dllfunc("ENABLECTRL", 0, "showtime");
+        }
+    } else if( $$note == "12" ) {
+        $$ret = dllfuncstr("GETCTRLSTATE", "delete");
+        if( $$ret == "1" ) {
+            ##r = dllfunc("ENABLECTRL", 1, "showdel");
+            ##r = dllfunc("ENABLECTRL", 1, "showplace");
+        } else {
+            ##r = dllfunc("ENABLECTRL", 0, "showdel");
+            ##r = dllfunc("ENABLECTRL", 0, "showplace");
+        }
+    }
+}
+#n = dllfunc("ENDDIALOG");
+if ($$note == "0" ) {
+    freedll;
+    endmacro;;
+}
+#sort = val(dllfuncstr("GETCTRLSTATE", "sort"));
+#delete = val(dllfuncstr("GETCTRLSTATE", "delete"));
+#delspc = val(dllfuncstr("GETCTRLSTATE", "delspc"));
+#showdel = val(dllfuncstr("GETCTRLSTATE", "showdel"));
+#endmessage = val(dllfuncstr("GETCTRLSTATE", "endmessage"));
+#showtime = val(dllfuncstr("GETCTRLSTATE", "showtime"));
+#showplace = val(dllfuncstr("GETCTRLSTATE", "showplace")) - 1;
+freedll;
+call ReserveOption;
+return;
+
+//------------------------------------------------------//
