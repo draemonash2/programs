@@ -1,4 +1,5 @@
 'Option Explicit
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '####################################################################
 '### 設定
@@ -23,11 +24,20 @@ Else
     WScript.Quit()
 End If
 
+Dim cFilePaths
+
 '*******************************************************
 '* ファイル/フォルダ名取得
 '*******************************************************
-Dim cFilePaths
-If PRODUCTION_ENVIRONMENT = 0 Then
+If EXECUTION_MODE = 0 Then 'Explorerから実行
+    Set cFilePaths = CreateObject("System.Collections.ArrayList")
+    Dim sArg
+    For Each sArg In WScript.Arguments
+        cFilePaths.add sArg
+    Next
+ElseIf EXECUTION_MODE = 1 Then 'X-Finderから実行
+    Set cFilePaths = WScript.Col( WScript.Env("Selected") )
+Else 'デバッグ実行
     MsgBox "デバッグモードです。"
     Set cFilePaths = CreateObject("System.Collections.ArrayList")
     Dim objWshShell
@@ -36,8 +46,6 @@ If PRODUCTION_ENVIRONMENT = 0 Then
     objWshShell.Run "cmd /c mkdir ""C:\Users\draem_000\Desktop\test2""", 0, True
     cFilePaths.Add "C:\Users\draem_000\Desktop\test.txt"
     cFilePaths.Add "C:\Users\draem_000\Desktop\test2"
-Else
-    Set cFilePaths = WScript.Col( WScript.Env("Selected") )
 End If
 
 '*** ファイルパスチェック ***

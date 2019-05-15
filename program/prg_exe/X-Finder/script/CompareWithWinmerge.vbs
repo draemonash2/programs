@@ -1,5 +1,5 @@
 'Option Explicit
-'Const PRODUCTION_ENVIRONMENT = 0
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '####################################################################
 '### 設定
@@ -14,22 +14,34 @@ Const PROG_NAME = "WinMergeで比較"
 Dim bIsContinue
 bIsContinue = True
 
+Dim objWshShell
+Dim objFSO
+Dim sTmpPath
+Dim sExePath
+Dim cSelected
+
 '*** 選択ファイル取得 ***
 If bIsContinue = True Then
-    Dim sTmpPath
-    Dim sExePath
-    Dim cSelected
-    If PRODUCTION_ENVIRONMENT = 0 Then
+    If EXECUTION_MODE = 0 Then 'Explorerから実行
+        Set objWshShell = WScript.CreateObject("WScript.Shell")
+        sTmpPath = objWshShell.SpecialFolders("Templates") & "\" & TEMP_FILE_NAME
+        sExePath = "C:\prg_exe\WinMerge\WinMergeU.exe"
+        Set cSelected = CreateObject("System.Collections.ArrayList")
+        Dim sArg
+        For Each sArg In WScript.Arguments
+            cSelected.add sArg
+        Next
+    ElseIf EXECUTION_MODE = 1 Then 'X-Finderから実行
+        sTmpPath = WScript.Env("Temp") & "\" & TEMP_FILE_NAME
+        sExePath = WScript.Env("WinMerge")
+        Set cSelected = WScript.Col(WScript.Env("Selected"))
+    Else
         MsgBox "デバッグモードです。"
         sTmpPath = "C:\prg_exe\X-Finder\" & TEMP_FILE_NAME
         sExePath = "C:\prg_exe\WinMerge\WinMergeU.exe"
         Set cSelected = CreateObject("System.Collections.ArrayList")
         cSelected.Add "C:\prg_exe\X-Finder\script\FileNameCopy.vbs"
         cSelected.Add "C:\prg_exe\X-Finder\script\FilePathCopy.vbs"
-    Else
-        sTmpPath = WScript.Env("Temp") & "\" & TEMP_FILE_NAME
-        sExePath = WScript.Env("WinMerge")
-        Set cSelected = WScript.Col(WScript.Env("Selected"))
     End If
 Else
     'Do Nothing

@@ -1,5 +1,5 @@
 'Option Explicit
-'Const PRODUCTION_ENVIRONMENT = 0
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '<<7-Zip usage>>
 '  7z x -o<target_dir_path> <archive_file_path>
@@ -123,15 +123,25 @@ cAcceptFileFormats.Add "taz"      ' Z
 '####################################################################
 Const PROG_NAME = "7-Zip で解凍"
 
-Dim sExePath
-Dim cSelectedPaths
-
 Dim bIsContinue
 bIsContinue = True
 
+Dim sExePath
+Dim cSelectedPaths
+
 '*** 選択ファイル取得 ***
 If bIsContinue = True Then
-    If PRODUCTION_ENVIRONMENT = 0 Then
+    If EXECUTION_MODE = 0 Then 'Explorerから実行
+        sExePath = "C:\prg_exe\7-ZipPortable\App\7-Zip64\7z.exe"
+        Set cSelectedPaths = CreateObject("System.Collections.ArrayList")
+        Dim sArg
+        For Each sArg In WScript.Arguments
+            cSelectedPaths.add sArg
+        Next
+    ElseIf EXECUTION_MODE = 1 Then 'X-Finderから実行
+        sExePath = WScript.Env("7-Zip")
+        Set cSelectedPaths = WScript.Col( WScript.Env("Selected") )
+    Else 'デバッグ実行
         MsgBox "デバッグモードです。"
         sExePath = "C:\prg_exe\7-ZipPortable\App\7-Zip64\7z.exe"
         Set cSelectedPaths = CreateObject("System.Collections.ArrayList")
@@ -139,9 +149,6 @@ If bIsContinue = True Then
         cSelectedPaths.Add "C:\Users\draem_000\Desktop\test\b b.zip"
         cSelectedPaths.Add "C:\Users\draem_000\Desktop\test\cc"
         cSelectedPaths.Add "C:\Users\draem_000\Desktop\test\d.txt"
-    Else
-        sExePath = WScript.Env("7-Zip")
-        Set cSelectedPaths = WScript.Col( WScript.Env("Selected") )
     End If
 Else
     'Do Nothing

@@ -1,5 +1,5 @@
 'Option Explicit
-'Const PRODUCTION_ENVIRONMENT = 0
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '####################################################################
 '### 設定
@@ -14,17 +14,30 @@ Const PROG_NAME = "カレントフォルダ配下の特定ファイルを Vim で全て開く"
 Dim bIsContinue
 bIsContinue = True
 
+Dim objFSO
+Dim sExePath
+Dim sCurDirPath
+
 '*** 選択ファイル取得 ***
 If bIsContinue = True Then
-    Dim sExePath
-    Dim sCurDirPath
-    If PRODUCTION_ENVIRONMENT = 0 Then
+    If EXECUTION_MODE = 0 Then 'Explorerから実行
+        Dim sArg
+        Dim sDefaultPath
+        Set objFSO = CreateObject("Scripting.FileSystemObject")
+        For Each sArg In WScript.Arguments
+            If sDefaultPath = "" Then
+                sDefaultPath = objFSO.GetParentFolderName( sArg )
+            End If
+        Next
+        sExePath = "C:\prg_exe\Vim\gvim.exe"
+        sCurDirPath = InputBox( "ファイルパスを指定してください", PROG_NAME, sDefaultPath )
+    ElseIf EXECUTION_MODE = 1 Then 'X-Finderから実行
+        sExePath = WScript.Env("Vim")
+        sCurDirPath = WScript.Env("Current")
+    Else 'デバッグ実行
         MsgBox "デバッグモードです。"
         sExePath = "C:\prg_exe\Vim\gvim.exe"
         sCurDirPath = "C:\codes\c"
-    Else
-        sExePath = WScript.Env("Vim")
-        sCurDirPath = WScript.Env("Current")
     End If
 Else
     'Do Nothing
@@ -71,7 +84,6 @@ If bIsContinue = True Then
     Dim objFile
     Dim sTextAll
     On Error Resume Next
-    Dim objFSO
     Set objFSO = WScript.CreateObject("Scripting.FileSystemObject")
     Dim asFileList
     If Err.Number = 0 Then

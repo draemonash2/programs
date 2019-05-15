@@ -1,5 +1,5 @@
 'Option Explicit
-'Const PRODUCTION_ENVIRONMENT = 0
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '####################################################################
 '### 設定
@@ -14,19 +14,33 @@ Const PROG_NAME = "タグファイル作成"
 Dim bIsContinue
 bIsContinue = True
 
+Dim sCTagExePath
+Dim sGTagExePath
+Dim sTrgtDirPath
+
 If bIsContinue = True Then
-    Dim sCTagExePath
-    Dim sGTagExePath
-    Dim sTrgtDirPath
-    If PRODUCTION_ENVIRONMENT = 0 Then
+    If EXECUTION_MODE = 0 Then 'Explorerから実行
+        Dim sArg
+        Dim sDefaultPath
+        Dim objFSO
+        Set objFSO = CreateObject("Scripting.FileSystemObject")
+        For Each sArg In WScript.Arguments
+            If sDefaultPath = "" Then
+                sDefaultPath = objFSO.GetParentFolderName( sArg )
+            End If
+        Next
+        sCTagExePath = "C:\prg_exe\Ctags\ctags.exe"
+        sGTagExePath = "C:\prg_exe\Gtags\bin\gtags.exe"
+        sTrgtDirPath = InputBox( "ファイルパスを指定してください", PROG_NAME, sDefaultPath )
+    ElseIf EXECUTION_MODE = 1 Then 'X-Finderから実行
+        sCTagExePath = "C:\prg_exe\Ctags\ctags.exe"
+        sGTagExePath = "C:\prg_exe\Gtags\bin\gtags.exe"
+        sTrgtDirPath = WScript.Env("Current")
+    Else 'デバッグ実行
         MsgBox "デバッグモードです。"
         sCTagExePath = "C:\prg_exe\Ctags\ctags.exe"
         sGTagExePath = "C:\prg_exe\Gtags\bin\gtags.exe"
         sTrgtDirPath = "C:\codes\c"
-    Else
-        sCTagExePath = "C:\prg_exe\Ctags\ctags.exe"
-        sGTagExePath = "C:\prg_exe\Gtags\bin\gtags.exe"
-        sTrgtDirPath = WScript.Env("Current")
     End If
 Else
     'Do Nothing

@@ -1,5 +1,5 @@
 'Option Explicit
-'Const PRODUCTION_ENVIRONMENT = 0
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '####################################################################
 '### 設定
@@ -14,21 +14,36 @@ Const PROG_NAME = "リネーム用バッチファイル出力"
 Dim bIsContinue
 bIsContinue = True
 
+Dim objFSO
+Dim sOutputBatDirPath
+Dim sExePath
+Dim cFilePaths
+
 If bIsContinue = True Then
-    Dim sOutputBatDirPath
-    Dim sExePath
-    Dim cFilePaths
-    If PRODUCTION_ENVIRONMENT = 0 Then
+    If EXECUTION_MODE = 0 Then 'Explorerから実行
+        Dim sArg
+        Dim sDefaultPath
+        Set objFSO = CreateObject("Scripting.FileSystemObject")
+        Set cFilePaths = CreateObject("System.Collections.ArrayList")
+        For Each sArg In WScript.Arguments
+            cFilePaths.add sArg
+            If sDefaultPath = "" Then
+                sDefaultPath = objFSO.GetParentFolderName( sArg )
+            End If
+        Next
+        sOutputBatDirPath = InputBox( "ファイルパスを指定してください", PROG_NAME, sDefaultPath )
+        sExePath = "C:\prg_exe\Vim\gvim.exe"
+    ElseIf EXECUTION_MODE = 1 Then 'X-Finderから実行
+        sOutputBatDirPath = WScript.Env("Current")
+        sExePath = WScript.Env("Vim")
+        Set cFilePaths = WScript.Col( WScript.Env("Selected") )
+    Else 'デバッグ実行
         MsgBox "デバッグモードです。"
         sOutputBatDirPath = "C:\Users\draem_000\Desktop\test"
         sExePath = "C:\prg_exe\Vim\gvim.exe"
         Set cFilePaths = CreateObject("System.Collections.ArrayList")
         cFilePaths.Add "C:\Users\draem_000\Desktop\test\aabbbbb.txt"
         cFilePaths.Add "C:\Users\draem_000\Desktop\test\b b"
-    Else
-        sOutputBatDirPath = WScript.Env("Current")
-        sExePath = WScript.Env("Vim")
-        Set cFilePaths = WScript.Col( WScript.Env("Selected") )
     End If
 Else
     'Do Nothing
@@ -79,7 +94,6 @@ End If
 
 '*** リネーム前ファイルリスト出力 ***
 If bIsContinue = True Then
-    Dim objFSO
     Set objFSO = CreateObject("Scripting.FileSystemObject")
     Dim objTxtFile
     Dim sBakFilePath

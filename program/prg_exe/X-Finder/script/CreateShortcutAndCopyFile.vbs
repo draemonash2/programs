@@ -1,5 +1,5 @@
 'Option Explicit
-'Const PRODUCTION_ENVIRONMENT = 0
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '####################################################################
 '### 設定
@@ -17,19 +17,33 @@ Const PROG_NAME = "ショートカット＆コピーファイル作成"
 Dim bIsContinue
 bIsContinue = True
 
-'*** 選択ファイル取得 ***
 Dim sOrgDirPath
 Dim cSelectedPaths
+Dim objFSO
+
+'*** 選択ファイル取得 ***
 If bIsContinue = True Then
-    If PRODUCTION_ENVIRONMENT = 0 Then
+    If EXECUTION_MODE = 0 Then 'Explorerから実行
+        Dim sArg
+        Dim sDefaultPath
+        Set objFSO = CreateObject("Scripting.FileSystemObject")
+        Set cSelectedPaths = CreateObject("System.Collections.ArrayList")
+        For Each sArg In WScript.Arguments
+            cSelectedPaths.add sArg
+            If sDefaultPath = "" Then
+                sDefaultPath = objFSO.GetParentFolderName( sArg )
+            End If
+        Next
+        sOrgDirPath = InputBox( "ファイルパスを指定してください", PROG_NAME, sDefaultPath )
+    ElseIf EXECUTION_MODE = 1 Then 'X-Finderから実行
+        sOrgDirPath = WScript.Env("Current")
+        Set cSelectedPaths = WScript.Col( WScript.Env("Selected") )
+    Else 'デバッグ実行
         MsgBox "デバッグモードです。"
         sOrgDirPath = "X:\100_Documents\200_【学校】共通\大学院\ゼミ出席簿"
         Set cSelectedPaths = CreateObject("System.Collections.ArrayList")
         cSelectedPaths.Add "X:\100_Documents\200_【学校】共通\大学院\ゼミ出席簿\H20年度 ゼミ出席簿.xls"
         cSelectedPaths.Add "X:\100_Documents\200_【学校】共通\大学院\ゼミ出席簿\H21年度 ゼミ出席簿.xls"
-    Else
-        sOrgDirPath = WScript.Env("Current")
-        Set cSelectedPaths = WScript.Col( WScript.Env("Selected") )
     End If
 Else
     'Do Nothing
@@ -78,7 +92,6 @@ End If
 
 '*** ショートカット作成 ***
 If bIsContinue = True Then
-    Dim objFSO
     Set objFSO = CreateObject("Scripting.FileSystemObject")
     Dim objWshShell
     Set objWshShell = WScript.CreateObject("WScript.Shell")

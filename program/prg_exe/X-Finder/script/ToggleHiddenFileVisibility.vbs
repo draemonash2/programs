@@ -1,5 +1,5 @@
 'Option Explicit
-'Const PRODUCTION_ENVIRONMENT = 0
+'Const EXECUTION_MODE = 255 '0:Explorerから実行、1:X-Finderから実行、other:デバッグ実行
 
 '####################################################################
 '### 設定
@@ -15,12 +15,12 @@ Dim bIsContinue
 bIsContinue = True
 
 If bIsContinue = True Then
-    If PRODUCTION_ENVIRONMENT = 0 Then
-        MsgBox "このスクリプトはデバッグモードでは実行できません。", vbOKOnly, PROG_NAME
+    If EXECUTION_MODE = 1 Then 'X-Finderから実行
+        'Do Nothing
+    Else
+        MsgBox "このスクリプトはX-Finder以外では実行できません。", vbOKOnly, PROG_NAME
         MsgBox "処理を中断します。", vbOKOnly, PROG_NAME
         bIsContinue = False
-    Else
-        'Do Nothing
     End If
 Else
     'Do Nothing
