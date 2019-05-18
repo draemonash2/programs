@@ -29,10 +29,6 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 ; *** ファイル起動（Win + Fn） ***
 	;todo.itmz
 		#F1::
-			sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
-			sFilePath = "%DOC_DIR_PATH%todo.itmz"
-			StartProgramAndActivate( sExePath, sFilePath )
-			return
 		+^!z::
 			sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
 			sFilePath = "%DOC_DIR_PATH%todo.itmz"
@@ -52,6 +48,7 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 			return
 	;temp.txt
 		#F5::
+		+^!s::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
 			sFilePath = "%DOC_DIR_PATH%temp.txt"
 			StartProgramAndActivate( sExePath, sFilePath )
@@ -74,8 +71,8 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 			StartProgramAndActivate( sExePath, sFilePath )
 			return
 	;かなキーをコンテキストメニュー表示へ
-	;	vkF2sc070::AppsKey
 		RAlt::AppsKey
+			return
 
 ; *** プログラム起動（Win + Alt + Fn）***
 	;rapture.exe
@@ -90,31 +87,25 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 		#!F2::
 			RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 			return
+	;Bluetoothテザリング起動
+		#!F11::
+			Run, control printers
+			Sleep 1000
+			Send, myp
+			Sleep 200
+			Send, {AppsKey}
+			Sleep 100
+			Send, c
+			Sleep 100
+			Send, a
+			Sleep 5000
+			Send, !{F4}
+			return
 	;ウィンドウ最前面切り替え
 		#!F12::
 			WinSet, AlwaysOnTop, TOGGLE, A
 			MsgBox, 0x43000, ウィンドウ最前面切り替え, アクティブウィンドウ最前面化の有効/無効を切り替えます, 5
 			Return
-	;Bluetoothテザリング起動
-		#!F11::
-			Send, #r
-			Sleep 500
-			Send, control printers
-			Sleep 500
-			Send, {Enter}
-			Sleep 2000
-			Send, myp
-			Sleep 500
-			Send, {AppsKey}
-			Sleep 500
-			Send, {Down}
-			Sleep 500
-			Send, {Right}
-			Sleep 500
-			Send, {Enter}
-			Sleep 2000
-			Send, !{F4}
-			return
 
 ;***** Software local *****
 	#IfWinActive ahk_exe EXCEL.EXE
@@ -132,11 +123,13 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 	#IfWinActive ahk_exe Rapture.exe
 		;Escで終了
 			Esc::!F4
+			return
 	#IfWinActive
 	
 	#IfWinActive ahk_exe vimrun.exe
 		;Escで終了
 			Esc::!F4
+			return
 	#IfWinActive
 	
 	#IfWinActive AHK_Exe kinza.exe
@@ -172,6 +165,7 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 	#IfWinActive ahk_class MPC-BE
 		;★
 			]::Send, {Space}
+			return
 	#IfWinActive
 
 ;* ***************************************************************
