@@ -1,4 +1,0 @@
-	setcompatiblemode 0x0F;
-	down;
-	golinetop;
-	paste;
