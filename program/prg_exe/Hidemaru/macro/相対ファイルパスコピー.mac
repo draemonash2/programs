@@ -1,0 +1,6 @@
+$script_path = "C:\\codes\\vbs\\tools\\win\\clipboard\\CpyRltvFilePath.vbs";
+$file_path = filename2;
+$match_dir_name = "Programs";
+$remove_dir_level = "0";
+
+runsync2 "cscript.exe " + $script_path + " " + $file_path + " " + $match_dir_name + " " + $remove_dir_level;
