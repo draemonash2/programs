@@ -26,8 +26,10 @@
 	noremap		<silent>			K			g*zz
 																							" ↓ 検索結果を画面中央に
 	noremap		<silent>			g#			g#zz
-																							" ↓ 削除（切り取りなし）
-	noremap		<silent>			x			"_x
+																							" ↓ 行削除（切取りなし）
+	nnoremap	<silent>			dd			"_dd
+																							" ↓ 行切取りなし
+	nnoremap	<silent>			dx			dd
 																							" ↓ カーソルを先頭に移動
 	noremap		<silent>			H			0
 																							" ↓ カーソルを末尾に移動
@@ -44,10 +46,6 @@
 	noremap		<silent>			<tab>		a<tab><esc>
 																							" ↓ スペースキー無効
 	noremap		<silent>			<space>		<nop>
-																							" ↓ カーソル移動＋画面移動（下）
-	noremap		<silent>			<c-j>		5jzz
-																							" ↓ カーソル移動＋画面移動（上）
-	noremap		<silent>			<c-k>		5kzz
 																							" ↓ カーソル移動＋画面移動（左）
 	noremap		<silent>			<c-h>		10zh10h
 																							" ↓ カーソル移動＋画面移動（右）
@@ -76,7 +74,6 @@
 	noremap		<silent>			<c-g>		:call ExecuteHNXgrep()<cr>
 																							" ↓ ハイライト解除
 	noremap		<silent>			<esc><esc>	:nohlsearch<cr>
-	
 																							" ↓ バッファリスト作成
 	noremap		<silent>			<F1>		:call BufferList()<cr>
 																							" ↓ タグリスト作成
@@ -95,15 +92,12 @@
 	noremap		<silent>			<F7>		:NERDTreeToggle<CR>
 																							" ↓ フォントサイズをトグル
 	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>
-																							" ↓ ↑前行の単語をコピーしてインクリメント
-	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
 																							" ↓ ウィンドウサイズをトグル
 	noremap		<silent>			<F10>		:call ToggleWindowSize()<cr>
 																							" ↓ タブ⇒空白 変換
 	noremap		<silent>			<F11>		:set expandtab<cr>:retab!<cr>
 																							" ↓ 空白⇒タブ 変換
 	noremap		<silent>			<F12>		:set noexpandtab<cr>:retab!<cr>
-	
 																							" ↓ 現在ファイルパスコピー
 	noremap		<silent>			<c-F1>		:call CopyCurFilePath()<cr>
 																							" ↓ 現在フォルダパスコピー
@@ -114,19 +108,25 @@
 	noremap		<silent>			<c-F4>		:call CopyProgramNo()<cr>
 																							" ↓ ファイル種別と行番号コピー
 	noremap		<silent>			<c-F5>		:call CopyFileLineNo()<cr>
-	
 																							" ↓ タグファイル更新
 	noremap		<silent>			<c-s-F5>	:call UpdateTagFile()<cr>
-	
 																							" ↓ ペーストしたテキストを再選択できるようにする
 "	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'
 	
 "=== ノーマルモード ===
 "	nnoremap	<silent>			<cr>		<nop>
+																							" ↓ カーソル移動＋画面移動（下）
+	nnoremap	<silent>			<c-j>		5jzz
+																							" ↓ カーソル移動＋画面移動（上）
+	nnoremap	<silent>			<c-k>		5kzz
+																							" ↓ 前行の単語をコピーしてインクリメント
+	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
 	
 "=== 挿入モード ===
 																							" ↓ Ctrl+J でノーマルモードに移行
 	inoremap	<silent>			<c-j>		<esc>
+																							" ↓ 【neosnippet】スニペットを展開
+	imap		<silent>			<c-k>		<Plug>(neosnippet_expand_or_jump)
 	
 "=== ヴィジュアルモード ===
 																							" ↓ インデント左シフト
@@ -145,17 +145,30 @@
 	vnoremap	<silent>			<F9>		:call ReplaceRelativePath()<cr>
 																							" ↓ ファイル種別と行番号コピー
 	vnoremap	<silent>			<c-F5>		:<bs><bs><bs><bs><bs>call CopyFileLineNo()<cr>
+																							" ↓ 削除
+	vnoremap	<silent>			d			"_d
+																							" ↓ 切り取り
+	vnoremap	<silent>			x			d
+																							" ↓ 上書きペースト
+	vmap		<silent>			p			dp
 
 " ==============================================================================
-" Gtags用キーバインド
-" [参照] http://cha.la.coocan.jp/doc/gnu_global.html#sec10
+" (※1) Gtags用キーバインド
+"		[参照] http://cha.la.coocan.jp/doc/gnu_global.html#sec10
 " ==============================================================================
+																							" ↓【gtags(※1)】
 "	map								<c-o>		:GtagsCursor<CR>
+																							" ↓【gtags(※1)】
 "	nnoremap						<c-d>		:Gtags <C-r><C-w><CR>
+																							" ↓【gtags(※1)】
 	nnoremap						<c-e>		:Gtags -r <C-r><C-w><CR>
+																							" ↓【gtags(※1)】
 "	nnoremap						gs			:Gtags -s <C-r><C-w><CR>
+																							" ↓【gtags(※1)】
 "	nnoremap						gG			:Gtags -g <C-r><C-w><CR>
+																							" ↓【gtags(※1)】
 "	nnoremap						,d			:<C-u>Gtags -f %<CR>
+																							" ↓【gtags(※1)】
 	nnoremap						<c-t>		<C-o>
 
 " **************************************************************************************************
@@ -607,15 +620,18 @@ endif
 " 以下のようにトグルする。
 "	10 ⇒ 13 ⇒ 16 ⇒ 10 ⇒ 13 ...
 " ==============================================================================
-	let g:FontSizeLevel = 0
+	let g:FontSizeLevel = 1
 	function! ToggleFontSize()
 		if g:FontSizeLevel == 0
-			set guifont=MS_Gothic:h10:cSHIFTJIS
+			set guifont=MS_Gothic:h8:cSHIFTJIS
 			simalt ~x
 		elseif g:FontSizeLevel == 1
-			set guifont=MS_Gothic:h13:cSHIFTJIS
+			set guifont=MS_Gothic:h10:cSHIFTJIS
 			simalt ~x
 		elseif g:FontSizeLevel == 2
+			set guifont=MS_Gothic:h13:cSHIFTJIS
+			simalt ~x
+		elseif g:FontSizeLevel == 3
 			set guifont=MS_Gothic:h16:cSHIFTJIS
 			simalt ~x
 		else
@@ -1062,3 +1078,6 @@ endif
 let g:nanomap_auto_realign = 1
 let g:nanomap_auto_open_close = 1
 let g:nanomap_highlight_delay = 100
+
+"neosnippet設定
+let g:neosnippet#snippets_directory = $VIM . '/_snipets'
