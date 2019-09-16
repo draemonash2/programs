@@ -29,7 +29,6 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 ; *** ファイル起動（Win + Fn） ***
 	;todo.itmz
 		#F1::
-		+^!z::
 			sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
 			sFilePath = "%DOC_DIR_PATH%todo.itmz"
 			StartProgramAndActivate( sExePath, sFilePath )
@@ -48,7 +47,6 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 			return
 	;temp.txt
 		#F5::
-		+^!s::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
 			sFilePath = "%DOC_DIR_PATH%temp.txt"
 			StartProgramAndActivate( sExePath, sFilePath )
@@ -73,6 +71,8 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 	;かなキーをコンテキストメニュー表示へ
 		RAlt::AppsKey
 			return
+	;プリントスクリーン単押しを抑制
+		PrintScreen::return
 
 ; *** プログラム起動（Win + Alt + Fn）***
 	;rapture.exe

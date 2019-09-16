@@ -26,6 +26,8 @@
 	noremap		<silent>			K			g*zz
 																							" ↓ 検索結果を画面中央に
 	noremap		<silent>			g#			g#zz
+																							" ↓ 削除（切り取りなし）
+	noremap		<silent>			x			"_x
 																							" ↓ 行削除（切取りなし）
 	nnoremap	<silent>			dd			"_dd
 																							" ↓ 行切取りなし
@@ -145,12 +147,12 @@
 	vnoremap	<silent>			<F9>		:call ReplaceRelativePath()<cr>
 																							" ↓ ファイル種別と行番号コピー
 	vnoremap	<silent>			<c-F5>		:<bs><bs><bs><bs><bs>call CopyFileLineNo()<cr>
-																							" ↓ 削除
+																							" ↓ 削除(クリップボード上書きなし削除)
 	vnoremap	<silent>			d			"_d
-																							" ↓ 切り取り
+																							" ↓ 切取り(クリップボード上書きあり削除)
 	vnoremap	<silent>			x			d
-																							" ↓ 上書きペースト
-	vmap		<silent>			p			dp
+																							" ↓ 上書きペースト(クリップボード上書きなし)
+	vnoremap	<silent>			p			"0p
 
 " ==============================================================================
 " (※1) Gtags用キーバインド
@@ -497,24 +499,53 @@ endif
 	autocmd FileType ruby,c,cpp hi CFunction guifg=orange
 
 " ==============================================================================
-" Grep の設定
+" Vim 内Grep の設定
 " [grep option]
 "   -i：大文字小文字を無視する
+"   -E：拡張正規表現で検索を行う
+" [参照] https://eng-entrance.com/linux-command-grep#-i
 " ==============================================================================
+	let g:sGrepWord = ""
 	let g:sGrepOpt = "-i"
 	let g:sGrepFileExt = "*.c,*.h"
 	let g:sGrepPath = "" "パス区切りは'/'で指定すること！
+	
+	"------------------------------------------------------
+	"現在のファイルに対して Grep
+	" :Gc <word>
+	"------------------------------------------------------
+	nnoremap <expr> gc ":Gc " . expand('<cword>')
+"	vnoremap <expr> gc ":Gc " . expand('<cword>')
+	command! -nargs=+ Gc call s:GrepAtCurFile(<f-args>)
+	function! s:GrepAtCurFile(...)
+		if a:0 < 1
+			echo "grep argument error!"
+		else
+			"### 対象単語 取得 ###
+			let g:sGrepWord = a:000[(a:0 - 1)]
+			
+			"### 対象パス 取得 ###
+			let l:sRootPath = GetCurFilePath("\\")
+			
+			"### Grep 実行 ###
+			execute "Grep " . g:sGrepOpt . " """ . a:000[(a:0 - 1)] . """ " . l:sRootPath
+		endif
+	endfunction
 	
 	"------------------------------------------------------
 	"上位階層の「tags」格納ディレクトリをルートとして Grep
 	" :Gp <word>
 	"------------------------------------------------------
 	nnoremap <expr> gp ":Gp " . expand('<cword>')
+"	vnoremap <expr> gp ":Gp " . expand('<cword>')
 	command! -nargs=+ Gp call s:GrepAtTagsPrj(<f-args>)
 	function! s:GrepAtTagsPrj(...)
 		if a:0 < 1
 			echo "grep argument error!"
 		else
+			"### 対象単語 取得 ###
+			let g:sGrepWord = a:000[(a:0 - 1)]
+			
 			"### 対象パス 取得 ###
 			if g:sGrepPath == ""
 				let l:sRootPath = SrchStoreDirPathToTop( GetCurDirPath("\\"), "tags" )
@@ -525,6 +556,7 @@ endif
 				let l:sRootPath = substitute( g:sGrepPath, "/", "\\", "g" )
 			endif
 			echo l:sRootPath
+			
 			"### 拡張子 取得 ###
 			let l:asFileTypes = split( g:sGrepFileExt, "," )
 			let l:sIncOpt = ""
@@ -535,26 +567,66 @@ endif
 					let l:sIncOpt = l:sIncOpt . " " . "--include=" . l:sFileType
 				endif
 			endfor
+			
 			"### Grep 実行 ###
 			execute "Grep -r " . g:sGrepOpt . " " . l:sIncOpt . " """. a:000[(a:0 - 1)] . """ " . l:sRootPath . "/**"
 		endif
 	endfunction
 	
 	"------------------------------------------------------
-	"現在のファイルに対して Grep
-	" :Gc <word>
+	"ファイルパスなどを指定して対話型 Grep
+	" :Gt
 	"------------------------------------------------------
-	nnoremap <expr> gc ":Gc " . expand('<cword>')
-	command! -nargs=+ Gc call s:GrepAtCurFile(<f-args>)
-	function! s:GrepAtCurFile(...)
-		if a:0 < 1
-			echo "grep argument error!"
-		else
-			"### 対象パス 取得 ###
-			let l:sRootPath = GetCurFilePath("\\")
-			"### Grep 実行 ###
-			execute "Grep " . g:sGrepOpt . " """ . a:000[(a:0 - 1)] . """ " . l:sRootPath
+	nnoremap <expr> gt ":Gt"
+"	vnoremap <expr> gt ":Gt " . expand('<cword>')
+	command! Gt call s:GrepAtInteractive()
+	function! s:GrepAtInteractive()
+		"### 対象単語 取得 ###
+		let l:sGrepWord = input("grep target text : ", expand('<cword>'))
+		if l:sGrepWord == ""
+			echo "\n"
+			echo "  grep target word is not specified!"
+			echo "  this process is suspended!"
+			return
 		endif
+		let g:sGrepWord = l:sGrepWord
+		
+		"### 対象パス 取得 ###
+		let l:sGrepPath = input("grep target path : ", g:sGrepPath)
+		if l:sGrepPath == ""
+			echo "\n"
+			echo "  grep target path is not specified!"
+			echo "  this process is suspended!"
+			return
+		endif
+		let l:sGrepPath = substitute( l:sGrepPath, "/", "\\", "g" )
+		let g:sGrepPath = l:sGrepPath
+		
+		"### 拡張子 取得 ###
+		let l:sGrepFileExt = input("grep target file ext(ex. *.c,*.h) : ", g:sGrepFileExt)
+		if l:sGrepFileExt == ""
+			echo "\n"
+			echo "  grep target path is not specified!"
+			echo "  this process is suspended!"
+			return
+		endif
+		let g:sGrepFileExt = l:sGrepFileExt
+		let l:asFileTypes = split( l:sGrepFileExt, "," )
+		let l:sFileTypeOpt  = ""
+		for l:sFileType in l:asFileTypes
+			if l:sFileTypeOpt == ""
+				let l:sFileTypeOpt = "--include=" . l:sFileType
+			else
+				let l:sFileTypeOpt = l:sFileTypeOpt . " " . "--include=" . l:sFileType
+			endif
+		endfor
+		
+		"### grepオプション 取得 ###
+		let l:sGrepOpt = input("grep options : ", g:sGrepOpt)
+		let g:sGrepOpt = l:sGrepOpt
+		
+		"### Grep 実行 ###
+		execute "Grep -r " . l:sGrepOpt . " " . l:sFileTypeOpt . " """. l:sGrepWord . """ " . l:sGrepPath . "/**"
 	endfunction
 
 " ==============================================================================
@@ -799,6 +871,7 @@ endif
 		
 		return l:sRelativePath
 	endfunction
+
 " ==============================================================================
 " 現在のスクリプトを実行する
 "	<<デフォルト時>>
