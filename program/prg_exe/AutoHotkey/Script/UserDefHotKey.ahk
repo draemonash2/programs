@@ -25,45 +25,55 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 ;		!）		Alt
 ;		#）		Windowsロゴキー
 
+;ヘルプ表示
+!^+F1::
+msgbox,
+(
+Ctrl+Shift+Alt+\：予算管理.xlsm
+Ctrl+Shift+Alt+F12：UserDefHotKey.ahk
+
+Ctrl+Shift+Alt+z：todo.itmz
+Ctrl+Shift+Alt+s：temp.txt
+Ctrl+Shift+Alt+d：temp.xlsm
+
+Ctrl+Shift+Alt+r：rapture.exe
+Ctrl+Shift+Alt+k：KitchenTimer.vbs
+Ctrl+Shift+Alt+a：xf.exe
+Ctrl+Shift+Alt+c：cCalc.exe
+
+Windows + F12：ウィンドウ最前面切り替え
+)
+return
+
 ;***** Global *****
 ; *** ファイル起動（Win + Fn） ***
 	;todo.itmz
-		#F1::
+		!^+z::
 			sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
 			sFilePath = "%DOC_DIR_PATH%todo.itmz"
 			StartProgramAndActivate( sExePath, sFilePath )
+			Send, F2
+			Sleep 200
+			Send, {Esc}
 			return
 	;予算管理.xlsm
-		#F2::
+		!^+\::
 			sFilePath = "%DOC_DIR_PATH%210_【衣食住】家計\100_予算管理.xlsm"
 			StartProgramAndActivate( "", sFilePath )
 			return
-	;日記.txtを初期化して起動
-		#F3::
-			RunWait "%DOC_DIR_PATH%900_【他】\日記を初期化して起動.bat""
-			sExePath = "C:\prg_exe\Vim\gvim.exe"
-			sFilePath = "%DOC_DIR_PATH%900_【他】\日記.txt"
-			StartProgramAndActivate( sExePath, sFilePath )
-			return
 	;temp.txt
-		#F5::
+		!^+s::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
 			sFilePath = "%DOC_DIR_PATH%temp.txt"
 			StartProgramAndActivate( sExePath, sFilePath )
 			return
 	;temp.xlsm
-		#F6::
+		!^+d::
 			sFilePath = "%DOC_DIR_PATH%temp.xlsm"
 			StartProgramAndActivate( "", sFilePath )
 			return
-	;other.itmz
-		#F11::
-			sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
-			sFilePath = "%DOC_DIR_PATH%other.itmz"
-			StartProgramAndActivate( sExePath, sFilePath )
-			return
 	;UserDefHotKey.ahk
-		#F12::
+		!^+F12::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
 			sFilePath = "%A_ScriptFullPath%"
 			StartProgramAndActivate( sExePath, sFilePath )
@@ -76,33 +86,23 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 
 ; *** プログラム起動（Win + Alt + Fn）***
 	;rapture.exe
-		#!F1::
+		+^!r::
 			Run "C:\prg_exe\Rapture\rapture.exe"
+			return
+	;KitchenTimer.vbs
+		+^!k::
+			Run "C:\codes\vbs\tools\win\file_ope\CopyFileFrServer.vbs"
 			return
 	;xf.exe
 		+^!a::
 			Run "C:\prg_exe\X-Finder\XF.exe"
 			return
 	;cCalc.exe
-		#!F2::
+		+^!c::
 			RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 			return
-	;Bluetoothテザリング起動
-		#!F11::
-			Run, control printers
-			Sleep 1000
-			Send, myp
-			Sleep 200
-			Send, {AppsKey}
-			Sleep 100
-			Send, c
-			Sleep 100
-			Send, a
-			Sleep 5000
-			Send, !{F4}
-			return
 	;ウィンドウ最前面切り替え
-		#!F12::
+		#F12::
 			WinSet, AlwaysOnTop, TOGGLE, A
 			MsgBox, 0x43000, ウィンドウ最前面切り替え, アクティブウィンドウ最前面化の有効/無効を切り替えます, 5
 			Return
@@ -118,6 +118,7 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 			F1::return
 		;IME OFF
 			IME_SET(0)
+			return
 	#IfWinActive
 	
 	#IfWinActive ahk_exe Rapture.exe
@@ -163,7 +164,6 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 	#IfWinActive
 	
 	#IfWinActive ahk_class MPC-BE
-		;★
 			]::Send, {Space}
 			return
 	#IfWinActive
