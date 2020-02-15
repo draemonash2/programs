@@ -11,7 +11,7 @@
 ;* ***************************************************************
 ;* Settings
 ;* ***************************************************************
-DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
+DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents
 
 ;* ***************************************************************
 ;* Keys
@@ -29,69 +29,67 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents\
 !^+F1::
 msgbox,
 (
-Ctrl+Shift+Alt+\：予算管理.xlsm
-Ctrl+Shift+Alt+F12：UserDefHotKey.ahk
+Ctrl+Shift+Alt+\：UserDefHotKey.ahk
 
-Ctrl+Shift+Alt+z：todo.itmz
-Ctrl+Shift+Alt+s：temp.txt
-Ctrl+Shift+Alt+d：temp.xlsm
+Ctrl+Shift+Alt+z：#todo.itmz
+Ctrl+Shift+Alt+s：#temp.txt
+Ctrl+Shift+Alt+d：#temp.xlsm
 
 Ctrl+Shift+Alt+r：rapture.exe
 Ctrl+Shift+Alt+k：KitchenTimer.vbs
 Ctrl+Shift+Alt+a：xf.exe
 Ctrl+Shift+Alt+c：cCalc.exe
 
-Windows + F12：ウィンドウ最前面切り替え
+Ctrl+Shift+Alt+_：予算管理.xlsm
+
+Ctrl+Shift+Alt+F12：Bluetoothテザリング起動
+
+Pause：Window最前面On
+Alt+Pause：Window最前面Off
+（Pause＝Fn+RShift ＠HP Spectre x360）
 )
 return
 
 ;***** Global *****
-; *** ファイル起動（Win + Fn） ***
+; *** ファイル起動 ***
 	;todo.itmz
 		!^+z::
 			sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
-			sFilePath = "%DOC_DIR_PATH%todo.itmz"
+			sFilePath = "%DOC_DIR_PATH%\#todo.itmz"
 			StartProgramAndActivate( sExePath, sFilePath )
-			Send, F2
-			Sleep 200
-			Send, {Esc}
 			return
-	;予算管理.xlsm
-		!^+\::
-			sFilePath = "%DOC_DIR_PATH%210_【衣食住】家計\100_予算管理.xlsm"
-			StartProgramAndActivate( "", sFilePath )
-			return
+			
 	;temp.txt
 		!^+s::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
-			sFilePath = "%DOC_DIR_PATH%temp.txt"
+			sFilePath = "%DOC_DIR_PATH%\#temp.txt"
 			StartProgramAndActivate( sExePath, sFilePath )
 			return
 	;temp.xlsm
 		!^+d::
-			sFilePath = "%DOC_DIR_PATH%temp.xlsm"
+			sFilePath = "%DOC_DIR_PATH%\#temp.xlsm"
 			StartProgramAndActivate( "", sFilePath )
 			return
 	;UserDefHotKey.ahk
-		!^+F12::
+		!^+\::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
 			sFilePath = "%A_ScriptFullPath%"
 			StartProgramAndActivate( sExePath, sFilePath )
 			return
-	;かなキーをコンテキストメニュー表示へ
-		RAlt::AppsKey
+	;予算管理.xlsm
+		!^+_::
+			sFilePath = "%DOC_DIR_PATH%\210_【衣食住】家計\100_予算管理.xlsm"
+			StartProgramAndActivate( "", sFilePath )
 			return
-	;プリントスクリーン単押しを抑制
-		PrintScreen::return
 
-; *** プログラム起動（Win + Alt + Fn）***
+; *** プログラム起動 ***
 	;rapture.exe
 		+^!r::
 			Run "C:\prg_exe\Rapture\rapture.exe"
 			return
 	;KitchenTimer.vbs
 		+^!k::
-			Run "C:\codes\vbs\tools\win\file_ope\CopyFileFrServer.vbs"
+			Run "C:\codes\vbs\tools\win\other\KitchenTimer.vbs"
 			return
 	;xf.exe
 		+^!a::
@@ -101,10 +99,41 @@ return
 		+^!c::
 			RunSuppressMultiStart( "C:\prg_exe\cCalc\cCalc.exe", "" )
 			return
-	;ウィンドウ最前面切り替え
-		#F12::
-			WinSet, AlwaysOnTop, TOGGLE, A
-			MsgBox, 0x43000, ウィンドウ最前面切り替え, アクティブウィンドウ最前面化の有効/無効を切り替えます, 5
+	;Window最前面化
+		Pause::
+			WinSet, AlwaysOnTop, On, A
+			MsgBox, 0x43000, Window最前面化, Window最前面On, 2
+			Return
+		!Pause::
+			WinSet, AlwaysOnTop, Off, A
+			MsgBox, 0x43000, Window最前面化, Window最前面Off, 2
+			Return
+	;Bluetoothテザリング起動
+		+^!F12::
+			Run, control printers
+			Sleep 2000
+			Send, myp
+			Sleep 300
+			Send, {AppsKey}
+			Sleep 200
+			Send, c
+			Sleep 200
+			Send, a
+			Sleep 5000
+			Send, !{F4}
+			return
+	;かなキーをコンテキストメニュー表示へ
+		RAlt::AppsKey
+			return
+	;プリントスクリーン単押しを抑制
+		PrintScreen::return
+
+	;テスト用
+		^Pause::
+			MsgBox, ctrlpause
+			Return
+		+Pause::
+			MsgBox, shiftpause
 			Return
 
 ;***** Software local *****
@@ -116,9 +145,6 @@ return
 	#IfWinActive ahk_exe iThoughts.exe
 		;F1ヘルプ無効化
 			F1::return
-		;IME OFF
-			IME_SET(0)
-			return
 	#IfWinActive
 	
 	#IfWinActive ahk_exe Rapture.exe
@@ -141,26 +167,6 @@ return
 			+LButton::Send, ^{LButton}
 			;Ctrl＋クリックで新規タブで開く
 			^LButton::Send, +^{LButton}
-			+^i::
-				Send, ^c
-				Sleep 100
-				Send, !d
-				Sleep 100
-				Send, ^v
-				Sleep 100
-				Send, {Home}
-				Sleep 100
-				Send, ^{Right}
-				Sleep 100
-				Send, ^{Right}
-				Sleep 100
-				Send, {Left}
-				Sleep 100
-				Send, {Delete}
-				Send, {Delete}
-				Sleep 100
-				Send, {Enter}
-				return
 	#IfWinActive
 	
 	#IfWinActive ahk_class MPC-BE

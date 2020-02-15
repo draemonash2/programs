@@ -26,12 +26,12 @@
 	noremap		<silent>			K			g*zz
 																							" ↓ 検索結果を画面中央に
 	noremap		<silent>			g#			g#zz
-																							" ↓ 削除（切り取りなし）
+																							" ↓ 1文字削除（切り取りなし）
 	noremap		<silent>			x			"_x
 																							" ↓ 行削除（切取りなし）
-	nnoremap	<silent>			dd			"_dd
-																							" ↓ 行切取りなし
-	nnoremap	<silent>			dx			dd
+"	nnoremap	<silent>			dd			"_dd
+																							" ↓ 行切取り
+"	nnoremap	<silent>			cc			dd
 																							" ↓ カーソルを先頭に移動
 	noremap		<silent>			H			0
 																							" ↓ カーソルを末尾に移動
@@ -48,6 +48,9 @@
 	noremap		<silent>			<tab>		a<tab><esc>
 																							" ↓ スペースキー無効
 	noremap		<silent>			<space>		<nop>
+																							" ↓ ハイライト解除
+	noremap		<silent>			<esc><esc>	:nohlsearch<cr>
+	
 																							" ↓ カーソル移動＋画面移動（左）
 	noremap		<silent>			<c-h>		10zh10h
 																							" ↓ カーソル移動＋画面移動（右）
@@ -74,8 +77,7 @@
 "	noremap		<silent>			<c-n>		:tabnew<cr>
 																							" ↓ HNXGrep を実行
 	noremap		<silent>			<c-g>		:call ExecuteHNXgrep()<cr>
-																							" ↓ ハイライト解除
-	noremap		<silent>			<esc><esc>	:nohlsearch<cr>
+	
 																							" ↓ バッファリスト作成
 	noremap		<silent>			<F1>		:call BufferList()<cr>
 																							" ↓ タグリスト作成
@@ -93,13 +95,14 @@
 																							" ↓ NERDtreeを起動
 	noremap		<silent>			<F7>		:NERDTreeToggle<CR>
 																							" ↓ フォントサイズをトグル
-	noremap		<silent>			<F8>		:call ToggleFontSize()<cr>
+	noremap		<silent>			<F8>		:call SwitchFontSize()<cr>
 																							" ↓ ウィンドウサイズをトグル
 	noremap		<silent>			<F10>		:call ToggleWindowSize()<cr>
 																							" ↓ タブ⇒空白 変換
 	noremap		<silent>			<F11>		:set expandtab<cr>:retab!<cr>
 																							" ↓ 空白⇒タブ 変換
 	noremap		<silent>			<F12>		:set noexpandtab<cr>:retab!<cr>
+	
 																							" ↓ 現在ファイルパスコピー
 	noremap		<silent>			<c-F1>		:call CopyCurFilePath()<cr>
 																							" ↓ 現在フォルダパスコピー
@@ -110,31 +113,40 @@
 	noremap		<silent>			<c-F4>		:call CopyProgramNo()<cr>
 																							" ↓ ファイル種別と行番号コピー
 	noremap		<silent>			<c-F5>		:call CopyFileLineNo()<cr>
+																							" ↓ 俯瞰モード
+	noremap		<silent>			<c-F8>		:call BirdEyesView()<cr>
 																							" ↓ タグファイル更新
+	
 	noremap		<silent>			<c-s-F5>	:call UpdateTagFile()<cr>
 																							" ↓ ペーストしたテキストを再選択できるようにする
 "	noremap		<silent>	<expr>	gp			'`[' . strpart(getregtype(), 0, 1) . '`]'
 	
 "=== ノーマルモード ===
 "	nnoremap	<silent>			<cr>		<nop>
+																							" ↓ 前行の単語をコピーしてインクリメント
+	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
 																							" ↓ カーソル移動＋画面移動（下）
 	nnoremap	<silent>			<c-j>		5jzz
 																							" ↓ カーソル移動＋画面移動（上）
 	nnoremap	<silent>			<c-k>		5kzz
-																							" ↓ 前行の単語をコピーしてインクリメント
-	nmap		<silent>			<F9>		kyiwjciw<c-r>0<esc>b<c-a>j
 	
 "=== 挿入モード ===
 																							" ↓ Ctrl+J でノーマルモードに移行
 	inoremap	<silent>			<c-j>		<esc>
 																							" ↓ 【neosnippet】スニペットを展開
 	imap		<silent>			<c-k>		<Plug>(neosnippet_expand_or_jump)
+																							" ↓ 貼り付け（Windowsクリップボード用）
+	inoremap	<silent>			<c-v>		<s-insert>
 	
 "=== ヴィジュアルモード ===
 																							" ↓ インデント左シフト
 	vnoremap	<silent>			<			<gv
 																							" ↓ インデント右シフト
 	vnoremap	<silent>			>			>gv
+																							" ↓ カーソル移動＋画面移動（下）
+	vnoremap	<silent>			<c-j>		5jzz
+																							" ↓ カーソル移動＋画面移動（上）
+	vnoremap	<silent>			<c-k>		5kzz
 																							" ↓ 末尾の空白を削除
 	vnoremap	<silent>			<F3>		:s/\s*$//<cr>:nohlsearch<cr>
 																							" ↓ ファイルパス区切り変換（\→/）
@@ -147,12 +159,12 @@
 	vnoremap	<silent>			<F9>		:call ReplaceRelativePath()<cr>
 																							" ↓ ファイル種別と行番号コピー
 	vnoremap	<silent>			<c-F5>		:<bs><bs><bs><bs><bs>call CopyFileLineNo()<cr>
-																							" ↓ 削除(クリップボード上書きなし削除)
-	vnoremap	<silent>			d			"_d
-																							" ↓ 切取り(クリップボード上書きあり削除)
-	vnoremap	<silent>			x			d
-																							" ↓ 上書きペースト(クリップボード上書きなし)
-	vnoremap	<silent>			p			"0p
+																							" ↓ 削除（切取りなし）
+"	vnoremap	<silent>			d			"_d
+																							" ↓ 切取り
+"	vnoremap	<silent>			c			d
+"																							" ↓ 上書きペースト(クリップボード上書きなし)
+"	vnoremap	<silent>			p			"0p
 
 " ==============================================================================
 " (※1) Gtags用キーバインド
@@ -688,35 +700,57 @@ endif
 
 " ==============================================================================
 " フォントサイズ設定
-" フォントサイズを変更する。
-" 以下のようにトグルする。
-"	10 ⇒ 13 ⇒ 16 ⇒ 10 ⇒ 13 ...
 " ==============================================================================
-	let g:FontSizeLevel = 1
-	function! ToggleFontSize()
+	let g:FontSizeLevel = 2
+	let g:bIsBirdEyesMode = 0
+	
+	"フォントサイズ更新
+	function! UpdateFontSize()
 		if g:FontSizeLevel == 0
-			set guifont=MS_Gothic:h8:cSHIFTJIS
+			set guifont=MS_Gothic:h2:cSHIFTJIS
 			simalt ~x
 		elseif g:FontSizeLevel == 1
-			set guifont=MS_Gothic:h10:cSHIFTJIS
+			set guifont=MS_Gothic:h8:cSHIFTJIS
 			simalt ~x
 		elseif g:FontSizeLevel == 2
-			set guifont=MS_Gothic:h13:cSHIFTJIS
+			set guifont=MS_Gothic:h10:cSHIFTJIS
 			simalt ~x
 		elseif g:FontSizeLevel == 3
+			set guifont=MS_Gothic:h13:cSHIFTJIS
+			simalt ~x
+		elseif g:FontSizeLevel == 4
 			set guifont=MS_Gothic:h16:cSHIFTJIS
 			simalt ~x
 		else
 			echo "error!"
 		endif
-		
-		if g:FontSizeLevel < 2
-			let g:FontSizeLevel = g:FontSizeLevel + 1
-		else
-			let g:FontSizeLevel = 0
-		endif
 	endfunction
-	call ToggleFontSize() "初回読み込み時のフォントサイズ
+	call UpdateFontSize() "初回読み込み時のフォントサイズ
+	
+	" フォントサイズを変更する。
+	" 以下のようにトグルする。
+	"	10 ⇒ 13 ⇒ 16 ⇒ 10 ⇒ 13 ...
+	function! SwitchFontSize()
+		let g:FontSizeLevel = g:FontSizeLevel + 1
+		if g:FontSizeLevel > 4
+			let g:FontSizeLevel = 1
+		endif
+		let g:FontSizeLevelOld = g:FontSizeLevel
+		call UpdateFontSize()
+	endfunction
+	
+	" 俯瞰モード
+	function! BirdEyesView()
+		if g:bIsBirdEyesMode == 0
+			let g:FontSizeLevelOld = g:FontSizeLevel
+			let g:FontSizeLevel = 0
+			let g:bIsBirdEyesMode = 1
+		else
+			let g:FontSizeLevel = g:FontSizeLevelOld
+			let g:bIsBirdEyesMode = 0
+		endif
+		call UpdateFontSize()
+	endfunction
 
 " ==============================================================================
 " ファイル保存時に「タブ」を「空白」に変換するかを選択する
@@ -1132,6 +1166,12 @@ endif
 " [参照] http://nanasi.jp/articles/vim/mark_vim.html
 " ==============================================================================
 	execute 'source ' . $MARKVIM
+
+" ==============================================================================
+" winresizer.vim 設定
+" [参照] https://github.com/simeji/winresizer
+" ==============================================================================
+	let g:winresizer_start_key = '<C-S-T>'
 
 " ==============================================================================
 " qfixgrep 設定
