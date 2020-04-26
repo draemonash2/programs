@@ -29,20 +29,20 @@ DOC_DIR_PATH = C:\Users\%A_Username%\Dropbox\100_Documents
 !^+F1::
 msgbox,
 (
-Ctrl+Shift+Alt+\：UserDefHotKey.ahk
+Ctrl+Shift+Alt + \：#todo.itmz
 
-Ctrl+Shift+Alt+z：#todo.itmz
-Ctrl+Shift+Alt+s：#temp.txt
-Ctrl+Shift+Alt+d：#temp.xlsm
+Ctrl+Shift+Alt + s：#temp.txt
+Ctrl+Shift+Alt + d：#temp.xlsm
 
-Ctrl+Shift+Alt+r：rapture.exe
-Ctrl+Shift+Alt+k：KitchenTimer.vbs
-Ctrl+Shift+Alt+a：xf.exe
-Ctrl+Shift+Alt+c：cCalc.exe
+Ctrl+Shift+Alt + x：Rapture
+Ctrl+Shift+Alt + k：KitchenTimer
+Ctrl+Shift+Alt + a：X-Finder.exe
+Ctrl+Shift+Alt + c：cCalc.exe
 
-Ctrl+Shift+Alt+_：予算管理.xlsm
+Ctrl+Shift+Alt + _：予算管理.xlsm
 
-Ctrl+Shift+Alt+F12：Bluetoothテザリング起動
+Ctrl+Shift+Alt + F12：UserDefHotKey.ahk
+Ctrl+Shift+Alt + F10：Bluetoothテザリング起動
 
 Pause：Window最前面On
 Alt+Pause：Window最前面Off
@@ -53,12 +53,12 @@ return
 ;***** Global *****
 ; *** ファイル起動 ***
 	;todo.itmz
-		!^+z::
+		!^+\::
 			sExePath = "C:\Program Files (x86)\toketaWare\iThoughts\iThoughts.exe"
 			sFilePath = "%DOC_DIR_PATH%\#todo.itmz"
-			StartProgramAndActivate( sExePath, sFilePath )
+			;StartProgramAndActivate( sExePath, sFilePath )
+			Run, %sExePath% %sFilePath%
 			return
-			
 	;temp.txt
 		!^+s::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
@@ -70,8 +70,13 @@ return
 			sFilePath = "%DOC_DIR_PATH%\#temp.xlsm"
 			StartProgramAndActivate( "", sFilePath )
 			return
+	;#temp.vsdm
+		!^+v::
+			sFilePath = "%DOC_DIR_PATH%\#temp.vsdm"
+			StartProgramAndActivate( "", sFilePath )
+			return
 	;UserDefHotKey.ahk
-		!^+\::
+		!^+F12::
 			sExePath = "C:\prg_exe\Vim\gvim.exe"
 			sFilePath = "%A_ScriptFullPath%"
 			StartProgramAndActivate( sExePath, sFilePath )
@@ -81,10 +86,15 @@ return
 			sFilePath = "%DOC_DIR_PATH%\210_【衣食住】家計\100_予算管理.xlsm"
 			StartProgramAndActivate( "", sFilePath )
 			return
+	;言語チートシート
+		!^+[::
+			sFilePath = "C:\codes\lang_cheet_sheet.xlsx"
+			StartProgramAndActivate( "", sFilePath )
+			return
 
 ; *** プログラム起動 ***
 	;rapture.exe
-		+^!r::
+		+^!x::
 			Run "C:\prg_exe\Rapture\rapture.exe"
 			return
 	;KitchenTimer.vbs
@@ -109,7 +119,7 @@ return
 			MsgBox, 0x43000, Window最前面化, Window最前面Off, 2
 			Return
 	;Bluetoothテザリング起動
-		+^!F12::
+		+^!F10::
 			Run, control printers
 			Sleep 2000
 			Send, myp
@@ -127,7 +137,7 @@ return
 			return
 	;プリントスクリーン単押しを抑制
 		PrintScreen::return
-
+		
 	;テスト用
 		^Pause::
 			MsgBox, ctrlpause
@@ -135,11 +145,51 @@ return
 		+Pause::
 			MsgBox, shiftpause
 			Return
+		
+		+^!i::
+			Send, ^c
+			Sleep 200
+			Send, ^e
+			Sleep 200
+			Send, ^v
+			Sleep 200
+			Send, {Left 3}
+			Sleep 200
+			Send, {Backspace 2}
+			Sleep 200
+			Send, {Space}
+			Sleep 200
+			Send, {End}
+			Sleep 200
+			Send, {Space}
+			Sleep 200
+			Send, openload
+			return
 
 ;***** Software local *****
 	#IfWinActive ahk_exe EXCEL.EXE
 		;F1ヘルプ無効化
 			F1::return
+		;Scroll left.
+			+WheelUp::
+			SetScrollLockState, On
+			SendInput {Left}
+			SetScrollLockState, Off
+			Return
+		;Scroll right.
+			+WheelDown::
+			SetScrollLockState, On
+			SendInput {Right}
+			SetScrollLockState, Off
+			Return
+		;Move prev sheet.
+			^+WheelUp::
+			SendInput ^{PgUp}
+			Return
+		;Move next sheet.
+			^+WheelDown::
+			SendInput ^{PgDn}
+			Return
 	#IfWinActive
 	
 	#IfWinActive ahk_exe iThoughts.exe
@@ -163,10 +213,7 @@ return
 		;The Great Suspender 用
 			F8::^+s
 			F9::^+u
-			;Shift＋クリックで新規タブ（バックグラウンド）で開く
-			+LButton::Send, ^{LButton}
-			;Ctrl＋クリックで新規タブで開く
-			^LButton::Send, +^{LButton}
+			return
 	#IfWinActive
 	
 	#IfWinActive ahk_class MPC-BE
